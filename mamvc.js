@@ -57,3 +57,11 @@ function on(...parameters) {
         return result.set(f(...args))
     }}
 }
+
+function concat(...parameters) {
+    return on(parameters).apply(parameters => parameters.join('x))
+}
+
+function fill(template, ...parameters) {
+    return on(parameters).apply(p => parameters)
+}

@@ -65,3 +65,4 @@ function concat(...parameters) {
 function fill(template, ...parameters) {
     return on(...parameters).apply(...p => p)
 }
+

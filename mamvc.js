@@ -6,8 +6,7 @@ class State {
 
     set(value) {
         this.value = value
-        for(let i = 0; i < this.observers.length; i++)
-            this.observers[i](this.value)
+        this.observers.forEach(observer => observer(this.value))
         return this
     }
 
@@ -30,4 +29,23 @@ class State {
         if(trigger) observer(this.value)
         return this
     }
+}
+
+function state(value = null) {
+    return new State(value)
+}
+
+function boolean(value = false) {
+    return state(value)
+}
+
+function on(...parameters) {
+    return {apply(f) {
+        let result = state()
+        let args = parameters.map(p => p instanceof State ? p.onChange(value => {
+            args[i] = value
+            result.set(f(...args))
+        }, false).get() : p)
+        return result.set(f(...args))
+    }}
 }

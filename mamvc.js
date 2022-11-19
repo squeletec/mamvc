@@ -24,6 +24,14 @@ class State {
         return result
     }
 
+    and(state) {
+        return on(this, state).apply((a, b) => a && b)
+    }
+
+    or(state) {
+        return on(this, state).apply((a, b) => a || b)
+    }
+
     onChange(observer, trigger = true) {
         this.observers.push(observer)
         if(trigger) observer(this.value)

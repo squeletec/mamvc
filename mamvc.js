@@ -59,9 +59,9 @@ function on(...parameters) {
 }
 
 function concat(...parameters) {
-    return on(parameters).apply(parameters => parameters.join('x))
+    return on(...parameters).apply(...p => p.join('x))
 }
 
 function fill(template, ...parameters) {
-    return on(parameters).apply(p => parameters)
+    return on(...parameters).apply(...p => p)
 }

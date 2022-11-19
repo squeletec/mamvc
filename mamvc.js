@@ -11,6 +11,10 @@ class State {
         return this
     }
 
+    update(value) {
+        return value === this.value ? this : this.set(value)
+    }
+
     get() {
         return this.value
     }

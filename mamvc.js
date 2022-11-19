@@ -1,4 +1,8 @@
+/*
+ * Class state represents, observable state.
+ */
 class State {
+
     constructor(value = null) {
         this.value = value
         this.observers = []
@@ -37,6 +41,7 @@ class State {
         if(trigger) observer(this.value)
         return this
     }
+
 }
 
 function state(value = null) {
@@ -59,7 +64,7 @@ function on(...parameters) {
 }
 
 function concat(...parameters) {
-    return on(...parameters).apply(...p => p.join('x))
+    return on(...parameters).apply(...p => p.join(''))
 }
 
 function fill(template, ...parameters) {

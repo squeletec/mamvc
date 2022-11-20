@@ -177,13 +177,13 @@ class XBuilder extends XNode {
     set(name, ...args) {
         if(args.length === 0)
             return this
-        let attr = event => {
-            if(event.value === null) this.node.removeAttribute(name)
-            else this.node.setAttribute(name, event.value)
+        let attr = value => {
+            if(value === null) this.node.removeAttribute(name)
+            else this.node.setAttribute(name, value)
         }
         let value = X(...args)
         if(value instanceof State) value.onChange(attr)
-        else attr({value: value})
+        else attr(value)
         return this
     }
 
@@ -217,12 +217,12 @@ class XBuilder extends XNode {
             return this
         let value = X(...args)
         let node = this.node;
-        function css(event) {
-            if(event.value === null) node.style.removeProperty(property)
-            else node.style.setProperty(property, event.value)
+        function css(value) {
+            if(value === null) node.style.removeProperty(property)
+            else node.style.setProperty(property, value)
         }
         if(value instanceof State) value.onChange(css)
-        else css({value: value})
+        else css(value)
         return this
     }
 
@@ -307,7 +307,7 @@ class XBuilder extends XNode {
     }
 
     receiving(channel, model) {
-        channel.onChange(event => event.value || model.set(false))
+        channel.onChange(value => value || model.set(false))
         return this.onDragover(() => channel.get() && model.set(true)).onDragleave(set(model, false))
     }
 
@@ -390,12 +390,12 @@ function fragment(...args) {return builder(document.createDocumentFragment()).ad
 
 function range(start, model, itemView = item => item, end = xText('')) {
     let f = fragment(start, end)
-    model.onChange(event => {
+    model.onChange(value => {
         for(let n = start.get().nextSibling, s; n && n !== end.get(); n = s) {
             s = n.nextSibling
             builder(n).remove()
         }
-        event.value.forEach(item => end.prepend(itemView(item)))
+        value.forEach(item => end.prepend(itemView(item)))
     })
     return f
 }
@@ -408,10 +408,10 @@ function each(model, itemView = item => item, end = xText('')) {
 function refresh(listModel, itemKey, itemView = item => item, boundary = xText('')) {
     let f = fragment(boundary)
     let viewMap = new Map()
-    listModel.onChange(event => {
+    listModel.onChange(value => {
         viewMap.forEach(view => view.remove())
         let nView = new Map()
-        event.value.forEach((item, i) => {
+        value.forEach((item, i) => {
             let key = itemKey(item)
             let view = viewMap.has(key) ? viewMap.get(key) : itemView(item)
             nView.set(key, view)

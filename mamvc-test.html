@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+  <script type="module" defer>
+    import { state } from "./mamvc.js"
+
+    let my = state()
+    my.set(45)
+    document.body.appendChild(document.createTextNode('' + my.get()))
+
+  </script>
+</head>
+<body>
+
+</body>
+</html>

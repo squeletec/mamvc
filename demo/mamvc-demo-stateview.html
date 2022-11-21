@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="mamvc-demo.css"/>
+    <script type="module" src="./mamvc-demo-runner.js"></script>
+    <script type="module" id="demoSource">
+import {state, div, byId, set} from "../mamvc.js";
+
+let myState = state('Initial')
+
+byId('demoOutput').add(
+    div().add(myState).onClick(set(myState, "Clicked"))
+)
+    </script>
+</head>
+<body>
+<pre id="demoSourceView"></pre>
+<div id="demoOutput"></div>
+</body>
+</html>

@@ -1,31 +1,71 @@
 /*
+BSD 2-Clause License
+
+Copyright (c) 2022, c0stra
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+/*
+Micro Ajax MVC library.
+
+ */
+
+/**
  * Class state represents, observable state.
  */
 class State {
 
     constructor(value = null) {
-        this.value = value
-        this.observers = []
+        this._value = value
+        this._observers = []
     }
 
     set(value) {
-        this.value = value
-        this.observers.forEach(observer => observer(this.value))
+        this._value = value
+        this._observers.forEach(observer => observer(this._value))
         return this
     }
 
     update(value) {
-        return value === this.value ? this : this.set(value)
+        return value === this._value ? this : this.set(value)
     }
 
     get() {
-        return this.value
+        return this._value
     }
 
-    map(mappingFunction) {
-        let result = new State()
+    map(mappingFunction, result = new State()) {
         this.onChange(value => result.set(mappingFunction(value)))
         return result
+    }
+
+    json(structure = this._value) {
+        if('object' === typeof structure)
+            for(let property in structure)
+                if(structure.hasOwnProperty(property))
+                    this[property] = this.map(_ => _[property], new State(structure[property]).json())
+        return this
     }
 
     and(state) {
@@ -37,11 +77,15 @@ class State {
     }
 
     onChange(observer, trigger = true) {
-        this.observers.push(observer)
-        if(trigger) observer(this.value)
+        this._observers.push(observer)
+        if(trigger) observer(this._value)
         return this
     }
 
+}
+
+function isState(variable) {
+    return variable instanceof State
 }
 
 export function state(value = null) {
@@ -52,10 +96,17 @@ export function boolean(value = false) {
     return state(value)
 }
 
+export function to(trueValue, falseValue = null) {
+    return value => value ? trueValue : falseValue
+}
+
+export function falseTo(falseValue) {
+    return to(null, falseValue)
+}
+
 export function on(...parameters) {
-    return {apply(f) {
-        let result = state()
-        let args = parameters.map((p, i) => p instanceof State ? p.onChange(value => {
+    return {apply(f, result = state()) {
+        let args = parameters.map((p, i) => isState(p) ? p.onChange(value => {
             args[i] = value
             result.set(f(...args))
         }, false).get() : p)
@@ -74,7 +125,7 @@ export function fill(name, parameter) {
     let i = t => t
     return {
         fill(name, parameter) {
-            if(parameter instanceof State) {
+            if(isState(parameter)) {
                 inputs.push(parameter)
                 let p = f
                 f = t => rep(p(t), name, parameter.get())
@@ -97,7 +148,11 @@ export function toggle(model) {
 }
 
 export function set(model, value) {
-    return () => model.set(value)
+    return isState(value) ? () => model.set(value.get()) : () => model.set(value)
+}
+
+export function when(condition, command) {
+    return () => condition.get() && command()
 }
 
 export function copyToClipboard(nodeOrBuilder) {
@@ -179,7 +234,7 @@ function valueView(value) {
 }
 
 export function text(value) {
-    return value instanceof State ? valueView(value) : xText(document.createTextNode(value));
+    return isState(value) ? valueView(value) : xText(document.createTextNode(value));
 }
 
 class XBuilder extends XNode {
@@ -228,7 +283,7 @@ class XBuilder extends XNode {
             else this.node.setAttribute(name, value)
         }
         let value = concat(...args)
-        if(value instanceof State) value.onChange(attr)
+        if(isState(value)) value.onChange(attr)
         else attr(value)
         return this
     }
@@ -253,7 +308,7 @@ class XBuilder extends XNode {
     rowspan(...value) {return this.set('rowspan', ...value)}
     autocomplete(...value) {return this.set('autocomplete', ...value)}
     checked(value) {return this.set('checked', value)}
-    disabled(value) {return this.set('disabled', value instanceof State ? mapBooleanModel(value, true) : value)}
+    disabled(value) {return this.set('disabled', isState(value) ? value.map(to(true)) : value)}
 
     /*
       Manipulation of Element style properties
@@ -267,13 +322,13 @@ class XBuilder extends XNode {
             if(value === null) node.style.removeProperty(property)
             else node.style.setProperty(property, value)
         }
-        if(value instanceof State) value.onChange(css)
+        if(isState(value)) value.onChange(css)
         else css(value)
         return this
     }
 
     display(value) {
-        return this.css('display', (value instanceof State && (value.value === true || value.value === false)) ? mapBooleanModel(value, null, 'none') : value)
+        return this.css('display', (isState(value) && (value.get() === true || value.get() === false)) ? value.map(falseTo('none')) : value)
     }
 
     textAlign(value) {return this.css('text-align', value)}
@@ -373,12 +428,12 @@ function builder(node) {
  */
 function body() {return builder(document.body)}
 function head() {return builder(document.head)}
-function byId(id) {return builder(document.getElementById(id))}
+export function byId(id) {return builder(document.getElementById(id))}
 function element(name, ...className) {return  builder(document.createElement(name)).setClass(...className)}
 function meta() {return element('meta')}
 function base() {return element('base')}
 export function div(...className) {return element('div', ...className)}
-function span(...className) {return element('span', ...className)}
+export function span(...className) {return element('span', ...className)}
 function img(...src) {return element('img').src(...src)}
 function link(rel) {return element('link').rel(rel)}
 function a(...href) {return element('a').href(...href)}
@@ -390,9 +445,9 @@ function h5() {return element('h5')}
 function p() {return element('p')}
 function pre() {return element('pre')}
 function code() {return element('code')}
-function ul() {return element('ul')}
+export function ul() {return element('ul')}
 function ol() {return element('ul')}
-function li() {return element('li')}
+export function li() {return element('li')}
 function small() {return element('small')}
 function strong() {return element('strong')}
 function em() {return element('em')}

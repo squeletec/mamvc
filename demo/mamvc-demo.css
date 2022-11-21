@@ -1,0 +1,25 @@
+
+#demoSourceView, #demoOutput {
+    margin: 1em;
+    border: 1px solid grey;
+    box-shadow: 3px 3px 10px silver;
+}
+
+#demoSourceView:before, #demoOutput:before {
+    position: absolute;
+    top: inherit;
+    left: inherit;
+    margin-top: -0.5em;
+    margin-left: 4em;
+    background-color: white;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+#demoSourceView:before {
+    content: "Source code";
+}
+
+#demoOutput:before {
+    content: "Output";
+}

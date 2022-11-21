@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="mamvc-demo.css"/>
+    <script type="module" src="./mamvc-demo-runner.js"></script>
+    <script type="module" id="demoSource">
+import { boolean, ul, li, byId } from "../mamvc.js";
+import {expander} from "../mamvc-rest-toolkit.js";
+
+let expanded = boolean()
+let enabled = boolean()
+
+byId('demoOutput').add(
+    ul().add(
+        li().add(expander(expanded, enabled), 'Node', ul().display(expanded).add(
+            li().add('Item 1'),
+            li().add('Item 2')
+        ))
+    )
+)
+
+setTimeout(() => enabled.set(true), 1000)
+    </script>
+</head>
+<body>
+<pre id="demoSourceView"></pre>
+<div id="demoOutput"></div>
+</body>
+</html>

@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="mamvc-test.css">
     <script type="module" defer>
 
-        import {state, boolean, concat, fill, set, toggle, text } from "./mamvc.js"
+        import {state, boolean, concat, fill, set, toggle, text, div } from "./mamvc.js"
         import {suite, assert, assertState } from "./mamvc-test-runner.js";
 
         suite({
@@ -113,6 +113,14 @@
                 let t = text(myState)
                 assert(t.get().textContent, 'E')
                 myState.set('F')
+            },
+
+            testContentObservingState() {
+                let myState = state("C")
+                let d = div(myState)
+                assert(d.innerHTML, 'C')
+                myState.set("D")
+                assert(d.innerHTML, 'C')
             }
         })
     </script>

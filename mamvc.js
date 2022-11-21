@@ -377,7 +377,7 @@ function byId(id) {return builder(document.getElementById(id))}
 function element(name, ...className) {return  builder(document.createElement(name)).setClass(...className)}
 function meta() {return element('meta')}
 function base() {return element('base')}
-function div(...className) {return element('div', ...className)}
+export function div(...className) {return element('div', ...className)}
 function span(...className) {return element('span', ...className)}
 function img(...src) {return element('img').src(...src)}
 function link(rel) {return element('link').rel(rel)}

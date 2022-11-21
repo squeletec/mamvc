@@ -29,3 +29,25 @@ thead {
     color: darkred;
     font-weight: bold;
 }
+
+td pre, th pre {
+    position: absolute;
+    top: inherit;
+    /*margin-top: 0.8em;*/
+    display: none;
+    background-color: lightyellow;
+    box-shadow: 2px 2px 5px silver;
+    font-family: monospace;
+    font-size: 8pt;
+}
+
+td:hover pre, th:hover pre {
+    display: block;
+}
+
+pre.left {
+    left:inherit;
+}
+pre.right {
+    right: 1em;
+}

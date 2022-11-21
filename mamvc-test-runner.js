@@ -6,7 +6,7 @@ export function suite(definition, reporter = domReporter()) {
 
     for(let property in definition) {
         if(definition.hasOwnProperty(property) && typeof definition[property] === "function") {
-            reporter.testStart(property)
+            reporter.testStart(property, definition[property])
             try {
                 definition[property]()
                 reporter.testPassed()
@@ -44,18 +44,22 @@ export function domReporter() {
     let reportItems = reportTable.appendChild(document.createElement('tbody'))
     let currentTest = null
 
-    function cell(type, content) {
+    function element(type, content) {
         let cell = document.createElement(type)
         cell.appendChild(document.createTextNode(content))
         return cell
     }
 
     function nameCell(name) {
-        return cell('th', name)
+        return element('th', name)
     }
 
     function startCell() {
-        return cell('td', new Date().toISOString().substring(0, 23).replace("T", " "))
+        return element('td', new Date().toISOString().substring(0, 23).replace("T", " "))
+    }
+
+    function detail(data) {
+        return element('pre', data)
     }
 
     return {
@@ -63,8 +67,8 @@ export function domReporter() {
             let headRow = reportHead.appendChild(document.createElement('tr'))
             headRow.appendChild(nameCell(definition.name || 'DefaultSuite'))
             headRow.appendChild(startCell())
-            headRow.appendChild(cell('td', ''))
-            headRow.appendChild(cell('td', ''))
+            headRow.appendChild(element('td', ''))
+            headRow.appendChild(element('td', ''))
         },
         suitePassed() {
 
@@ -72,18 +76,18 @@ export function domReporter() {
         suiteFailed(errors) {
 
         },
-        testStart(name) {
+        testStart(name, func) {
             currentTest = reportItems.appendChild(document.createElement('tr'))
-            currentTest.appendChild(nameCell(name))
+            currentTest.appendChild(nameCell(name)).appendChild(detail(func)).setAttribute('class', 'left')
             currentTest.appendChild(startCell())
         },
         testPassed() {
-            currentTest.appendChild(cell('td', 'passed')).setAttribute('class', 'passed')
-            currentTest.appendChild(cell('td', ''))
+            currentTest.appendChild(element('td', 'passed')).setAttribute('class', 'passed')
+            currentTest.appendChild(element('td', ''))
         },
         testFailed(error) {
-            currentTest.appendChild(cell('td', 'failed')).setAttribute('class', 'failed')
-            currentTest.appendChild(cell('td', error.message))
+            currentTest.appendChild(element('td', 'failed')).setAttribute('class', 'failed')
+            currentTest.appendChild(element('td', error.message)).appendChild(detail(error.stack)).setAttribute('class', 'right')
             console.error(error)
         }
 

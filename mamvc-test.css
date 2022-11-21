@@ -5,7 +5,7 @@ body {
 }
 
 table {
-    width: 100%;
+    width: 90%;
     border: 1px solid silver;
     border-collapse: collapse;
     margin: 1em;
@@ -14,6 +14,7 @@ table {
 th, td {
     text-align: left;
     border: 1px solid silver;
+    padding-left: 1em;
 }
 
 thead {
@@ -39,8 +40,14 @@ td pre, th pre {
     box-shadow: 2px 2px 5px silver;
     font-family: monospace;
     font-size: 8pt;
+    font-weight: normal;
+    color: black;
+    padding: 1em;
 }
 
+tbody tr:hover {
+    background-color: lightyellow;
+}
 td:hover pre, th:hover pre {
     display: block;
 }
@@ -48,6 +55,17 @@ td:hover pre, th:hover pre {
 pre.left {
     left:inherit;
 }
+
 pre.right {
     right: 1em;
+}
+
+th {
+    width: 30%;
+}
+td:nth-child(2) {
+    width: 20%;
+}
+td:nth-child(3) {
+    width: 50%;
 }

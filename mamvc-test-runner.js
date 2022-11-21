@@ -42,6 +42,7 @@ export function domReporter() {
     let reportTable = document.body.appendChild(document.createElement('table'))
     let reportHead = reportTable.appendChild(document.createElement('thead'))
     let reportItems = reportTable.appendChild(document.createElement('tbody'))
+    let headRow = null
     let currentTest = null
 
     function element(type, content) {
@@ -64,17 +65,15 @@ export function domReporter() {
 
     return {
         suiteStart(definition) {
-            let headRow = reportHead.appendChild(document.createElement('tr'))
+            headRow = reportHead.appendChild(document.createElement('tr'))
             headRow.appendChild(nameCell(definition.name || 'DefaultSuite'))
             headRow.appendChild(startCell())
-            headRow.appendChild(element('td', ''))
-            headRow.appendChild(element('td', ''))
         },
         suitePassed() {
-
+            headRow.appendChild(element('td', 'passed')).setAttribute('class', 'passed')
         },
         suiteFailed(errors) {
-
+            headRow.appendChild(element('td', errors.length + ' tests failed')).setAttribute('class', 'failed')
         },
         testStart(name, func) {
             currentTest = reportItems.appendChild(document.createElement('tr'))
@@ -83,11 +82,11 @@ export function domReporter() {
         },
         testPassed() {
             currentTest.appendChild(element('td', 'passed')).setAttribute('class', 'passed')
-            currentTest.appendChild(element('td', ''))
         },
         testFailed(error) {
-            currentTest.appendChild(element('td', 'failed')).setAttribute('class', 'failed')
-            currentTest.appendChild(element('td', error.message)).appendChild(detail(error.stack)).setAttribute('class', 'right')
+            let result = currentTest.appendChild(element('td', error.message))
+            result.setAttribute('class', 'failed')
+            result.appendChild(detail(error.stack)).setAttribute('class', 'right')
             console.error(error)
         }
 

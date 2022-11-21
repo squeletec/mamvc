@@ -117,10 +117,10 @@
 
             testContentObservingState() {
                 let myState = state("C")
-                let d = div(myState)
-                assert(d.innerHTML, 'C')
+                let d = div().add(myState)
+                assert(d.get().innerHTML, 'C')
                 myState.set("D")
-                assert(d.innerHTML, 'C')
+                assert(d.get().innerHTML, 'D')
             }
         })
     </script>

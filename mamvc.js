@@ -227,7 +227,7 @@ class XBuilder extends XNode {
             if(value === null) this.node.removeAttribute(name)
             else this.node.setAttribute(name, value)
         }
-        let value = X(...args)
+        let value = concat(...args)
         if(value instanceof State) value.onChange(attr)
         else attr(value)
         return this
@@ -261,7 +261,7 @@ class XBuilder extends XNode {
     css(property, ...args) {
         if(args.length === 0)
             return this
-        let value = X(...args)
+        let value = concat(...args)
         let node = this.node;
         function css(value) {
             if(value === null) node.style.removeProperty(property)
@@ -280,12 +280,12 @@ class XBuilder extends XNode {
     textLeft() {return this.textAlign('left')}
     textRight() {return this.textAlign('right')}
     textCenter() {return this.textAlign('center')}
-    width(value, unit = 'px') {return this.css('width', X(value, unit))}
-    height(value, unit = 'px') {return this.css('height', X(value, unit))}
-    top(value, unit = 'px') {return this.css('top', X(value, unit))}
-    bottom(value, unit = 'px') {return this.css('bottom', X(value, unit))}
-    left(value, unit = 'px') {return this.css('left', X(value, unit))}
-    right(value, unit = 'px') {return this.css('right', X(value, unit))}
+    width(value, unit = 'px') {return this.css('width', concat(value, unit))}
+    height(value, unit = 'px') {return this.css('height', concat(value, unit))}
+    top(value, unit = 'px') {return this.css('top', concat(value, unit))}
+    bottom(value, unit = 'px') {return this.css('bottom', concat(value, unit))}
+    left(value, unit = 'px') {return this.css('left', concat(value, unit))}
+    right(value, unit = 'px') {return this.css('right', concat(value, unit))}
     resize(value) {return this.css('resize', value)}
     color(value) {return this.css('color', value)}
     fontSize(...args) {return this.css('font-size', ...args)}
@@ -300,18 +300,18 @@ class XBuilder extends XNode {
     linearGradient(value) {return this.backgroundImage('linear-gradient(', value, ')')}
     position(value) {return this.css('position', value)}
     float(value) {return this.css('float', value)}
-    paddingLeft(value, unit = 'px') {return this.css('padding-left', X(value, unit))}
-    paddingRight(value, unit = 'px') {return this.css('padding-right', X(value, unit))}
-    paddingTop(value, unit = 'px') {return this.css('padding-top', X(value, unit))}
-    paddingBottom(value, unit = 'px') {return this.css('padding-bottom', X(value, unit))}
-    marginLeft(value, unit = 'px') {return this.css('margin-left', X(value, unit))}
-    marginRight(value, unit = 'px') {return this.css('margin-right', X(value, unit))}
-    marginTop(value, unit = 'px') {return this.css('margin-top', X(value, unit))}
-    marginBottom(value, unit = 'px') {return this.css('margin-bottom', X(value, unit))}
+    paddingLeft(value, unit = 'px') {return this.css('padding-left', concat(value, unit))}
+    paddingRight(value, unit = 'px') {return this.css('padding-right', concat(value, unit))}
+    paddingTop(value, unit = 'px') {return this.css('padding-top', concat(value, unit))}
+    paddingBottom(value, unit = 'px') {return this.css('padding-bottom', concat(value, unit))}
+    marginLeft(value, unit = 'px') {return this.css('margin-left', concat(value, unit))}
+    marginRight(value, unit = 'px') {return this.css('margin-right', concat(value, unit))}
+    marginTop(value, unit = 'px') {return this.css('margin-top', concat(value, unit))}
+    marginBottom(value, unit = 'px') {return this.css('margin-bottom', concat(value, unit))}
     cursor(value) {return this.css('cursor', value)}
     transition(value) {return this.css('transition', value)}
     transform(value) {return this.css('transform', value)}
-    rotate(value, unit) {return this.transform(X('rotate(', value, unit, ')'))}
+    rotate(value, unit) {return this.transform(concat('rotate(', value, unit, ')'))}
     overflow(value) {return this.css('overflow', value)}
     overflowX(value) {return this.css('overflow-x', value)}
     overflowY(value) {return this.css('overflow-y', value)}

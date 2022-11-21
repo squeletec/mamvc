@@ -1,0 +1,31 @@
+
+body {
+    font-family: Arial, serif;
+    font-size: 10pt;
+}
+
+table {
+    width: 100%;
+    border: 1px solid silver;
+    border-collapse: collapse;
+    margin: 1em;
+}
+
+th, td {
+    text-align: left;
+    border: 1px solid silver;
+}
+
+thead {
+    background-color: silver;
+}
+
+.passed {
+    color: green;
+    font-weight: bold;
+}
+
+.failed {
+    color: darkred;
+    font-weight: bold;
+}

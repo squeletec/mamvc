@@ -48,14 +48,14 @@ export function state(value = null) {
     return new State(value)
 }
 
-function boolean(value = false) {
+export function boolean(value = false) {
     return state(value)
 }
 
-function on(...parameters) {
+export function on(...parameters) {
     return {apply(f) {
         let result = state()
-        let args = parameters.map(p => p instanceof State ? p.onChange(value => {
+        let args = parameters.map((p, i) => p instanceof State ? p.onChange(value => {
             args[i] = value
             result.set(f(...args))
         }, false).get() : p)
@@ -63,14 +63,60 @@ function on(...parameters) {
     }}
 }
 
-function concat(...parameters) {
-    return on(...parameters).apply(...p => p.join(''))
+export function concat(...parameters) {
+    return on(...parameters).apply((...p) => p.join(''))
 }
 
-function fill(template, ...parameters) {
-    return on(...parameters).apply(...p => p)
+export function fill(name, parameter) {
+    function rep(t, name, value) {return t.replaceAll('{' + name + '}', value)}
+    let inputs = []
+    let f = t => t
+    let i = t => t
+    return {
+        fill(name, parameter) {
+            if(parameter instanceof State) {
+                inputs.push(parameter)
+                let p = f
+                f = t => rep(p(t), name, parameter.get())
+            } else {
+                let p = i
+                i = t => rep(p(t), name, parameter)
+            }
+            return this
+        },
+        into(template) {
+            return on(i(template), ...inputs).apply(f)
+        }
+    }.fill(name, parameter)
 }
 
+
+
+export function toggle(model) {
+    return () => model.set(!model.get())
+}
+
+export function set(model, value) {
+    return () => model.set(value)
+}
+
+export function copyToClipboard(nodeOrBuilder) {
+    let node = nodeOrBuilder instanceof XNode ? nodeOrBuilder.get() : nodeOrBuilder
+    return function(event) {
+        if(document.selection) {
+            let ieRange = document.body.createTextRange()
+            ieRange.moveToElementText(node)
+            ieRange.select().createTextRange()
+        } else if(window.getSelection) {
+            let domRange = document.createRange()
+            domRange.selectNode(node)
+            window.getSelection().removeAllRanges()
+            window.getSelection().addRange(domRange)
+            document.execCommand("copy")
+            window.getSelection().removeAllRanges()
+        }
+    }
+}
 
 
 /**
@@ -128,11 +174,11 @@ function x(parameter) {
 
 function valueView(value) {
     let builder = xText(document.createTextNode(value.get()))
-    value.onChange(event => builder.setValue(event.value), false)
+    value.onChange(v => builder.setValue(v), false)
     return builder
 }
 
-function text(value) {
+export function text(value) {
     return value instanceof State ? valueView(value) : xText(document.createTextNode(value));
 }
 

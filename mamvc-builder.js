@@ -344,10 +344,10 @@ function del() {return element('del')}
 function ins() {return element('ins')}
 function hr() {return element('hr')}
 function br() {return element('br')}
-function iframe(...src) {return element('iframe').src(src)}
-function fragment(...args) {return builder(document.createDocumentFragment()).add(...args)}
+export function iframe(...src) {return element('iframe').src(src)}
+export function fragment(...args) {return builder(document.createDocumentFragment()).add(...args)}
 
-function range(start, model, itemView = item => item, end = xText('')) {
+export function range(start, model, itemView = item => item, end = xText('')) {
     let f = fragment(start, end)
     model.onChange(value => {
         for(let n = start.get().nextSibling, s; n && n !== end.get(); n = s) {
@@ -359,12 +359,12 @@ function range(start, model, itemView = item => item, end = xText('')) {
     return f
 }
 
-function each(model, itemView = item => item, end = xText('')) {
+export function each(model, itemView = item => item, end = xText('')) {
     return range(xText(''), model, itemView, end)
 }
 
 
-function refresh(listModel, itemKey, itemView = item => item, boundary = xText('')) {
+export function refresh(listModel, itemKey, itemView = item => item, boundary = xText('')) {
     let f = fragment(boundary)
     let viewMap = new Map()
     listModel.onChange(value => {

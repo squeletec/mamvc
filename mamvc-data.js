@@ -34,7 +34,7 @@ class Channel {
         this._uri = isState(uri) ? uri : state(uri)
         this._model = state()
         this._busy = boolean()
-        this._progress = state({total: 0, done: 0}).json()
+        this._progress = state({total: 0, done: 0}).hierarchy()
     }
 
     setModel(model) {

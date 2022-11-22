@@ -55,11 +55,11 @@ class State {
         return result
     }
 
-    json(structure = this._value) {
+    hierarchy(structure = this._value) {
         if('object' === typeof structure)
             for(let property in structure)
                 if(structure.hasOwnProperty(property))
-                    this[property] = this.map(_ => _[property], new State(structure[property]).json())
+                    this[property] = this.map(_ => _[property], new State(structure[property]).hierarchy())
         return this
     }
 

@@ -32,7 +32,7 @@ export function expander(model, enabled = boolean(true)) {
     return span().display('inline-block').cursor('pointer')
         .transition('transform .2s ease-in-out').transform(model.map(to('rotate(90deg)')))
         .color(enabled.map(falseTo('silver')))
-        .add('▶')
+        .add('\u25B6')
         .onClick(when(enabled, toggle(model)))
 }
 

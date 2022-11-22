@@ -308,42 +308,42 @@ export function ol() {return element('ul')}
 export function li() {return element('li')}
 export function small() {return element('small')}
 export function strong() {return element('strong')}
-function em() {return element('em')}
-function abbr() {return element('abbr')}
-function time(value) {return element('time').add(text(value))}
-function form(method) {return element('form').method(method || 'POST')}
-function textarea(name) {return element('textarea').name(name)}
-function input(type, name) {return element('input').type(type).name(name)}
-function inputText(name) {return input('text', name)}
-function password(name) {return input('password', name)}
-function checkbox(name) {return input('checkbox', name)}
-function radio(name) {return input('radio', name)}
-function submit(value) {return input('submit').value(value)}
-function reset(value) {return input('reset').value(value)}
-function select(name) {return element('select').name(name)}
-function option(value) {return element('option').value(value)}
-function label(forInput) {return element('label').set('for', forInput)}
-function fieldset(legendValue) {return legendValue ? element('fieldset').add(legend(legendValue)) : element('fieldset')}
-function legend(value) {return element('legend').add(text(value))}
-function dd() {return element('dd')}
-function dl() {return element('dl')}
-function dt() {return element('dt')}
-function dfn() {return element('dfn')}
-function table() {return element('table')}
-function tbody() {return element('tbody')}
-function thead() {return element('thead')}
-function tfoot() {return element('tfoot')}
-function tr() {return element('tr')}
-function td() {return element('td')}
-function th() {return element('th')}
-function sub() {return element('sub')}
-function sup() {return element('sup')}
-function details() {return element('details')}
-function summary() {return element('summary')}
-function del() {return element('del')}
-function ins() {return element('ins')}
-function hr() {return element('hr')}
-function br() {return element('br')}
+export function em() {return element('em')}
+export function abbr() {return element('abbr')}
+export function time(value) {return element('time').add(text(value))}
+export function form(method) {return element('form').method(method || 'POST')}
+export function textarea(name) {return element('textarea').name(name)}
+export function input(type, name) {return element('input').type(type).name(name)}
+export function inputText(name) {return input('text', name)}
+export function password(name) {return input('password', name)}
+export function checkbox(name) {return input('checkbox', name)}
+export function radio(name) {return input('radio', name)}
+export function submit(value) {return input('submit').value(value)}
+export function reset(value) {return input('reset').value(value)}
+export function select(name) {return element('select').name(name)}
+export function option(value) {return element('option').value(value)}
+export function label(forInput) {return element('label').set('for', forInput)}
+export function fieldset(legendValue) {return legendValue ? element('fieldset').add(legend(legendValue)) : element('fieldset')}
+export function legend(value) {return element('legend').add(text(value))}
+export function dd() {return element('dd')}
+export function dl() {return element('dl')}
+export function dt() {return element('dt')}
+export function dfn() {return element('dfn')}
+export function table() {return element('table')}
+export function tbody() {return element('tbody')}
+export function thead() {return element('thead')}
+export function tfoot() {return element('tfoot')}
+export function tr() {return element('tr')}
+export function td() {return element('td')}
+export function th() {return element('th')}
+export function sub() {return element('sub')}
+export function sup() {return element('sup')}
+export function details() {return element('details')}
+export function summary() {return element('summary')}
+export function del() {return element('del')}
+export function ins() {return element('ins')}
+export function hr() {return element('hr')}
+export function br() {return element('br')}
 export function iframe(...src) {return element('iframe').src(src)}
 export function fragment(...args) {return builder(document.createDocumentFragment()).add(...args)}
 

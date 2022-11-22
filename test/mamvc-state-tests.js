@@ -72,12 +72,17 @@ suite({
         assertState(result, "fixed/value1/aha/value2/aa/C/value2")
     },
 
-    testStructure() {
+    testHierarchyAccess() {
         let page = state({content: "A"}).hierarchy()
         assertState(page.content, "A")
     },
 
-    testNestedStructure() {
+    testArrayHierarchyAccess() {
+        let page = state(['a', '3']).hierarchy()
+        assertState(page.length, 2)
+    },
+
+    testNestedHieararchyAccess() {
         let model = state({a:{b:"c"}}).hierarchy()
         assertState(model.a.b, "c")
     }

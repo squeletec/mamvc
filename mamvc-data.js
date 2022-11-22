@@ -50,6 +50,10 @@ class Channel {
         return this._progress
     }
 
+    busy() {
+        return this._busy
+    }
+
     set(value) {
         this.model().set(value)
         this._busy.set(false)
@@ -75,7 +79,7 @@ class Channel {
 }
 
 export function channel(...uri) {
-    return new Channel(concat(uri))
+    return new Channel(concat(...uri))
 }
 
 export function onDemand(channel, trigger = boolean()) {
@@ -84,6 +88,6 @@ export function onDemand(channel, trigger = boolean()) {
     return {
         channel() {return channel},
         model() {return channel.model()},
-        trigget() {return trigger}
+        trigger() {return trigger}
     }
 }

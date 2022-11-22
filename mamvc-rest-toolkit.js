@@ -1,32 +1,6 @@
-import {state, to, span, toggle, div, on, boolean, when, falseTo} from "./mamvc.js";
+import { to, span, toggle, div, on, boolean, when, falseTo} from "./mamvc.js";
 
-export function pageModel() {
-    return state({
-        "content": [],
-        "pageable": {
-            "sort": {
-                "sorted": true,
-                "unsorted": false
-            },
-            "offset": 0,
-            "pageNumber": 0,
-            "pageSize": 20,
-            "paged": true,
-            "unpaged": false
-        },
-        "totalPages": 3,
-        "last": false,
-        "totalElements": 50,
-        "size": 20,
-        "number": 0,
-        "numberOfElements": 1,
-        "sort": {
-            "sorted": true,
-            "unsorted": false
-        },
-        "first": true
-    }).hierarchy()
-}
+export * from "./mamvc-rtk-data-table.js"
 
 export function expander(model, enabled = boolean(true)) {
     return span().display('inline-block').cursor('pointer')

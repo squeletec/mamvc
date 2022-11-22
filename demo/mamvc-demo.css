@@ -23,3 +23,11 @@
 #demoOutput:before {
     content: "Output";
 }
+
+.level1 {
+    padding-left: 1.5em;
+}
+
+.level2 {
+    padding-left: 3em;
+}

@@ -56,10 +56,14 @@ class State {
     }
 
     hierarchy(structure = this._value) {
-        if('object' === typeof structure)
-            for(let property in structure)
-                if(structure.hasOwnProperty(property))
-                    this[property] = this.map(_ => _[property], new State(structure[property]).hierarchy())
+        if('object' === typeof structure) {
+            if(Array.isArray(structure))
+                this.length = this.map(v => v.length)
+            else
+                for(let property in structure)
+                    if(structure.hasOwnProperty(property))
+                        this[property] = this.map(_ => _[property], new State(structure[property]).hierarchy())
+        }
         return this
     }
 
@@ -88,6 +92,10 @@ export function state(value = null) {
 }
 
 export function boolean(value = false) {
+    return state(value)
+}
+
+export function list(value = []) {
     return state(value)
 }
 
@@ -136,3 +144,6 @@ export function fill(name, parameter) {
     }.fill(name, parameter)
 }
 
+export function not(booleanModel) {
+    return booleanModel.map(v => !v)
+}

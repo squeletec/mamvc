@@ -47,7 +47,7 @@ class Channel {
     }
 
     progress() {
-
+        return this._progress
     }
 
     set(value) {
@@ -55,31 +55,6 @@ class Channel {
         this._busy.set(false)
         return this
     }
-/*
-        onGetRequest(uri, ...args) {
-            let request = new XMLHttpRequest()
-            request.open('GET', uri, true)
-            this.onRequest(request, ...args)
-            request.send()
-        },
-
-        onRequest(request, ...args) {
-            request.onprogress = event => {
-                if(event.lengthComputable)
-                    this.totalCount.set(event.total)
-                this.doneCount.set(event.loaded)
-            }
-            request.onreadystatechange = () => {
-                if(request.readyState === request.DONE) {
-                    if(SUCCESS_STATUSES.has(request.status))
-                        process(request, ...args)
-                    else
-                        this.onerror(new Error('Request failed: ' + request.status + ' ' + request.statusText + '\n\n' + request.responseText))
-                }
-            }
-        },
-
- */
 
     get() {
         this._busy.set(true)
@@ -107,8 +82,8 @@ class Channel {
 function prepareRequest(request, progressModel, dataModel) {
     request.onprogress = event => {
         if(event.lengthComputable)
-            progressModel.totalCount.set(event.total)
-        progressModel.doneCount.set(event.loaded)
+            progressModel.total.set(event.total)
+        progressModel.done.set(event.loaded)
     }
     request.onreadystatechange = () => {
         if(request.readyState === request.DONE) {

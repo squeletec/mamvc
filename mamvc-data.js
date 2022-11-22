@@ -58,18 +58,13 @@ class Channel {
 
     get() {
         this._busy.set(true)
-        let request = new XMLHttpRequest()
-        request.open("get", this._uri.get())
-        prepareRequest(request, this._progress, this._model).send()
+        fetch(this._uri.get()).then(response => response.json()).then(json => this.set(json)).catch()
         return this
     }
 
     post(data) {
         this._busy.set(true)
-        let request = new XMLHttpRequest()
-        request.open("post", this._uri.get())
-        request.setRequestHeader('Content-Type', 'application/json')
-        prepareRequest(request, this._progress, this._model).send(JSON.stringify(data))
+        fetch(this._uri.get(), {method: 'POST', body: JSON.stringify(data)}).then(response => response.json()).then(json => this.set(json)).catch()
         return this
     }
 
@@ -79,23 +74,16 @@ class Channel {
     }
 }
 
-function prepareRequest(request, progressModel, dataModel) {
-    request.onprogress = event => {
-        if(event.lengthComputable)
-            progressModel.total.set(event.total)
-        progressModel.done.set(event.loaded)
-    }
-    request.onreadystatechange = () => {
-        if(request.readyState === request.DONE) {
-            if(SUCCESS_STATUSES.has(request.status))
-                dataModel.set(JSON.parse(request.responseText))
-            else
-                this.onerror(new Error('Request failed: ' + request.status + ' ' + request.statusText + '\n\n' + request.responseText))
-        }
-    }
-    return request
-}
-
 export function channel(...uri) {
     return new Channel(concat(uri))
+}
+
+export function onDemand(channel, trigger = boolean()) {
+    let initialValue = channel.model().get()
+    trigger.onChange(value => value ? channel.get() : channel.set(initialValue))
+    return {
+        channel() {return channel},
+        model() {return channel.model()},
+        trigget() {return trigger}
+    }
 }

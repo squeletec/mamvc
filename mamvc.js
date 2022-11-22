@@ -31,6 +31,7 @@ Micro Ajax MVC library.
 
  */
 export * from "./mamvc-state.js"
+export * from "./mamvc-data.js"
 export * from "./mamvc-command.js"
 export * from "./mamvc-builder.js"
 

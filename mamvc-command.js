@@ -30,7 +30,39 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 Micro Ajax MVC library.
 
  */
-export * from "./mamvc-state.js"
-export * from "./mamvc-command.js"
-export * from "./mamvc-builder.js"
+import { isState } from "./mamvc-state.js";
+import { XNode } from "./mamvc-builder.js";
 
+/*
+Commands
+ */
+
+export function toggle(model) {
+    return () => model.set(!model.get())
+}
+
+export function set(model, value) {
+    return isState(value) ? () => model.set(value.get()) : () => model.set(value)
+}
+
+export function when(condition, command) {
+    return () => condition.get() && command()
+}
+
+export function copyToClipboard(nodeOrBuilder) {
+    let node = nodeOrBuilder instanceof XNode ? nodeOrBuilder.get() : nodeOrBuilder
+    return function(event) {
+        if(document.selection) {
+            let ieRange = document.body.createTextRange()
+            ieRange.moveToElementText(node)
+            ieRange.select().createTextRange()
+        } else if(window.getSelection) {
+            let domRange = document.createRange()
+            domRange.selectNode(node)
+            window.getSelection().removeAllRanges()
+            window.getSelection().addRange(domRange)
+            document.execCommand("copy")
+            window.getSelection().removeAllRanges()
+        }
+    }
+}

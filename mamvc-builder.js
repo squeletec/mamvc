@@ -85,7 +85,7 @@ function x(parameter) {
     return text(parameter)
 }
 
-function valueView(value) {
+export function valueView(value) {
     let builder = xText(document.createTextNode(value.get()))
     value.onChange(v => builder.setValue(v), false)
     return builder
@@ -277,37 +277,37 @@ class XBuilder extends XNode {
 
 }
 
-function builder(node) {
+export function builder(node) {
     return new XBuilder(node)
 }
 
 /*
   Ready to use element builders.
  */
-function body() {return builder(document.body)}
-function head() {return builder(document.head)}
+export function body() {return builder(document.body)}
+export function head() {return builder(document.head)}
 export function byId(id) {return builder(document.getElementById(id))}
-function element(name, ...className) {return  builder(document.createElement(name)).setClass(...className)}
-function meta() {return element('meta')}
-function base() {return element('base')}
+export function element(name, ...className) {return  builder(document.createElement(name)).setClass(...className)}
+export function meta() {return element('meta')}
+export function base() {return element('base')}
 export function div(...className) {return element('div', ...className)}
 export function span(...className) {return element('span', ...className)}
-function img(...src) {return element('img').src(...src)}
-function link(rel) {return element('link').rel(rel)}
-function a(...href) {return element('a').href(...href)}
-function h1() {return element('h1')}
-function h2() {return element('h2')}
-function h3() {return element('h3')}
-function h4() {return element('h4')}
-function h5() {return element('h5')}
-function p() {return element('p')}
-function pre() {return element('pre')}
-function code() {return element('code')}
+export function img(...src) {return element('img').src(...src)}
+export function link(rel) {return element('link').rel(rel)}
+export function a(...href) {return element('a').href(...href)}
+export function h1() {return element('h1')}
+export function h2() {return element('h2')}
+export function h3() {return element('h3')}
+export function h4() {return element('h4')}
+export function h5() {return element('h5')}
+export function p() {return element('p')}
+export function pre() {return element('pre')}
+export function code() {return element('code')}
 export function ul() {return element('ul')}
-function ol() {return element('ul')}
+export function ol() {return element('ul')}
 export function li() {return element('li')}
-function small() {return element('small')}
-function strong() {return element('strong')}
+export function small() {return element('small')}
+export function strong() {return element('strong')}
 function em() {return element('em')}
 function abbr() {return element('abbr')}
 function time(value) {return element('time').add(text(value))}

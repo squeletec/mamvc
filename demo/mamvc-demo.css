@@ -1,6 +1,7 @@
 
 #demoSourceView, #demoOutput {
-    margin: 1em;
+    margin: 10px;
+    padding: 1em;
     border: 1px solid grey;
     box-shadow: 3px 3px 10px silver;
 }
@@ -9,11 +10,9 @@
     position: absolute;
     top: inherit;
     left: inherit;
-    margin-top: -0.5em;
+    margin-top: -1.5em;
     margin-left: 4em;
     background-color: white;
-    padding-left: 1em;
-    padding-right: 1em;
 }
 
 #demoSourceView:before {

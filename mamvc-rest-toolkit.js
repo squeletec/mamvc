@@ -25,7 +25,7 @@ export function pageModel() {
             "unsorted": false
         },
         "first": true
-    }).json()
+    }).hierarchy()
 }
 
 export function expander(model, enabled = boolean(true)) {

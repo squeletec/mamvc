@@ -73,12 +73,12 @@ suite({
     },
 
     testStructure() {
-        let page = state({content: "A"}).json()
+        let page = state({content: "A"}).hierarchy()
         assertState(page.content, "A")
     },
 
     testNestedStructure() {
-        let model = state({a:{b:"c"}}).json()
+        let model = state({a:{b:"c"}}).hierarchy()
         assertState(model.a.b, "c")
     }
 

@@ -1,5 +1,8 @@
 import {to, span, toggle, div, on, boolean, when, falseTo, XNode, a} from "./mamvc.js";
 
+function overlay() {
+    return div().position('fixed').top(0).left(0).bottom(0).right(0).backgroundColor('rgba(0,0,0,0.5)').textAlign('center').verticalAlign()
+}
 
 class Dialog extends XNode {
     constructor(title) {

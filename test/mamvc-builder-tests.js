@@ -1,4 +1,4 @@
-import {state, div, text } from "../mamvc.js"
+import {state, div, text, inputText} from "../mamvc.js"
 import {suite, assert } from "./mamvc-test-runner.js";
 
 
@@ -22,5 +22,14 @@ suite({
         assert(d.get().innerHTML, 'C')
         myState.set("D")
         assert(d.get().innerHTML, 'D')
+    },
+
+    testInputModel() {
+        let myState = state('A')
+        let i = inputText('name').model(myState)
+        assert(i.get().value, 'A')
+        myState.set('B')
+        assert(i.get().value, 'B')
     }
+
 })

@@ -57,6 +57,12 @@ export class XNode {
         this.node.parentNode.replaceChild(replacement.node, this.node)
         return this
     }
+
+    to(parent) {
+        parent.add(this)
+        return this
+    }
+
 }
 
 
@@ -115,11 +121,6 @@ class XBuilder extends XNode {
         return this
     }
 
-    to(parent) {
-        parent.add(this)
-        return this
-    }
-
     clear() {
         while(this.node.firstChild) this.node.removeChild(this.node.firstChild)
         return this
@@ -130,20 +131,21 @@ class XBuilder extends XNode {
         return this;
     }
 
+    _manipulate(f, args) {
+        let value = concat(...args)
+        if(isState(value)) value.onChange(f)
+        else f(value)
+        return this
+    }
+
     /*
      Manipulation of Element attributes.
      */
     set(name, ...args) {
-        if(args.length === 0)
-            return this
-        let attr = value => {
+        return (args.length === 0) ? this : this._manipulate(value => {
             if(value === null) this.node.removeAttribute(name)
             else this.node.setAttribute(name, value)
-        }
-        let value = concat(...args)
-        if(isState(value)) value.onChange(attr)
-        else attr(value)
-        return this
+        }, args)
     }
 
     setClass(...value) {return this.set('class', ...value)}
@@ -152,7 +154,7 @@ class XBuilder extends XNode {
     title(...value) {return this.set('title', ...value)}
     href(...value) {return this.set('href', ...value)}
     type(...value) {return this.set('type', ...value)}
-    value(...value) {return this.set('value', ...value)}
+    //value(...value) {return this.set('value', ...value)}
     readonly(...value) {return this.set('readonly', ...value)}
     action(...value) {return this.set('action', ...value)}
     target(...value) {return this.set('target', ...value)}
@@ -172,17 +174,10 @@ class XBuilder extends XNode {
       Manipulation of Element style properties
      */
     css(property, ...args) {
-        if(args.length === 0)
-            return this
-        let value = concat(...args)
-        let node = this.node;
-        function css(value) {
-            if(value === null) node.style.removeProperty(property)
-            else node.style.setProperty(property, value)
-        }
-        if(isState(value)) value.onChange(css)
-        else css(value)
-        return this
+        return (args.length === 0) ? this : this._manipulate(value => {
+            if(value === null) this.node.style.removeProperty(property)
+            else this.node.style.setProperty(property, value)
+        }, args)
     }
 
     display(value) {
@@ -190,6 +185,7 @@ class XBuilder extends XNode {
     }
 
     textAlign(value) {return this.css('text-align', value)}
+    verticalAlign(value) {return this.css('vertical-align', value)}
     textLeft() {return this.textAlign('left')}
     textRight() {return this.textAlign('right')}
     textCenter() {return this.textAlign('center')}
@@ -228,6 +224,17 @@ class XBuilder extends XNode {
     overflow(value) {return this.css('overflow', value)}
     overflowX(value) {return this.css('overflow-x', value)}
     overflowY(value) {return this.css('overflow-y', value)}
+
+    setProperty(name, ...args) {
+        return (args.length === 0) ? this : this._manipulate(value => {
+            if(value === null) this.node[name] = null
+            else this.node[name] = value
+        }, args)
+    }
+
+    value(...args) {
+        return this.setProperty('value', ...args)
+    }
 
     /*
      Dealing with events
@@ -273,7 +280,7 @@ class XBuilder extends XNode {
     /*
      Special binding
      */
-    model(model) {return (this.get().nodeName === 'TEXTAREA' ? this.add(model) : this.value(model)).onChange(() => model.set(this.get().value))}
+    model(model) {return this.value(model).onChange(() => model.set(this.get().value))}
 
 }
 

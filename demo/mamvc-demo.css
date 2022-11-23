@@ -30,3 +30,26 @@
 .level2 {
     padding-left: 3em;
 }
+
+.dialog {
+    margin-top: 3em;
+    border: 1px solid black;
+    box-shadow: 5px 5px 15px black;
+}
+
+.title {
+    background-color: rgba(0,0,255,0.5);
+    font-weight: bold;
+    color: white;
+}
+
+.title a {
+    background-color: red;
+    width: 12pt;
+}
+
+.content {
+    text-align: left;
+    padding: 1em;
+    background-color: rgba(250,255,250,0.8);
+}

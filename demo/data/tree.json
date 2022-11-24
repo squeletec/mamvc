@@ -1,0 +1,15 @@
+{
+  "item": {
+    "id": 1,
+    "name": "Root",
+    "content": "Root content"
+  },
+  "children": [{
+    "item": {
+      "id": 2,
+      "name": "Child",
+      "content": "Child content"
+    },
+    "children": []
+  }]
+}

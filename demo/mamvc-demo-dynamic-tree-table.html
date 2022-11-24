@@ -10,7 +10,7 @@ import {byId, channel } from "../mamvc.js";
 import {treeTable, loadFrom} from "../mamvc-ui.js";
 
 byId('demoOutput').add(
-    treeTable(channel('data/tree.json').set([]).get().model(), loadFrom((children, level) => channel('data/subtree.json').set([])))
+    treeTable(channel('data/root.json').set([]).get().model(), loadFrom(() => channel('data/subtree.json').set([])))
         .column('id')
         .treeColumn('name')
         .column('content')

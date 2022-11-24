@@ -5,4 +5,10 @@
     "content": "Subtree content"
   },
   "children": []
+}, {
+  "item": {
+    "id": 2,
+    "name": "Leaf",
+    "content": "Leaf content"
+  }
 }]

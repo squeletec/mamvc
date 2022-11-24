@@ -1,18 +1,19 @@
 
 #demoSourceView, #demoOutput {
     margin: 10px;
-    padding: 1em;
+    padding: 10px;
     border: 1px solid grey;
-    box-shadow: 3px 3px 10px silver;
+/*    box-shadow: 3px 3px 10px silver;*/
 }
 
 #demoSourceView:before, #demoOutput:before {
     position: absolute;
     top: inherit;
     left: inherit;
-    margin-top: -1.5em;
-    margin-left: 4em;
+    margin-top: -18px;
+    margin-left: 40px;
     background-color: white;
+    font-family: monospace;
 }
 
 #demoSourceView:before {
@@ -52,4 +53,19 @@
     text-align: left;
     padding: 1em;
     background-color: rgba(250,255,250,0.8);
+}
+
+table, td, th {
+    border: 1px solid silver;
+    border-collapse: collapse;
+}
+
+td, th {
+    text-align: left;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+tr:nth-child(even) {
+    background-color: #e3e3e3;
 }

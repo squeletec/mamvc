@@ -29,6 +29,10 @@ export function pageModel() {
     }).hierarchy()
 }
 
+function cell(column, rowData, c = td()) {
+    return c.add(column.cell(rowData, c))
+}
+
 class DataTable extends XNode {
 
     constructor(channel, pageRequest) {
@@ -40,7 +44,7 @@ class DataTable extends XNode {
             thead().add(tr().add(each(this.columnsModel, column => th().add(column.name)))),
             tbody().add(each(
                 page.content,
-                rowData => tr().add(each(this.columnsModel, column => column.cell(rowData)))
+                rowData => tr().add(each(this.columnsModel, column => cell(column, rowData)))
             )),
             tfoot().add(
                 tr().add(td().colspan(this.columnsModel.length).add(
@@ -55,7 +59,7 @@ class DataTable extends XNode {
         )
     }
 
-    column(name, content = rowData => td().add(rowData[name])) {
+    column(name, content = rowData => rowData[name]) {
         this.columnsModel.get().push({name: name, cell: content})
         this.columnsModel.set(this.columnsModel.get())
         return this

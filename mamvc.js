@@ -30,8 +30,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 Micro Ajax MVC library.
 
  */
-export * from "./mamvc-state.js"
-export * from "./mamvc-data.js"
-export * from "./mamvc-command.js"
-export * from "./mamvc-builder.js"
+export * from "./mamvc/mamvc-state.js"
+export * from "./mamvc/mamvc-data.js"
+export * from "./mamvc/mamvc-command.js"
+export * from "./mamvc/mamvc-builder.js"
 

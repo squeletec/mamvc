@@ -1,6 +1,4 @@
-import {builder, table, thead, tbody, tr, td, th, a, XNode, each, tfoot} from "./mamvc-builder.js";
-import {list, not, on, state} from "./mamvc-state.js";
-import {set, when} from "./mamvc-command.js";
+import {builder, table, thead, tbody, tr, td, th, a, XNode, each, tfoot, list, not, on, state, set, when} from "../mamvc.js";
 
 
 export function pageModel() {

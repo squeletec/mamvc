@@ -1,7 +1,7 @@
-import {to, span, toggle, div, on, boolean, when, falseTo, XNode, a} from "./mamvc.js";
+import {to, span, toggle, div, on, boolean, when, falseTo} from "./mamvc.js";
 
-export * from "./mamvc-rtk-data-table.js"
-export * from "./mamvc-rtk-dialog.js"
+export * from "./mamvc-ui/mamvc-data-table.js"
+export * from "./mamvc-ui/mamvc-dialog.js"
 
 export function expander(model, enabled = boolean(true)) {
     return span().display('inline-block').cursor('pointer')

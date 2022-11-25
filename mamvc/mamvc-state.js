@@ -107,6 +107,10 @@ export function falseTo(falseValue) {
     return to(null, falseValue)
 }
 
+export function execute(trueCommand, falseCommand) {
+    return value => value ? trueCommand() : falseCommand()
+}
+
 export function on(...parameters) {
     return {apply(f, result = state()) {
         let args = parameters.map((p, i) => isState(p) ? p.onChange(value => {

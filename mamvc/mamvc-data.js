@@ -84,7 +84,7 @@ export function channel(...uri) {
 
 export function onDemand(channel, trigger = boolean()) {
     let initialValue = channel.model().get()
-    trigger.onChange(value => value ? channel.get() : channel.set(initialValue))
+    trigger.onChange(execute(get(channel), set(channel.model(), initialValue)))
     return {
         setInitial(value) {initialValue = value; return this},
         channel() {return channel},

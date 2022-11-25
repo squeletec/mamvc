@@ -45,6 +45,14 @@ export function set(model, value) {
     return isState(value) ? () => model.set(value.get()) : () => model.set(value)
 }
 
+export function get(channel) {
+    return () => channel.get()
+}
+
+export function post(channel, data) {
+    return () => channel.post(data)
+}
+
 export function when(condition, command) {
     return () => condition.get() && command()
 }

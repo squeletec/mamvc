@@ -6,13 +6,7 @@ import {
     tr,
     td,
     th,
-    XNode,
-    each,
-    list,
-    state,
-    range,
-    onDemand,
-    channel,
+    XNode,  each, list, state,  range,  onDemand, channel,
     span, boolean
 } from "../mamvc.js";
 import {expander} from "./mamvc-elements.js";
@@ -25,13 +19,13 @@ function cell(level, column, rowData, c = td()) {
     return c.add(column.cell(rowData, c, level))
 }
 
-function staticExpand(childrenModel, expanded) {
-    let children = childrenModel.get()
-    expanded.onChange(v => childrenModel.set(v ? children : []))
+function staticExpand(nodeModel, expanded) {
+    let children = nodeModel.children.get()
+    expanded.onChange(v => nodeModel.children.set(v ? children : []))
 }
 
 export function loadFrom(channelProvider) {
-    return (childrenModel, expanded, level) => onDemand(channelProvider(childrenModel, level).setModel(childrenModel), expanded).setInitial([])
+    return (nodeModel, expanded, level) => onDemand(channelProvider(nodeModel, level).setModel(nodeModel.children), expanded).setInitial([])
 }
 
 class TreeTable extends XNode {
@@ -59,7 +53,7 @@ class TreeTable extends XNode {
         this.columnsModel.get().push({name: name, cell: (node, td, level) => {
             if(node.hasOwnProperty('children')) {
                 let expanded = boolean()
-                this.childrenModels(node.children, expanded, level)
+                this.childrenModels(node, expanded, level)
                 return content(node.item, td.add(span().paddingLeft(level, 'em'), expander(expanded), ' '), level)
             }
             else return content(node.item, td.add(span().paddingLeft(level, 'em')), level)

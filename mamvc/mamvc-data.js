@@ -25,7 +25,7 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {concat, isState, state, boolean } from "./mamvc-state.js";
+import {concat, isState, state, boolean} from "./mamvc-state.js";
 
 const SUCCESS_STATUSES = new Set([200, 0])
 
@@ -80,15 +80,4 @@ class Channel {
 
 export function channel(...uri) {
     return new Channel(concat(...uri))
-}
-
-export function onDemand(channel, trigger = boolean()) {
-    let initialValue = channel.model().get()
-    trigger.onChange(execute(get(channel), set(channel.model(), initialValue)))
-    return {
-        setInitial(value) {initialValue = value; return this},
-        channel() {return channel},
-        model() {return channel.model()},
-        trigger() {return trigger}
-    }
 }

@@ -1,0 +1,13 @@
+[{
+  "item": {
+    "id": 1,
+    "name": "Subtree 2",
+    "content": "Subtree content"
+  }
+}, {
+  "item": {
+    "id": 2,
+    "name": "Leaf 2",
+    "content": "Leaf content"
+  }
+}]

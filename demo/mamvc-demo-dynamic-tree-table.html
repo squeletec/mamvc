@@ -6,11 +6,14 @@
     <link rel="stylesheet" href="mamvc-demo.css"/>
     <script type="module" src="./mamvc-demo-runner.js"></script>
     <script type="module" id="demoSource">
-import {byId, channel } from "../mamvc.js";
-import {treeTable, loadFrom} from "../mamvc-ui.js";
+import {byId, channel, get } from "../mamvc.js";
+import {treeTable} from "../mamvc-ui.js";
 
 byId('demoOutput').add(
-    treeTable(channel('data/root.json').set([]).get().model(), loadFrom(() => channel('data/subtree.json').set([])))
+    treeTable(
+        channel('data/root.json').set([]).get().model(),
+        nodeModel => get(channel('data/subtree', nodeModel.item.id, '.json').setModel(nodeModel.children))
+    )
         .column('id')
         .treeColumn('name')
         .column('content')

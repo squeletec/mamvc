@@ -1,3 +1,3 @@
 import { byId } from "../mamvc.js"
 
-byId("demoSourceView").add(byId("demoSource").get().textContent)
+byId("demoSourceView").add(byId("demoSource").get().outerHTML)

@@ -1,4 +1,24 @@
-import {builder, table, thead, tbody, tr, td, th, a, XNode, each, tfoot, list, not, on, state, set, when} from "../mamvc.js";
+import {
+    form,
+    builder,
+    table,
+    thead,
+    tbody,
+    tr,
+    td,
+    th,
+    a,
+    XNode,
+    each,
+    tfoot,
+    list,
+    not,
+    on,
+    state,
+    set,
+    when,
+    inputText, submit, reset, get
+} from "../mamvc.js";
 
 
 export function pageModel() {
@@ -69,4 +89,12 @@ class DataTable extends XNode {
 
 export function pageTable(channel, pageRequest) {
     return new DataTable(channel, pageRequest)
+}
+
+export function search(channel, queryModel) {
+    return form().onSubmit(get(channel)).onReset(set(queryModel, '')).add(
+        inputText('query').model(queryModel),
+        submit('Search'),
+        reset('Clear')
+    )
 }

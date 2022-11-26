@@ -91,6 +91,10 @@ export function state(value = null) {
     return new State(value)
 }
 
+export function string(value = '') {
+    return state(value)
+}
+
 export function boolean(value = false) {
     return state(value)
 }

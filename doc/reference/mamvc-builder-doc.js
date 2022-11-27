@@ -6,7 +6,8 @@ m.body().add(
     doc('Document builder API').add(
         section('Element builders').add(
             method(m.builder).add(
-                description('Use the DOM builder features on top of standard Javascript DOM Element.')
+                description('Create the DOM builder, and use its features on top of standard Javascript DOM Element.'),
+                parameter('node', 'DOM node, retrieved by standard DOM API.')
             ),
             method(m.byId).add(
 

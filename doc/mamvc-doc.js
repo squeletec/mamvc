@@ -1,4 +1,4 @@
-import {div, h1, h2, h3, pre, XNode} from "../mamvc.js";
+import {div, h1, h2, h3, a, pre, XNode} from "../mamvc.js";
 
 export function doc(name) {
     return div('document').add(h1().add(name))
@@ -12,7 +12,8 @@ export function section(name) {
 
 export function method(f) {
     return div('method').add(
-        h3().add(f.toString().split("{")[0])
+        a().name(f.name),
+        h3().add(a('#', f.name).setClass('self-link').add('🔗'), f.toString().split("{")[0].substring('function'.length))
     )
 }
 
@@ -21,7 +22,10 @@ export function description(...values) {
 }
 
 export function parameter(name, ...description) {
-    return div('parameter').add()
+    return div('parameter').add(
+        div('name').add(name),
+        div('description').add(...description)
+    )
 }
 
 export function example(code) {

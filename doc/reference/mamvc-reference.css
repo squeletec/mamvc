@@ -1,0 +1,31 @@
+
+body {
+    padding: 1em;
+    font-size: 11pt;
+    font-family: Arial, serif;
+}
+
+.method h3 {
+    font-family: monospace;
+    color: darkviolet;
+}
+
+.parameter .name {
+    display: inline-block;
+    width: 10em;
+    color: darkviolet;
+    font-weight: bold;
+    font-family: monospace;
+}
+
+.parameter .description {
+    display: inline-block;
+}
+
+.self-link {
+    color: transparent;
+}
+
+h3:hover .self-link {
+    color: silver;
+}

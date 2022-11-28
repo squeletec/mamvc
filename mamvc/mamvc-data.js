@@ -42,6 +42,11 @@ class Channel {
         return this
     }
 
+    map(mappingFunction, result) {
+        this._model.map(mappingFunction, result)
+        return this
+    }
+
     model() {
         return this._model
     }

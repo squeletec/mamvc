@@ -62,7 +62,7 @@ class State {
             else
                 for(let property in structure)
                     if(structure.hasOwnProperty(property))
-                        this[property] = this.map(_ => (_ === undefined || _ === null) ? _ : _[property], new State(structure[property]).hierarchy())
+                        this[property] = this.map(_ => (_ === undefined || _ === null) ? _ : _[property], isState(structure[property]) ? structure[property] : new State(structure[property]).hierarchy())
         }
         return this
     }

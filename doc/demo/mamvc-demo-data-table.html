@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="mamvc-demo.css"/>
+    <script type="module" src="mamvc-demo-runner.js" defer></script>
+<script type="module" id="demoSource" defer>
+
+    import {channel, state, body, div } from "../../mamvc.js"
+    import {pageTable} from "../../mamvc-ui.js"
+
+    let pageRequest = state({page: 0, size: 5}).hierarchy()
+
+    body().add(div().id('demoOutput').add(
+        pageTable(channel('data/page', pageRequest.page, '.json').get(), pageRequest)
+            .column('id')
+            .column('name')
+            .column('content')
+    ))
+
+</script>
+</head>
+<body>
+</body>
+</html>

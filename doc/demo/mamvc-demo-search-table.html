@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" href="mamvc-demo.css"/>
-    <script type="module" src="./mamvc-demo-runner.js"></script>
+    <script type="module" src="mamvc-demo-runner.js"></script>
 <script type="module" id="demoSource">
-    import {byId, channel, state, string } from "../mamvc.js";
-    import {pageTable, search} from "../mamvc-ui.js";
+    import {byId, channel, state, string } from "../../mamvc.js";
+    import {pageTable, search} from "../../mamvc-ui.js";
 
     let pageRequest = state({page: 0, size: 5}).hierarchy()
     let searchChannel = channel('data/page', pageRequest.page, '.json')

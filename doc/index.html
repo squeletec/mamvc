@@ -2,27 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-    <script type="module">
-        import {body, head, a, p, div, pre, h3, h2, h1} from "../mamvc.js"
-
-        function doc(f, description, ...args) {
-            return div("def").add(
-                a().name(f.name).add(h3().add(f.toString().split('{')[0])),
-                p().add(description)
-            )
-        }
-        body().add(
-            h1().add('DOM Builder library documentation'),
-            h2().add('Simple DOM element builder entry methods'),
-            doc(body, "Access to document.body element"),
-            doc(head, "Access to document.head element"),
-            h2().add('Simple DOM element builder entry methods'),
-            doc(body().onReset, "Add form reset handler")
-        )
-    </script>
+    <title>µ-AMVC Documentation</title>
 </head>
 <body>
+<h1>µ-AMVC Documentation</h1>
+<p>
+    µ-AMVC project aims to provide simple pure ES5 based MVC implementation with simple binding to server REST API,
+    and simple toolkit build applications quickly on top of that.
+</p>
+<p>
+    Current state: Under development
+</p>
+<p>
+    To see individual features in action see: <a href="demo/index.html">Reference</a>
+</p>
 
+<p>
+    Visit full reference of the library here: <a href="reference/index.html">Reference</a>
+</p>
 </body>
 </html>

@@ -4,17 +4,15 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" href="mamvc-demo.css"/>
-    <script type="module" src="./mamvc-demo-runner.js"></script>
+    <script type="module" src="mamvc-demo-runner.js"></script>
     <script type="module" id="demoSource">
-import {byId, channel, state } from "../mamvc.js";
-import {pageTable} from "../mamvc-ui.js";
-
-let pageRequest = state({page: 0, size: 5}).hierarchy()
+import {byId, channel } from "../../mamvc.js";
+import {treeTable} from "../../mamvc-ui.js";
 
 byId('demoOutput').add(
-    pageTable(channel('data/page', pageRequest.page, '.json').get(), pageRequest)
+    treeTable(channel('data/tree.json').set([]).get().model())
         .column('id')
-        .column('name')
+        .treeColumn('name')
         .column('content')
 )
     </script>

@@ -70,7 +70,7 @@ function xNode(node) {
     return new XNode(node);
 }
 
-class XText extends XNode {
+export class XText extends XNode {
     constructor(text) {
         super(text instanceof Node ? text : document.createTextNode(text));
     }
@@ -101,7 +101,7 @@ export function text(value) {
     return isState(value) ? valueView(value) : xText(document.createTextNode(value));
 }
 
-class XBuilder extends XNode {
+export class XBuilder extends XNode {
     /**
      * Class DOM fluent builder.
      *
@@ -217,6 +217,12 @@ class XBuilder extends XNode {
     marginRight(value, unit = 'px') {return this.css('margin-right', concat(value, unit))}
     marginTop(value, unit = 'px') {return this.css('margin-top', concat(value, unit))}
     marginBottom(value, unit = 'px') {return this.css('margin-bottom', concat(value, unit))}
+    border(...args) {return this.css('border', ...args)}
+    borderTop(...args) {return this.css('border-top', ...args)}
+    borderBottom(...args) {return this.css('border-bottom', ...args)}
+    borderLeft(...args) {return this.css('border-left', ...args)}
+    borderRight(...args) {return this.css('border-right', ...args)}
+    borderRadius(...args) {return this.css('border-radius', ...args)}
     cursor(value) {return this.css('cursor', value)}
     transition(value) {return this.css('transition', value)}
     transform(value) {return this.css('transform', value)}
@@ -224,6 +230,7 @@ class XBuilder extends XNode {
     overflow(value) {return this.css('overflow', value)}
     overflowX(value) {return this.css('overflow-x', value)}
     overflowY(value) {return this.css('overflow-y', value)}
+    flex(...args) {return this.css('flex', ...args)}
 
     setProperty(name, ...args) {
         return (args.length === 0) ? this : this._manipulate(value => {

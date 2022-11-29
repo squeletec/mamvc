@@ -4,19 +4,19 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" href="mamvc-demo.css"/>
-    <script type="module" src="mamvc-demo-runner.js"></script>
-    <script type="module" id="demoSource">
-import {state, div, byId, set} from "../../mamvc.js";
+    <script type="module" src="mamvc-demo-runner.js" defer></script>
+<script type="module" id="demoSource" defer>
 
-let myState = state('Initial')
+    import {state, body, div, set} from "../../mamvc.js";
 
-byId('demoOutput').add(
-    div().add(myState).onClick(set(myState, "Clicked"))
-)
-    </script>
+    let myState = state('Initial')
+
+    body().add(div().id('demoOutput').add(
+        div().add(myState).onClick(set(myState, "Clicked"))
+    ))
+
+</script>
 </head>
 <body>
-<pre id="demoSourceView"></pre>
-<div id="demoOutput"></div>
 </body>
 </html>

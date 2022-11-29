@@ -16,6 +16,9 @@
     font-family: monospace;
 }
 
+.paging {
+    margin-right: 0.5em;
+}
 #demoSourceView:before {
     content: "Source code";
 }

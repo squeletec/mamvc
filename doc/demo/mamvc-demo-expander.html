@@ -4,28 +4,27 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" href="mamvc-demo.css"/>
-    <script type="module" src="mamvc-demo-runner.js"></script>
-    <script type="module" id="demoSource">
-import { boolean, ul, li, byId } from "../../mamvc.js";
-import {expander} from "../../mamvc-ui.js";
+    <script type="module" src="mamvc-demo-runner.js" defer></script>
+<script type="module" id="demoSource" defer>
 
-let expanded = boolean()
-let enabled = boolean()
+    import { boolean, ul, li, body, div } from "../../mamvc.js";
+    import {expander} from "../../mamvc-ui.js";
 
-byId('demoOutput').add(
-    ul().add(
-        li().add(expander(expanded, enabled), 'Node', ul().display(expanded).add(
-            li().add('Item 1'),
-            li().add('Item 2')
-        ))
-    )
-)
+    let expanded = boolean()
+    let enabled = boolean()
 
-setTimeout(() => enabled.set(true), 1000)
-    </script>
+    body().add(div().id('demoOutput').add(
+        ul().add(
+            li().add(expander(expanded, enabled), 'Node', ul().display(expanded).add(
+                li().add('Item 1'),
+                li().add('Item 2')
+            ))
+        )
+    ))
+
+    setTimeout(() => enabled.set(true), 1000)
+</script>
 </head>
 <body>
-<pre id="demoSourceView"></pre>
-<div id="demoOutput"></div>
 </body>
 </html>

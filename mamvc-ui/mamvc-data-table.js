@@ -1,24 +1,4 @@
-import {
-    form,
-    builder,
-    table,
-    thead,
-    tbody,
-    tr,
-    td,
-    th,
-    a,
-    XNode,
-    each,
-    tfoot,
-    list,
-    not,
-    on,
-    state,
-    set,
-    when,
-    inputText, submit, reset, get
-} from "../mamvc.js";
+import {form, table, thead, tbody, tr, td, th, a, each, tfoot, list, not, on, state, set, when, inputText, submit, reset, get, XBuilder, channel, span} from "../mamvc.js";
 
 
 export function pageModel() {
@@ -49,33 +29,26 @@ export function pageModel() {
     }).hierarchy()
 }
 
+export function pagedChannel(...uri) {
+    return channel(...uri).setModel(pageModel())
+}
+
 function cell(column, rowData, c = td()) {
     return c.add(column.cell(rowData, c))
 }
 
-class DataTable extends XNode {
+class DataTable extends XBuilder {
 
-    constructor(channel, pageRequest) {
+    constructor(dataModel) {
         super(table().get());
-        let page = channel.setModel(pageModel()).model()
         this.columnsModel = list().hierarchy()
-        this.columnsModel.onChange(() => channel.model().set(channel.model().get()))
-        builder(this.get()).add(
+        this.columnsModel.onChange(() => dataModel.set(dataModel.get()))
+        this.add(
             thead().add(tr().add(each(this.columnsModel, column => th().add(column.name)))),
             tbody().add(each(
-                page.content,
+                dataModel,
                 rowData => tr().add(each(this.columnsModel, column => cell(column, rowData)))
-            )),
-            tfoot().add(
-                tr().add(td().colspan(this.columnsModel.length).add(
-                    a().add('<<').onClick(when(not(page.first), set(pageRequest.page, 0))),
-                    a().add('<').onClick(when(not(page.first), set(pageRequest.page, page.number.map(v => v - 1)))),
-                    'Displaying results ', page.pageable.offset, ' - ', on(page.pageable.offset, page.size).apply((a, b) => a + b), ' of total ', page.totalElements,
-                    a().add('>').onClick(when(not(page.last), set(pageRequest.page, page.number.map(v => v + 1)))),
-                    a().add('>>').onClick(when(not(page.last), set(pageRequest.page, page.totalPages))),
-                    a().add('%').onClick(() => channel.get())
-                ))
-            )
+            ))
         )
     }
 
@@ -85,10 +58,28 @@ class DataTable extends XNode {
         return this
     }
 
+    paging(pageChannel, pageRequest, page = pageChannel.model()) {
+        return this.add(
+            tfoot().add(
+                tr().add(td().colspan(this.columnsModel.length).add(
+                    a().setClass('paging first-page').add('\u23EE\uFE0E').title('Go to first page').onClick(when(not(page.first), set(pageRequest.page, 0))),
+                    a().setClass('paging prev-page').add('\u23F4\uFE0E').title('Go to previous page').onClick(when(not(page.first), set(pageRequest.page, page.number.map(v => v - 1)))),
+                    span('paging current-page').add('Showing results ', page.pageable.offset.map(v => v + 1), ' - ', on(page.pageable.offset, page.size).apply((a, b) => a + b), ' of total ', page.totalElements),
+                    a().setClass('paging next-page').add('\u23F5\uFE0E').title('Go to next page').onClick(when(not(page.last), set(pageRequest.page, page.number.map(v => v + 1)))),
+                    a().setClass('paging last-page').add('\u23ED\uFE0E').title('Go to last page').onClick(when(not(page.last), set(pageRequest.page, page.totalPages))),
+                    a().setClass('paging reload-page').add('\u21BB').title('Reload page').onClick(() => pageChannel.get())
+                ))
+            )
+        )
+    }
+}
+
+export function dataTable(dataModel) {
+    return new DataTable(dataModel)
 }
 
 export function pageTable(channel, pageRequest) {
-    return new DataTable(channel, pageRequest)
+    return dataTable(channel.setModel(pageModel()).model().content).paging(channel, pageRequest)
 }
 
 export function search(channel, queryModel) {

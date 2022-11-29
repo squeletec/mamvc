@@ -4,36 +4,36 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" href="mamvc-demo.css"/>
-    <script type="module" src="mamvc-demo-runner.js"></script>
-    <script type="module" id="demoSource">
-import { boolean, table, range, tbody, td, tr, byId, channel, get, set, execute, not } from "../../mamvc.js";
-import {expander, nodeExpander} from "../../mamvc-ui.js";
+    <script type="module" src="mamvc-demo-runner.js" defer></script>
+<script type="module" id="demoSource" defer>
 
-let items = channel('data/items.json').set([])
-let expanded = nodeExpander(get(items), items.model())
+    import { boolean, table, range, tbody, td, tr, body, div, channel, get, set, execute, not } from "../../mamvc.js";
+    import {expander, nodeExpander} from "../../mamvc-ui.js";
 
-byId('demoOutput').add(
-    table().add(
-        tbody().add(
-            range(
-                tr().add(td().add(expander(expanded, items.busy().map(v => !v)), ' Node')),
-                items.model(),
-                item => {
-                    let d = channel("data/", item).set([])
-                    return range(
-                        tr().add(td().setClass('level1').add(expander(boolean().onChange(execute(get(d), set(d.model(), []))), not(d.busy())), ' ', item)),
-                        d.model(),
-                        item2 => tr().add(td().setClass('level2').add(item2))
-                    )
-                }
+    let items = channel('data/items.json').set([])
+    let expanded = nodeExpander(get(items), items.model())
+
+    body().add(div().id('demoOutput').add(
+        table().add(
+            tbody().add(
+                range(
+                    tr().add(td().add(expander(expanded, items.busy().map(v => !v)), ' Node')),
+                    items.model(),
+                    item => {
+                        let d = channel("data/", item).set([])
+                        return range(
+                            tr().add(td().setClass('level1').add(expander(boolean().onChange(execute(get(d), set(d.model(), []))), not(d.busy())), ' ', item)),
+                            d.model(),
+                            item2 => tr().add(td().setClass('level2').add(item2))
+                        )
+                    }
+                )
             )
         )
-    )
-)
-    </script>
+    ))
+
+</script>
 </head>
 <body>
-<pre id="demoSourceView"></pre>
-<div id="demoOutput"></div>
 </body>
 </html>

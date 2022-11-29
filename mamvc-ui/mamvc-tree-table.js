@@ -1,4 +1,4 @@
-import {builder, table, thead, tbody, tr, td, th, XNode, each, list, state, range, span, boolean, set, execute} from "../mamvc.js";
+import {table, thead, tbody, tr, td, th, XBuilder, each, list, state, range, span, boolean, set, execute} from "../mamvc.js";
 import {expander} from "./mamvc-elements.js";
 
 export function nodeModel(item = {}) {
@@ -17,7 +17,7 @@ export function nodeExpander(expandCommand, model) {
     return boolean().onChange(execute(expandCommand, set(model, [])))
 }
 
-class TreeTable extends XNode {
+class TreeTable extends XBuilder {
 
     constructor(rootModel, childrenCommand = staticExpand) {
         super(table().get());
@@ -32,7 +32,7 @@ class TreeTable extends XNode {
                 child => subTree(state(child).hierarchy(), level + 1)
             ) : row
         }
-        builder(this.get()).add(
+        this.add(
             thead().add(tr().add(each(this.columnsModel, column => th().add(column.name)))),
             tbody().add(each(rootModel, item => subTree(state(item).hierarchy()))),
         )

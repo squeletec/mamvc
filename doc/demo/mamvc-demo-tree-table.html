@@ -4,21 +4,21 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" href="mamvc-demo.css"/>
-    <script type="module" src="mamvc-demo-runner.js"></script>
-    <script type="module" id="demoSource">
-import {byId, channel } from "../../mamvc.js";
-import {treeTable} from "../../mamvc-ui.js";
+    <script type="module" src="mamvc-demo-runner.js" defer></script>
+    <script type="module" id="demoSource" defer>
 
-byId('demoOutput').add(
-    treeTable(channel('data/tree.json').set([]).get().model())
-        .column('id')
-        .treeColumn('name')
-        .column('content')
-)
-    </script>
+    import {body, div, channel } from "../../mamvc.js";
+    import {treeTable} from "../../mamvc-ui.js";
+
+    body().add(div().id('demoOutput').add(
+        treeTable(channel('data/tree.json').set([]).get().model())
+            .column('id')
+            .treeColumn('name')
+            .column('content')
+    ))
+
+</script>
 </head>
 <body>
-<pre id="demoSourceView"></pre>
-<div id="demoOutput"></div>
 </body>
 </html>

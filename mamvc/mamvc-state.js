@@ -152,6 +152,28 @@ export function fill(name, parameter) {
     }.fill(name, parameter)
 }
 
+function r(template, name, value) {
+    return template.replaceAll('{' + name + '}', value)
+}
+
+function t(s, f, ...args) {
+    return {
+        fill(name, value) {
+            if(isState(value))
+                return t(s, u=>r(f(u), name, value.get()), value, ...args)
+            else
+                return t(r(s, name, value), f, ...args)
+        },
+        result(model = string()) {
+            return on(...args).apply(f, model)
+        }
+    }
+}
+
+export function template(string) {
+    return t(string, s=>s)
+}
+
 export function not(booleanModel) {
     return booleanModel.map(v => !v)
 }

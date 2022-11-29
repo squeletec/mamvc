@@ -34,7 +34,7 @@ export function pagedChannel(...uri) {
 }
 
 function cell(column, rowData, c = td()) {
-    return c.add(column.cell(rowData, c))
+    return c.add(column(rowData, c))
 }
 
 class DataTable extends XBuilder {
@@ -47,7 +47,7 @@ class DataTable extends XBuilder {
             thead().add(tr().add(each(this.columnsModel, column => th().add(column.name)))),
             tbody().add(each(
                 dataModel,
-                rowData => tr().add(each(this.columnsModel, column => cell(column, rowData)))
+                rowData => tr().add(each(this.columnsModel, column => cell(column.cell, rowData)))
             ))
         )
     }
@@ -58,6 +58,13 @@ class DataTable extends XBuilder {
         return this
     }
 
+    columns(def) {
+        for(k in def) if(def.hasOwnProperty(k)) {
+            if(typeof def[k] === 'function')
+                this.column(k, o => def[k](o[k]))
+        }
+    }
+    
     paging(pageChannel, pageRequest, page = pageChannel.model()) {
         return this.add(
             tfoot().add(

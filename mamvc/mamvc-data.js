@@ -32,6 +32,7 @@ const SUCCESS_STATUSES = new Set([200, 0])
 class Channel {
     constructor(uri) {
         this._uri = isState(uri) ? uri : state(uri)
+        this._uri.onChange(() => this.get(), false)
         this._model = state()
         this._busy = boolean()
         this._progress = state({total: 0, done: 0}).hierarchy()
@@ -77,8 +78,8 @@ class Channel {
         return this
     }
 
-    every(milliseconds) {
-        setInterval(() => this.update(), milliseconds)
+    getEvery(milliseconds) {
+        setInterval(() => this.get(), milliseconds)
         return this
     }
 }

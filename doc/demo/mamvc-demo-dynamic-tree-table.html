@@ -9,6 +9,13 @@
 import {body, div, channel, get } from "../../mamvc.js";
 import {treeTable} from "../../mamvc-ui.js";
 
+function ch(row) {
+    return row.content
+}
+ch.header = function(name) {
+    return "Custom header"
+}
+
 body().add(div().id('demoOutput').add(
     treeTable(
         channel('data/root.json').set([]).get().model(),
@@ -16,7 +23,7 @@ body().add(div().id('demoOutput').add(
     )
         .column('id')
         .treeColumn('name')
-        .column('content')
+        .column('content', ch)
 ))
     </script>
 </head>

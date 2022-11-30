@@ -1,4 +1,4 @@
-import {form, table, thead, tbody, tr, td, th, a, each, caption, list, not, on, state, set, when, inputText, submit, reset, get, XBuilder, channel, span} from "../mamvc.js";
+import {form, table, thead, tbody, tr, td, th, a, each, caption, list, not, on, state, set, when, inputText, submit, reset, get, to, XBuilder, channel, span} from "../mamvc.js";
 
 
 export function pageModel() {
@@ -44,7 +44,7 @@ class DataTable extends XBuilder {
         this.columnsModel = list().hierarchy()
         this.columnsModel.onChange(() => dataModel.set(dataModel.get()))
         this.add(
-            thead().add(tr().add(each(this.columnsModel, column => cell(column.cell.header || self.header, column.name, column.name, th())))),
+            thead().add(tr().add(each(this.columnsModel, column => cell(column.cell.header || self.header, column.name, column.name, th().setClass('header-' + column.name))))),
             tbody().add(each(
                 dataModel,
                 rowData => tr().add(each(this.columnsModel, column => cell(column.cell, rowData, column.name, td())))

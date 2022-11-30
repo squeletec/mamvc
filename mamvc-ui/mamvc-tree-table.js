@@ -5,8 +5,8 @@ export function nodeModel(item = {}) {
     return state({item:item, children:[]}).hierarchy()
 }
 
-function cell(level, column, rowData, c = td()) {
-    return c.add(column.cell(rowData, c, level))
+function cell(level, cellFunction, rowData, c) {
+    return c.add(cellFunction(rowData, c, level))
 }
 
 function staticExpand(nodeModel) {
@@ -25,7 +25,7 @@ class TreeTable extends XBuilder {
         this.columnsModel.onChange(() => rootModel.set(rootModel.get()))
         this.childrenCommand = childrenCommand
         let subTree = (parent, level = 0) => {
-            let row = tr().add(each(this.columnsModel, column => cell(level, column, parent)))
+            let row = tr().add(each(this.columnsModel, column => cell(level, column.cell, parent, td())))
             return parent.hasOwnProperty('children') ? range(
                 row,
                 parent.children,
@@ -33,7 +33,7 @@ class TreeTable extends XBuilder {
             ) : row
         }
         this.add(
-            thead().add(tr().add(each(this.columnsModel, column => th().add(column.name)))),
+            thead().add(tr().add(each(this.columnsModel, column => cell(-1, column.cell.header || (n => n), column.name, th().setClass('header-' + column.name))))),
             tbody().add(each(rootModel, item => subTree(state(item).hierarchy()))),
         )
     }
@@ -48,7 +48,9 @@ class TreeTable extends XBuilder {
     }
 
     column(name, content = rowData => rowData[name]) {
-        this.columnsModel.get().push({name: name, cell: (node, td, level) => content(node.item, td, level)})
+        let c = (node, td, level) => content(node.item, td, level)
+        c.header = content.header
+        this.columnsModel.get().push({name: name, cell: c})
         this.columnsModel.set(this.columnsModel.get())
         return this
     }

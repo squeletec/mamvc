@@ -64,7 +64,7 @@ class DataTable extends XBuilder {
                 let c = d[k]
                 switch (typeof c) {
                     case "function":
-                        let rf = row => c(resolve(row, ...keys, k))
+                        let rf = (row, path, e) => c(resolve(row, ...keys, k), path, e)
                         rf.header = c.header
                         this.columnsModel.get().push({name: [...keys, k], cell: rf})
                         break

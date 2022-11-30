@@ -12,7 +12,8 @@
 
     let pageRequest = state({page: 0, size: 5}).hierarchy()
 
-    function Adult(age) {
+    function Adult(age, path, c) {
+        c.title(path.join("."))
         return age > 18 ? "Adult" : "Child"
     }
 

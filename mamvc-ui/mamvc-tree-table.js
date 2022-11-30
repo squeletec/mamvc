@@ -24,7 +24,7 @@ class TreeTable extends XBuilder {
         this.columnsModel = list().hierarchy()
         this.columnsModel.onChange(() => rootModel.set(rootModel.get()))
         this.childrenCommand = childrenCommand
-        let subTree = (parent, level = 0) => {
+        let subTree = (parent, level = 1) => {
             let row = tr().add(each(this.columnsModel, column => cell(level, column.cell, parent, td())))
             return parent.hasOwnProperty('children') ? range(
                 row,

@@ -2,7 +2,13 @@
   "content": [{
     "id": 1,
     "name": "Jackie",
-    "content": "Nonsense"
+    "content": "Nonsense",
+    "user": {
+      "id": 34,
+      "first": "John",
+      "last": "Doe",
+      "age": 56
+    }
   }, {
     "id": 2,
     "name": "Jamie",

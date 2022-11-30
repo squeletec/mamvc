@@ -231,6 +231,9 @@ export class XBuilder extends XNode {
     overflowX(value) {return this.css('overflow-x', value)}
     overflowY(value) {return this.css('overflow-y', value)}
     flex(...args) {return this.css('flex', ...args)}
+    captionSide(...args) {return this.css('caption-side', ...args)}
+    whiteSpace(...args) {return this.css('white-space', ...args)}
+    nowrap() {return this.whiteSpace('nowrap')}
 
     setProperty(name, ...args) {
         return (args.length === 0) ? this : this._manipulate(value => {
@@ -301,11 +304,11 @@ export function builder(node) {
 export function body() {return builder(document.body)}
 export function head() {return builder(document.head)}
 export function byId(id) {return builder(document.getElementById(id))}
-export function element(name, ...className) {return  builder(document.createElement(name)).setClass(...className)}
+export function element(name) {return  builder(document.createElement(name))}
 export function meta() {return element('meta')}
 export function base() {return element('base')}
-export function div(...className) {return element('div', ...className)}
-export function span(...className) {return element('span', ...className)}
+export function div(...className) {return element('div').setClass(...className)}
+export function span(...className) {return element('span').setClass(...className)}
 export function img(...src) {return element('img').src(...src)}
 export function link(rel) {return element('link').rel(rel)}
 export function a(...href) {return element('a').href(...href)}
@@ -350,6 +353,7 @@ export function tfoot() {return element('tfoot')}
 export function tr() {return element('tr')}
 export function td() {return element('td')}
 export function th() {return element('th')}
+export function caption() {return element('caption')}
 export function sub() {return element('sub')}
 export function sup() {return element('sup')}
 export function details() {return element('details')}

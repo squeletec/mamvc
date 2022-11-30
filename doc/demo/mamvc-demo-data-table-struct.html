@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="mamvc-demo.css"/>
+    <script type="module" src="mamvc-demo-runner.js" defer></script>
+<script type="module" id="demoSource" defer>
+
+    import {channel, state, body, div } from "../../mamvc.js"
+    import {pageTable, self, path} from "../../mamvc-ui.js"
+
+    let pageRequest = state({page: 0, size: 5}).hierarchy()
+
+    function Adult(age) {
+        return age > 18 ? "Adult" : "Child"
+    }
+
+    body().add(div().id('demoOutput').add(
+        pageTable(channel('data/page', pageRequest.page, '.json').get(), pageRequest)
+            .columns({
+                id: self,
+                name: self,
+                content: self,
+                user: {
+                    first: self,
+                    last: path,
+                    age: Adult
+                }
+            })
+    ))
+
+</script>
+</head>
+<body>
+</body>
+</html>

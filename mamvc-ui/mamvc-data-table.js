@@ -80,13 +80,15 @@ class DataTable extends XBuilder {
     }
     
     paging(pageChannel, pageRequest, page = pageChannel.model()) {
+        let firstDisabled = page.first.map(to('silver'))
+        let lastDisabled = page.last.map(to('silver'))
         return this.add(
             caption().captionSide('bottom').textLeft().nowrap().add(
-                a().setClass('paging first-page').add('\u23EE\uFE0E').title('Go to first page').onClick(when(not(page.first), set(pageRequest.page, 0))),
-                a().setClass('paging prev-page').add('\u23F4\uFE0E').title('Go to previous page').onClick(when(not(page.first), set(pageRequest.page, page.number.map(v => v - 1)))),
+                a().setClass('paging first-page').color(firstDisabled).add('\u23EE\uFE0E').title('Go to first page').onClick(when(not(page.first), set(pageRequest.page, 0))),
+                a().setClass('paging prev-page').color(firstDisabled).add('\u23F4\uFE0E').title('Go to previous page').onClick(when(not(page.first), set(pageRequest.page, page.number.map(v => v - 1)))),
                 span('paging current-page').add('Rows ', page.pageable.offset.map(v => v + 1), ' - ', on(page.pageable.offset, page.size).apply((a, b) => a + b), ' of ', page.totalElements),
-                a().setClass('paging next-page').add('\u23F5\uFE0E').title('Go to next page').onClick(when(not(page.last), set(pageRequest.page, page.number.map(v => v + 1)))),
-                a().setClass('paging last-page').add('\u23ED\uFE0E').title('Go to last page').onClick(when(not(page.last), set(pageRequest.page, page.totalPages))),
+                a().setClass('paging next-page').color(lastDisabled).add('\u23F5\uFE0E').title('Go to next page').onClick(when(not(page.last), set(pageRequest.page, page.number.map(v => v + 1)))),
+                a().setClass('paging last-page').color(lastDisabled).add('\u23ED\uFE0E').title('Go to last page').onClick(when(not(page.last), set(pageRequest.page, page.totalPages.map(v => v - 1)))),
                 a().setClass('paging reload-page').add('\u21BB').title('Reload page').onClick(() => pageChannel.get())
             )
         )

@@ -48,7 +48,7 @@ class TreeTable extends XBuilder {
     }
 
     column(name, content = rowData => rowData[name]) {
-        let c = (node, path td, level) => content(node.item, path, td, level)
+        let c = (node, path, t, level) => content(node.item, path, t, level)
         c.header = content.header
         this.columnsModel.get().push({name: name, cell: c})
         this.columnsModel.set(this.columnsModel.get())

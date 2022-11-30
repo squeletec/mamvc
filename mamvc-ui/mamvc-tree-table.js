@@ -5,8 +5,8 @@ export function nodeModel(item = {}) {
     return state({item:item, children:[]}).hierarchy()
 }
 
-function cell(level, cellFunction, rowData, c) {
-    return c.add(cellFunction(rowData, c, level))
+function cell(level, cellFunction, rowData, path, c) {
+    return c.add(cellFunction(rowData, path, c, level))
 }
 
 function staticExpand(nodeModel) {
@@ -25,7 +25,7 @@ class TreeTable extends XBuilder {
         this.columnsModel.onChange(() => rootModel.set(rootModel.get()))
         this.childrenCommand = childrenCommand
         let subTree = (parent, level = 1) => {
-            let row = tr().add(each(this.columnsModel, column => cell(level, column.cell, parent, td())))
+            let row = tr().add(each(this.columnsModel, column => cell(level, column.cell, parent, column.name, td())))
             return parent.hasOwnProperty('children') ? range(
                 row,
                 parent.children,
@@ -33,22 +33,22 @@ class TreeTable extends XBuilder {
             ) : row
         }
         this.add(
-            thead().add(tr().add(each(this.columnsModel, column => cell(-1, column.cell.header || (n => n), column.name, th().setClass('header-' + column.name))))),
+            thead().add(tr().add(each(this.columnsModel, column => cell(-1, column.cell.header || (n => n), column.name, column.name, th().setClass('header-' + column.name))))),
             tbody().add(each(rootModel, item => subTree(state(item).hierarchy()))),
         )
     }
 
     treeColumn(name, content = rowData => rowData[name]) {
-        this.columnsModel.get().push({name: name, cell: (node, td, level) => {
+        this.columnsModel.get().push({name: name, cell: (node, path, td, level) => {
             td.add(span().paddingLeft(level, 'em'))
-            return content(node.item, node.hasOwnProperty('children') ? td.add(expander(nodeExpander(this.childrenCommand(node, level), node.children)), ' ') : td, level)
+            return content(node.item, path, node.hasOwnProperty('children') ? td.add(expander(nodeExpander(this.childrenCommand(node, level), node.children)), ' ') : td, level)
         }})
         this.columnsModel.set(this.columnsModel.get())
         return this
     }
 
     column(name, content = rowData => rowData[name]) {
-        let c = (node, td, level) => content(node.item, td, level)
+        let c = (node, path td, level) => content(node.item, path, td, level)
         c.header = content.header
         this.columnsModel.get().push({name: name, cell: c})
         this.columnsModel.set(this.columnsModel.get())

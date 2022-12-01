@@ -202,6 +202,7 @@ export class XBuilder extends XNode {
     fontWeight(...args) {return this.css('font-weight', ...args)}
     visibility(value) {return this.css('visibility', value)}
     opacity(...args) {return this.css('opacity', ...args)}
+    background(...args) {return this.css('background', ...args)}
     backgroundColor(value) {return this.css('background-color', value)}
     backgroundImage(...args) {return this.css('background-image', ...args)}
     backgroundRepeat(...args) {return this.css('background-repeat', ...args)}
@@ -209,10 +210,12 @@ export class XBuilder extends XNode {
     linearGradient(value) {return this.backgroundImage('linear-gradient(', value, ')')}
     position(value) {return this.css('position', value)}
     float(value) {return this.css('float', value)}
+    padding(...args) {return this.css('padding', ...args)}
     paddingLeft(value, unit = 'px') {return this.css('padding-left', concat(value, unit))}
     paddingRight(value, unit = 'px') {return this.css('padding-right', concat(value, unit))}
     paddingTop(value, unit = 'px') {return this.css('padding-top', concat(value, unit))}
     paddingBottom(value, unit = 'px') {return this.css('padding-bottom', concat(value, unit))}
+    margin(...args) {return this.css('margin', ...args)}
     marginLeft(value, unit = 'px') {return this.css('margin-left', concat(value, unit))}
     marginRight(value, unit = 'px') {return this.css('margin-right', concat(value, unit))}
     marginTop(value, unit = 'px') {return this.css('margin-top', concat(value, unit))}
@@ -234,6 +237,8 @@ export class XBuilder extends XNode {
     captionSide(...args) {return this.css('caption-side', ...args)}
     whiteSpace(...args) {return this.css('white-space', ...args)}
     nowrap() {return this.whiteSpace('nowrap')}
+    boxSizing(value) {return this.css('box-sizing', value)}
+    borderBox() {return this.boxSizing('border-box')}
 
     setProperty(name, ...args) {
         return (args.length === 0) ? this : this._manipulate(value => {
@@ -372,7 +377,7 @@ export function range(start, model, itemView = item => item, end = xText('')) {
             s = n.nextSibling
             builder(n).remove()
         }
-        value.forEach(item => end.prepend(itemView(item)))
+        (Array.isArray(value) ? value : [value]).forEach((item, index) => end.prepend(itemView(item, index)))
     })
     return f
 }

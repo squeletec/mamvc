@@ -50,7 +50,7 @@ class DataTable extends XBuilder {
             thead().add(tr().add(each(this.columnsModel, column => cell(column.cell.header || self.header, column.name, column.name, th().setClass('header-' + last(column.name)))))),
             tbody().add(each(
                 dataModel,
-                rowData => tr().add(each(this.columnsModel, column => cell(column.cell, rowData, column.name, td())))
+                (rowData, index) => tr().add(each(this.columnsModel, column => cell(column.cell, rowData, column.name, td())))
             ))
         )
     }

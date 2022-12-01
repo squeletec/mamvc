@@ -29,7 +29,7 @@ class TreeTable extends XBuilder {
             return parent.hasOwnProperty('children') ? range(
                 row,
                 parent.children,
-                child => subTree(state(child).hierarchy(), level + 1)
+                (child, index) => subTree(state(child).hierarchy(), level + 1)
             ) : row
         }
         this.add(

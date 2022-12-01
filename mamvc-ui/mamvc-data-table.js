@@ -36,26 +36,56 @@ export function pagedChannel(...uri) {
     return channel(...uri).setModel(pageModel())
 }
 
-function cell(func, rowData, name, c) {
-    return c.add(func(rowData, name, c))
+function cell(func, row, c) {
+    return c.add(func(row, c))
 }
+
+function row(data, path, index) {
+    return {
+        data: data,
+        path: path,
+        item() {return resolve(this.data, this.path)},
+        index: index
+    }
+}
+
+export function resolve(object, propertyNames) {
+    for(let i = 0; i < propertyNames.length; i++)
+        if(typeof object === "object") object = object[propertyNames[i]]
+    return object
+}
+
+export function self(row) {
+    return row.item()
+}
+self.header = row => last(row.path)
+
+export function path(row) {
+    return self(row)
+}
+path.header = row => row.path.join(".")
+
+export function position(row) {
+    return row.index + 1
+}
+position.header = () => '#'
 
 class DataTable extends XBuilder {
 
-    constructor(dataModel) {
+    constructor(dataModel, offset = state(0)) {
         super(table().get());
         this.columnsModel = list().hierarchy()
         this.columnsModel.onChange(() => dataModel.set(dataModel.get()))
         this.add(
-            thead().add(tr().add(each(this.columnsModel, column => cell(column.cell.header || self.header, column.name, column.name, th().setClass('header-' + last(column.name)))))),
+            thead().add(tr().add(each(this.columnsModel, column => cell(column.cell.header || self.header, row(column.name, column.name), th().setClass('header-' + last(column.name)))))),
             tbody().add(each(
                 dataModel,
-                (rowData, index) => tr().add(each(this.columnsModel, column => cell(column.cell, rowData, column.name, td())))
+                (item, index) => tr().add(each(this.columnsModel, column => cell(column.cell, row(item, column.name, offset.get() + index), td())))
             ))
         )
     }
 
-    column(name, content = rowData => resolve(rowData, name)) {
+    column(name, content = self) {
         this.columnsModel.get().push({name: [name], cell: content})
         this.columnsModel.set(this.columnsModel.get())
         return this
@@ -66,13 +96,9 @@ class DataTable extends XBuilder {
             for(let k in d) if(d.hasOwnProperty(k)) {
                 let c = d[k]
                 switch (typeof c) {
-                    case "function":
-                        let rf = (row, path, e) => c(resolve(row, ...keys, k), path, e)
-                        rf.header = c.header
-                        this.columnsModel.get().push({name: [...keys, k], cell: rf})
+                    case "function": this.columnsModel.get().push({name: [...keys, k], cell: c})
                         break
-                    case "object":
-                        if(!Array.isArray(c)) p(c, ...keys, k)
+                    case "object": if(!Array.isArray(c)) p(c, ...keys, k)
                         break
                 }
             }
@@ -98,12 +124,13 @@ class DataTable extends XBuilder {
     }
 }
 
-export function dataTable(dataModel) {
-    return new DataTable(dataModel)
+export function dataTable(dataModel, offset = state(0)) {
+    return new DataTable(dataModel, offset)
 }
 
 export function pageTable(channel, pageRequest) {
-    return dataTable(channel.setModel(pageModel()).model().content).paging(channel, pageRequest)
+    let page = pageModel()
+    return dataTable(page.map(v => v.content), page.pageable.offset).paging(channel.setModel(page), pageRequest)
 }
 
 export function search(channel, queryModel) {
@@ -113,19 +140,3 @@ export function search(channel, queryModel) {
         reset('Clear')
     )
 }
-
-export function resolve(object, ...propertyNames) {
-    for(let i = 0; i < propertyNames.length; i++)
-        if(typeof object === "object") object = object[propertyNames[i]]
-    return object
-}
-
-export function self(value) {
-    return value
-}
-self.header = name => name[name.length - 1]
-
-export function path(value) {
-    return value
-}
-path.header = name => name.join(".")

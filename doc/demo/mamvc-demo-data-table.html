@@ -8,12 +8,13 @@
 <script type="module" id="demoSource" defer>
 
     import {channel, state, body, div } from "../../mamvc.js"
-    import {pageTable} from "../../mamvc-ui.js"
+    import {pageTable, position} from "../../mamvc-ui.js"
 
     let pageRequest = state({page: 0, size: 5}).hierarchy()
 
     body().add(div().id('demoOutput').add(
         pageTable(channel('data/page', pageRequest.page, '.json').get(), pageRequest)
+            .column('pos', position)
             .column('id')
             .column('name')
             .column('content')

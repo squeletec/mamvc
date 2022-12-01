@@ -61,16 +61,16 @@
     },
     "offset": 0,
     "pageNumber": 0,
-    "pageSize": 9,
+    "pageSize": 5,
     "paged": true,
     "unpaged": false
   },
-  "totalPages": 3,
-  "last": false,
-  "totalElements": 23,
-  "size": 9,
+  "totalPages": 1,
+  "last": true,
+  "totalElements": 3,
+  "size": 3,
   "number": 0,
-  "numberOfElements": 9,
+  "numberOfElements": 3,
   "sort": {
     "sorted": false,
     "unsorted": true

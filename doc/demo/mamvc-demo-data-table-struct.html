@@ -12,13 +12,13 @@
 
     let pageRequest = state({page: 0, size: 5}).hierarchy()
 
-    function Adult(age, path, c) {
-        c.title(path.join("."))
-        return age > 18 ? "Adult" : "Child"
+    function Adult(row, c) {
+        c.title(row.path.join("."))
+        return row.item() > 18 ? "Adult" : "Child"
     }
 
     body().add(div().id('demoOutput').add(
-        pageTable(channel('data/page', pageRequest.page, '.json').get(), pageRequest)
+        pageTable(channel('data/page.json').get(), pageRequest)
             .columns({
                 id: self,
                 name: self,

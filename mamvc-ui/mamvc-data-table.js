@@ -6,7 +6,6 @@ export function last(array) {
 
 export function pageModel() {
     return state({
-        "content": [],
         "pageable": {
             "sort": {
                 "sorted": false,
@@ -28,7 +27,8 @@ export function pageModel() {
             "sorted": false,
             "unsorted": true
         },
-        "first": true
+        "first": true,
+        "content": []
     }).hierarchy()
 }
 

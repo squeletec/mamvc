@@ -1,4 +1,31 @@
-import {form, table, thead, tbody, tr, td, th, a, each, caption, list, not, on, state, set, when, inputText, submit, reset, get, to, XBuilder, channel, span} from "../mamvc.js";
+import {
+    form,
+    table,
+    thead,
+    tbody,
+    tr,
+    td,
+    th,
+    a,
+    each,
+    caption,
+    list,
+    not,
+    on,
+    state,
+    string,
+    set,
+    when,
+    inputText,
+    submit,
+    reset,
+    get,
+    to,
+    XBuilder,
+    channel,
+    span,
+    template
+} from "../mamvc.js";
 
 export function last(array) {
     return array[array.length - 1]
@@ -30,6 +57,10 @@ export function pageModel() {
         "first": true,
         "content": []
     }).hierarchy()
+}
+
+export function pageRequestModel(pageSize = 25) {
+    return state({page: 0, size: pageSize}).hierarchy()
 }
 
 export function pagedChannel(...uri) {
@@ -108,35 +139,46 @@ class DataTable extends XBuilder {
         return this
     }
     
-    paging(pageChannel, pageRequest, page = pageChannel.model()) {
-        let firstDisabled = page.first.map(to('silver'))
-        let lastDisabled = page.last.map(to('silver'))
-        return this.add(
-            caption().captionSide('bottom').textLeft().nowrap().add(
-                a().setClass('paging first-page').color(firstDisabled).add('\u23EE\uFE0E').title('Go to first page').onClick(when(not(page.first), set(pageRequest.page, 0))),
-                a().setClass('paging prev-page').color(firstDisabled).add('\u23F4\uFE0E').title('Go to previous page').onClick(when(not(page.first), set(pageRequest.page, page.number.map(v => v - 1)))),
-                span('paging current-page').add('Rows ', page.pageable.offset.map(v => v + 1), ' - ', on(page.pageable.offset, page.size).apply((a, b) => a + b), ' of ', page.totalElements),
-                a().setClass('paging next-page').color(lastDisabled).add('\u23F5\uFE0E').title('Go to next page').onClick(when(not(page.last), set(pageRequest.page, page.number.map(v => v + 1)))),
-                a().setClass('paging last-page').color(lastDisabled).add('\u23ED\uFE0E').title('Go to last page').onClick(when(not(page.last), set(pageRequest.page, page.totalPages.map(v => v - 1)))),
-                a().setClass('paging reload-page').add('\u21BB').title('Reload page').onClick(() => pageChannel.get())
-            )
-        )
+    captionTop(...args) {
+        return this.add(caption().captionSide('top').textLeft().nowrap().add(...args))
     }
+
+    captionBottom(...args) {
+        return this.add(caption().captionSide('bottom').textLeft().nowrap().add(...args))
+
+    }
+}
+
+export function pageControls(pageRequest, pageChannel, page = pageChannel.model()) {
+    let firstDisabled = page.first.map(to('silver'))
+    let lastDisabled = page.last.map(to('silver'))
+    return form().onSubmit(event => pageRequest.page.set(parseInt(event.target.page.value) - 1)).add(
+        a().setClass('paging first-page').color(firstDisabled).add('\u23EE\uFE0E').title('Go to first page').onClick(when(not(page.first), set(pageRequest.page, 0))),
+        a().setClass('paging prev-page').color(firstDisabled).add('\u23F4\uFE0E').title('Go to previous page').onClick(when(not(page.first), set(pageRequest.page, page.number.map(v => v - 1)))),
+        span('paging current-page').add('Page: ', inputText('page').width(2, 'em').value(page.number.map(v => v + 1)), ' of ', page.totalPages, ' (rows ', page.pageable.offset.map(v => v + 1), ' - ', on(page.pageable.offset, page.size).apply((a, b) => a + b), ' of ', page.totalElements, ')'),
+        a().setClass('paging next-page').color(lastDisabled).add('\u23F5\uFE0E').title('Go to next page').onClick(when(not(page.last), set(pageRequest.page, page.number.map(v => v + 1)))),
+        a().setClass('paging last-page').color(lastDisabled).add('\u23ED\uFE0E').title('Go to last page').onClick(when(not(page.last), set(pageRequest.page, page.totalPages.map(v => v - 1)))),
+        a().setClass('paging reload-page').add('\u21BB').title('Reload page').onClick(() => pageChannel.get())
+    )
 }
 
 export function dataTable(dataModel, offset = state(0)) {
     return new DataTable(dataModel, offset)
 }
 
-export function pageTable(channel, pageRequest) {
+export function pageTable(pageRequest, channel) {
     let page = pageModel()
-    return dataTable(page.map(v => v.content), page.pageable.offset).paging(channel.setModel(page), pageRequest)
+    return dataTable(page.map(v => v.content), page.pageable.offset).captionBottom(pageControls(pageRequest, channel.setModel(page)))
 }
 
-export function search(channel, queryModel) {
-    return form().onSubmit(get(channel)).onReset(set(queryModel, '')).add(
+export function searchControls(queryModel) {
+    return form().onSubmit(event => queryModel.set(event.target.query.value)).onReset(set(queryModel, '')).add(
         inputText('query').model(queryModel),
         submit('Search'),
         reset('Clear')
     )
+}
+
+export function searchTable(pageRequest, channel, queryModel) {
+    return pageTable(pageRequest, channel).captionTop(searchControls(queryModel))
 }

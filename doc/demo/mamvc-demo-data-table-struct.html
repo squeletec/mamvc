@@ -7,10 +7,10 @@
     <script type="module" src="mamvc-demo-runner.js" defer></script>
 <script type="module" id="demoSource" defer>
 
-    import {channel, state, body, div } from "../../mamvc.js"
-    import {pageTable, self, path} from "../../mamvc-ui.js"
+    import {channel, body, div } from "../../mamvc.js"
+    import {pageTable, self, path, pageRequestModel} from "../../mamvc-ui.js"
 
-    let pageRequest = state({page: 0, size: 5}).hierarchy()
+    let pageRequest = pageRequestModel(9)
 
     function Adult(row, c) {
         c.title(row.path.join("."))
@@ -18,7 +18,7 @@
     }
 
     body().add(div().id('demoOutput').add(
-        pageTable(channel('data/page.json').get(), pageRequest)
+        pageTable(pageRequest, channel('data/page.json').get())
             .columns({
                 id: self,
                 name: self,

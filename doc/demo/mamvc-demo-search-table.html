@@ -7,16 +7,14 @@
     <script type="module" src="mamvc-demo-runner.js" defer></script>
 <script type="module" id="demoSource" defer>
 
-    import {body, div, channel, state, string } from "../../mamvc.js";
-    import {dataTable, search} from "../../mamvc-ui.js";
+    import {channel, body, div, string } from "../../mamvc.js"
+    import {searchTable, position, pageRequestModel} from "../../mamvc-ui.js"
 
-    let pageRequest = state({page: 0, size: 5}).hierarchy()
-    let searchChannel = channel('data/page', pageRequest.page, '.json')
-    let query = string()
+    let pageRequest = pageRequestModel(9)
 
     body().add(div().id('demoOutput').add(
-        search(searchChannel, query),
-        dataTable(searchChannel.get(), pageRequest)
+        searchTable(pageRequest, channel('data/page', pageRequest.page, '.json').get(), string(''))
+            .column('pos', position)
             .column('id')
             .column('name')
             .column('content')

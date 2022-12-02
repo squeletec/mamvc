@@ -58,7 +58,7 @@ class State {
     hierarchy(structure = this._value) {
         if('object' === typeof structure) {
             if(Array.isArray(structure))
-                this.length = this.map(v => v.length)
+                this.length = this.map(_ => (_ === undefined || _ === null) ? _ : _.length)
             else
                 for(let property in structure)
                     if(structure.hasOwnProperty(property))

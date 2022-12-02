@@ -108,7 +108,7 @@ class DataTable extends XBuilder {
         this.columnsModel = list().hierarchy()
         this.columnsModel.onChange(() => dataModel.set(dataModel.get()))
         this.add(
-            thead().add(tr().add(each(this.columnsModel, column => cell(column.cell.header || self.header, row(column.name, column.name), th().setClass('header-' + last(column.name)))))),
+            thead().add(tr().add(each(this.columnsModel, (column, index) => cell(column.cell.header || self.header, row(column.name, column.name, index), th().setClass('header-' + last(column.name)))))),
             tbody().add(each(
                 dataModel,
                 (item, index) => tr().add(each(this.columnsModel, column => cell(column.cell, row(item, column.name, offset.get() + index), td())))

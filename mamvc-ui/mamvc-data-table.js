@@ -138,14 +138,19 @@ class DataTable extends XBuilder {
         this.columnsModel.set(this.columnsModel.get())
         return this
     }
-    
+
+    moveColumn(from, to) {
+        let f = this.columnsModel.get().splice(from, 1)
+        this.columnsModel.get().splice(to, 0, ...f)
+        this.columnsModel.set(this.columnsModel.get())
+    }
+
     captionTop(...args) {
         return this.add(caption().captionSide('top').textLeft().nowrap().add(...args))
     }
 
     captionBottom(...args) {
         return this.add(caption().captionSide('bottom').textLeft().nowrap().add(...args))
-
     }
 }
 

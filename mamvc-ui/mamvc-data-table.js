@@ -154,7 +154,7 @@ class DataTable extends XBuilder {
     }
 }
 
-export function pageControls(pageRequest, pageChannel, page = pageChannel.model()) {
+export function pageControls(pageRequest, page) {
     let firstDisabled = page.first.map(to('silver'))
     let lastDisabled = page.last.map(to('silver'))
     return form().onSubmit(event => pageRequest.page.set(parseInt(event.target.page.value) - 1)).add(
@@ -163,7 +163,7 @@ export function pageControls(pageRequest, pageChannel, page = pageChannel.model(
         span('paging current-page').add('Page: ', inputText('page').width(2, 'em').value(page.number.map(v => v + 1)), ' of ', page.totalPages, ' (rows ', page.pageable.offset.map(v => v + 1), ' - ', on(page.pageable.offset, page.size).apply((a, b) => a + b), ' of ', page.totalElements, ')'),
         a().setClass('paging next-page').color(lastDisabled).add('\u23F5\uFE0E').title('Go to next page').onClick(when(not(page.last), set(pageRequest.page, page.number.map(v => v + 1)))),
         a().setClass('paging last-page').color(lastDisabled).add('\u23ED\uFE0E').title('Go to last page').onClick(when(not(page.last), set(pageRequest.page, page.totalPages.map(v => v - 1)))),
-        a().setClass('paging reload-page').add('\u21BB').title('Reload page').onClick(() => pageChannel.get())
+        a().setClass('paging reload-page').add('\u21BB').title('Reload page').onClick(() => pageRequest.page.set(pageRequest.page.get()))
     )
 }
 
@@ -171,9 +171,8 @@ export function dataTable(dataModel, offset = state(0)) {
     return new DataTable(dataModel, offset)
 }
 
-export function pageTable(pageRequest, channel) {
-    let page = pageModel()
-    return dataTable(page.map(v => v.content), page.pageable.offset).captionBottom(pageControls(pageRequest, channel.setModel(page)))
+export function pageTable(pageRequest, page) {
+    return dataTable(page.map(v => v.content), page.pageable.offset).captionBottom(pageControls(pageRequest, page))
 }
 
 export function searchControls(queryModel) {
@@ -184,6 +183,6 @@ export function searchControls(queryModel) {
     )
 }
 
-export function searchTable(pageRequest, channel, queryModel) {
-    return pageTable(pageRequest, channel).captionTop(searchControls(queryModel))
+export function searchTable(searchCall) {
+    return pageTable(searchCall.input.pageRequest, searchCall.output).captionTop(searchControls(searchCall.input.query))
 }

@@ -183,6 +183,6 @@ export function searchControls(queryModel) {
     )
 }
 
-export function searchTable(searchCall) {
-    return pageTable(searchCall.input.pageRequest, searchCall.output).captionTop(searchControls(searchCall.input.query))
+export function searchTable(searchCall, pageRequest = searchCall.input.pageRequest, query = searchCall.input.query, page = searchCall.output) {
+    return pageTable(pageRequest, page).captionTop(searchControls(query))
 }

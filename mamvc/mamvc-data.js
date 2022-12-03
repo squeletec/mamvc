@@ -87,3 +87,47 @@ class Channel {
 export function channel(...uri) {
     return new Channel(concat(...uri))
 }
+
+function setArg(value, args, i, rest) {
+    args[i] = isState(value) ? value.onChange(v => {
+        args[i] = v
+        rest.call()
+    }).get() : value
+}
+
+class RestCall {
+    constructor(input, template, output, loading) {
+        this.input = input
+        this.output = output
+        this.error = state()
+        this.loading = loading
+        this.args = template.split(/\{([^}]+)\}/)
+        for(let i = 1; i < this.args.length; i += 2) {
+            let name = this.args[i]
+            if(input.hasOwnProperty(name))
+                setArg(input[name], this.args, i, this)   
+            else
+                throw new Error('Parameter ' + name + ' not bound.')
+        }
+    }
+
+    set(value) {
+        this.output.set(value)
+        this.loading.set(false)
+    }
+
+    call() {
+        this.loading.set(true)
+        fetch(this.args.join('')).then(r => r.json).then(r => this.output.set(r))
+        return this
+    }
+
+    callEvery(milliseconds) {
+        setInterval(() => this.call())
+        return this
+    }
+}
+
+export function remote(input, template, output = state(), loading = boolean()) {
+    return new RestCall(input, template, output, loading)
+}

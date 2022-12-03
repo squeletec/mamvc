@@ -89,10 +89,10 @@ export function channel(...uri) {
 }
 
 function setArg(value, args, i, rest) {
-    args[i] = isState(value) ? value.onChange(v => {
+    return isState(value) ? value.onChange(v => {
         args[i] = v
         rest.call()
-    }).get() : value
+    }, false).get() : value
 }
 
 class RestCall {
@@ -101,13 +101,20 @@ class RestCall {
         this.output = output
         this.error = state()
         this.loading = loading
-        this.args = template.split(/\{([^}]+)\}/)
+        this.args = template.split(/\{([^}]+)}/)
+        let used = new Set()
         for(let i = 1; i < this.args.length; i += 2) {
             let name = this.args[i]
-            if(input.hasOwnProperty(name))
-                setArg(input[name], this.args, i, this)   
-            else
-                throw new Error('Parameter ' + name + ' not bound.')
+            if(input.hasOwnProperty(name)) {
+                this.args[i] = setArg(input[name], this.args, i, this)
+                used.add(name)
+            }
+            else throw new Error('Parameter ' + name + ' not bound.')
+        }
+        let sep = template.indexOf("?") < 0 ? "?" : "&"
+        for(let name in input) if(input.hasOwnProperty(name) && !used.has(name)) {
+            this.args.push(sep + name, setArg(input[name], this.args, this.args.length, this))
+            sep = "&"
         }
     }
 
@@ -118,7 +125,7 @@ class RestCall {
 
     call() {
         this.loading.set(true)
-        fetch(this.args.join('')).then(r => r.json).then(r => this.output.set(r))
+        fetch(this.args.join('')).then(r => r.json()).then(r => this.output.set(r))
         return this
     }
 
@@ -128,6 +135,6 @@ class RestCall {
     }
 }
 
-export function remote(input, template, output = state(), loading = boolean()) {
+export function remote(template, input, output = state(), loading = boolean()) {
     return new RestCall(input, template, output, loading)
 }

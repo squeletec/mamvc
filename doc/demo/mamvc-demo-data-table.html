@@ -7,13 +7,11 @@
     <script type="module" src="mamvc-demo-runner.js" defer></script>
 <script type="module" id="demoSource" defer>
 
-    import {channel, body, div } from "../../mamvc.js"
-    import {pageTable, position, pageRequestModel} from "../../mamvc-ui.js"
-
-    let pageRequest = pageRequestModel(9)
+    import {body, div } from "../../mamvc.js"
+    import {pageTable, position, pageApi} from "../../mamvc-ui.js"
 
     body().add(div().id('demoOutput').add(
-        pageTable(pageRequest, channel('data/page', pageRequest.page, '.json').get())
+        pageTable(pageApi('data/page{page}.json').call())
             .column('pos', position)
             .column('id')
             .column('name')

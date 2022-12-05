@@ -19,8 +19,20 @@ suite({
         assertState(myState, "OK")
     },
 
-    async testUriModel() {
-        let m = uriModel("uri/{id}/x.html", {id: state(1), page: state(0)})
+    testUriModelTemplateChange() {
+        let input = {id: state(1), page: state(0)}
+        let m = uriModel("uri/{id}/x.html", input)
         assertState(m, "uri/1/x.html?page=0")
+        input.id.set(4)
+        assertState(m, "uri/4/x.html?page=0")
+    },
+
+    testUriModelParamChange() {
+        let input = {id: state(1), page: state(0)}
+        let m = uriModel("uri/{id}/x.html", input)
+        assertState(m, "uri/1/x.html?page=0")
+        input.page.set(1)
+        assertState(m, "uri/1/x.html?page=1")
     }
+
 })

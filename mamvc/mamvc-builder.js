@@ -359,6 +359,8 @@ export function tr() {return element('tr')}
 export function td() {return element('td')}
 export function th() {return element('th')}
 export function caption() {return element('caption')}
+export function captionTop() {return caption().captionSide('top')}
+export function captionBottom() {return caption().captionSide('bottom')}
 export function sub() {return element('sub')}
 export function sup() {return element('sup')}
 export function details() {return element('details')}

@@ -1,6 +1,6 @@
 import {
     form, table, thead, tbody, tr, td, th, a, each, caption, list, not, on, state, string, set, when, inputText, submit,
-    reset, to, XBuilder, channel, span, remote, resolve, last, boolean, execute, range
+    reset, to, XBuilder, channel, span, remote, resolve, last, boolean, execute, range, captionTop, captionBottom
 } from "../mamvc.js";
 import {expander} from "./mamvc-elements.js";
 
@@ -126,8 +126,8 @@ export function dataTable(result, offset = state(0)) {
     return new DataTable(result, offset)
 }
 
-export function pageTable(pageCall, page = pageCall.input.page, data = pageCall.output) {
-    return dataTable(data.map(v => v.content), data.pageable.offset).captionBottom(pageControls(page, data))
+export function pageTable(pageCall, page = pageCall.input.page, result = pageCall.output) {
+    return dataTable(result.map(v => v.content), result.pageable.offset).captionTop(pageCall.error).captionBottom(pageControls(page, result))
 }
 
 export function pageApi(uri) {
@@ -143,7 +143,12 @@ export function searchControls(query) {
 }
 
 export function searchTable(searchCall, page = searchCall.input.page, query = searchCall.input.query, result = searchCall.output) {
-    return pageTable(searchCall, page, result).captionTop(searchControls(query))
+    return dataTable(result.map(v => v.content), result.pageable.offset).add(
+        captionTop().setClass('search').textLeft().nowrap().add(searchControls(query)),
+        captionTop().setClass('error').textLeft().nowrap().add(searchCall.error),
+        captionBottom().setClass('paging').textLeft().nowrap().add(pageControls(page, result))
+    )
+    //return pageTable(searchCall, page, result)
 }
 
 export function searchApi(uri) {

@@ -75,3 +75,8 @@ td, th {
 tr:nth-child(even) {
     background-color: #e3e3e3;
 }
+
+caption.error {
+    background-color: bisque;
+    font-family: monospace;
+}

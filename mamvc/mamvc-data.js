@@ -110,7 +110,7 @@ export function uriModel(template, input) {
     let sep = template.indexOf("?") < 0 ? "?" : "&"
     for(let name in input) if(input.hasOwnProperty(name) && !used.has(name)) {
         args.push(sep + name + "=")
-        args.push(setArg(input[name], args, args.length, this))
+        args.push(setArg(input[name], args, args.length, result))
         sep = "&"
     }
     return result.set(args.join(''))
@@ -120,7 +120,7 @@ class RestCall {
     constructor(template, input, output, loading) {
         this.input = input
         this.output = output
-        this.error = state()
+        this.error = string()
         this.loading = loading
         this.uri = uriModel(template, input).onChange(() => this.call(), false)
     }
@@ -132,7 +132,8 @@ class RestCall {
 
     call() {
         this.loading.set(true)
-        fetch(this.uri.get()).then(r => r.json()).then(r => this.output.set(r))
+        fetch(this.uri.get()).then(r => r.ok ? r.json().then(r => this.output.set(r)) : this.error.set(r.statusText))
+            .catch(reason => this.error.set(reason))
         return this
     }
 

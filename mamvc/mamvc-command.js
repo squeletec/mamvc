@@ -53,6 +53,10 @@ export function post(channel, data) {
     return () => channel.post(data)
 }
 
+export function call(rest) {
+    return () => rest.call()
+}
+
 export function when(condition, command) {
     return () => condition.get() && command()
 }

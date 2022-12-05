@@ -130,15 +130,20 @@ class RestCall {
         this.loading.set(false)
     }
 
+    setError(value) {
+        this.error.set(value)
+        this.loading.set(false)
+    }
+
     call() {
         this.loading.set(true)
         this.error.set('')
         fetch(this.uri.get()).then(r => r.ok
             ? r.json().then(r => this.output.set(r))
             : r.headers.get('Content-Type').indexOf('json') < 0
-                ? this.error.set(r.statusText)
-                : r.json().then(j => this.error.set(j.message))
-        ).catch(reason => this.error.set(reason))
+                ? this.setError(r.statusText)
+                : r.json().then(j => this.setError(j.message))
+        ).catch(reason => this.setError(reason))
         return this
     }
 

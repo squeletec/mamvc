@@ -1,11 +1,7 @@
 import {
     form, table, thead, tbody, tr, td, th, a, each, caption, list, not, on, state, string, set, when, inputText, submit,
-    reset, to, XBuilder, channel, span, remote
+    reset, to, XBuilder, channel, span, remote, resolve, last, self
 } from "../mamvc.js";
-
-export function last(array) {
-    return array[array.length - 1]
-}
 
 export function pageModel() {
     return state({
@@ -55,27 +51,6 @@ function row(data, path, index) {
         index: index
     }
 }
-
-export function resolve(object, propertyNames) {
-    for(let i = 0; i < propertyNames.length; i++)
-        if(typeof object === "object") object = object[propertyNames[i]]
-    return object
-}
-
-export function self(row) {
-    return row.item()
-}
-self.header = row => last(row.path)
-
-export function path(row) {
-    return self(row)
-}
-path.header = row => row.path.join(".")
-
-export function position(row) {
-    return row.index + 1
-}
-position.header = () => '#'
 
 class DataTable extends XBuilder {
 

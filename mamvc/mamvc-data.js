@@ -138,3 +138,29 @@ class RestCall {
 export function remote(template, input, output = state(), loading = boolean()) {
     return new RestCall(input, template, output, loading)
 }
+
+export function resolve(object, propertyNames) {
+    for(let i = 0; i < propertyNames.length; i++)
+        if(typeof object === "object") object = object[propertyNames[i]]
+    return object
+}
+
+export function last(array) {
+    return array[array.length - 1]
+}
+
+
+export function self(row) {
+    return row.item()
+}
+self.header = row => last(row.path)
+
+export function path(row) {
+    return self(row)
+}
+path.header = row => row.path.join(".")
+
+export function position(row) {
+    return row.index + 1
+}
+position.header = () => '#'

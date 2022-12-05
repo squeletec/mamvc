@@ -5,8 +5,7 @@ function item(name, href) {
 }
 
 body().add(
-    h1().add(a('index.html').title('Back to list of all examples').add('<'), ' Demo'),
-    ul().add(
+    ul().float('right').add(
         item('State view', 'stateview'),
         item('Expander', 'expander'),
         item('Dialog', 'dialog'),
@@ -17,6 +16,7 @@ body().add(
         item('Tree table loading subtrees via rest API on expansion', 'dynamic-tree-table'),
         item('Layout with sidebar', 'layout-sidebar'),
     ),
+    h1().add(a('index.html').title('Back to list of all examples').add('<'), ' Demo'),
     pre().id('demoSourceView').add(byId("demoSource").get().outerHTML)
 )
 

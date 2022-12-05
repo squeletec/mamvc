@@ -15,7 +15,10 @@
     background-color: white;
     font-family: monospace;
 }
-
+ul {
+    background-color: white;
+    box-shadow: 4px 4px 80px silver;
+}
 .paging {
     margin-right: 0.5em;
 }

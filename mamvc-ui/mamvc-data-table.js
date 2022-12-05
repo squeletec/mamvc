@@ -1,7 +1,8 @@
 import {
     form, table, thead, tbody, tr, td, th, a, each, caption, list, not, on, state, string, set, when, inputText, submit,
-    reset, to, XBuilder, channel, span, remote, resolve, last, self
+    reset, to, XBuilder, channel, span, remote, resolve, last, boolean, execute, range
 } from "../mamvc.js";
+import {expander} from "./mamvc-elements.js";
 
 export function pageModel() {
     return state({
@@ -43,12 +44,13 @@ function cell(func, row, c) {
     return c.add(func(row, c))
 }
 
-function row(data, path, index) {
+function row(data, path, index, level) {
     return {
         data: data,
         path: path,
         item() {return resolve(this.data, this.path)},
-        index: index
+        index: index,
+        level: level
     }
 }
 
@@ -110,7 +112,7 @@ export function pageControls(page, result) {
     let lastDisabled = result.last.map(to('silver'))
     let notFirst = not(result.first)
     let notLast = not(result.last)
-    return form().onSubmit(event => page.page.set(parseInt(event.target.page.value) - 1)).add(
+    return form().onSubmit(event => page.set(parseInt(event.target.page.value) - 1)).add(
         a().setClass('paging first-page').color(firstDisabled).add('\u23EE\uFE0E').title('Go to first page').onClick(when(notFirst, set(page, 0))),
         a().setClass('paging prev-page').color(firstDisabled).add('\u23F4\uFE0E').title('Go to previous page').onClick(when(notFirst, set(page, result.number.map(v => v - 1)))),
         span('paging current-page').add('Page: ', inputText('page').width(2, 'em').value(result.number.map(v => v + 1)), ' of ', result.totalPages, ' (rows ', result.pageable.offset.map(v => v + 1), ' - ', on(result.pageable.offset, result.size).apply((a, b) => a + b), ' of ', result.totalElements, ')'),
@@ -146,4 +148,98 @@ export function searchTable(searchCall, page = searchCall.input.page, query = se
 
 export function searchApi(uri) {
     return remote(uri, {query: string(), order: string(), page: state(0), size: state(25)}, pageModel())
+}
+
+
+
+function staticExpand(nodeModel) {
+    return set(nodeModel.children, nodeModel.children.get())
+}
+
+export function nodeExpander(expandCommand, model) {
+    return boolean().onChange(execute(expandCommand, set(model, [])))
+}
+
+class TreeTable extends XBuilder {
+
+    constructor(rootModel, childrenCommand = staticExpand) {
+        super(table().get());
+        this.columnsModel = list().hierarchy()
+        this.columnsModel.onChange(() => rootModel.set(rootModel.get()))
+        this.childrenCommand = childrenCommand
+        let subTree = (parent, index, level = 1) => {
+            let r = tr().add(each(this.columnsModel, column => cell(column.cell, row(parent, column.name, index, level), td())))
+            return parent.hasOwnProperty('children') ? range(
+                r,
+                parent.children,
+                (child, index) => subTree(state(child).hierarchy(), index, level + 1)
+            ) : r
+        }
+        this.add(
+            thead().add(tr().add(each(this.columnsModel, (column, index) => cell(column.cell.header || self.header, row(column.name, column.name, index, -1), th().setClass('header-' + column.name))))),
+            tbody().add(each(rootModel, (item, index) => subTree(state(item).hierarchy(), index))),
+        )
+    }
+
+    treeColumn(name, content = self) {
+        let c = {name: ['item', name], cell: (row, td) => {
+                td.add(span().paddingLeft(row.level, 'em'))
+                return content(row, row.data.hasOwnProperty('children') ? td.add(expander(nodeExpander(this.childrenCommand(row.data, row.level), row.data.children)), ' ') : td, row.level)
+            }}
+        c.cell.header = content.header
+        this.columnsModel.get().push(c)
+        this.columnsModel.set(this.columnsModel.get())
+        return this
+    }
+
+    column(name, content = self) {
+        //let c = (row, t) => content(node.item, t)
+        //c.header = content.header
+        this.columnsModel.get().push({name: ['item', name], cell: content})
+        this.columnsModel.set(this.columnsModel.get())
+        return this
+    }
+
+    columns(def) {
+        let p = (d, ...keys) => {
+            for(let k in d) if(d.hasOwnProperty(k)) {
+                let c = d[k]
+                switch (typeof c) {
+                    case "function": this.columnsModel.get().push({name: [...keys, k], cell: c})
+                        break
+                    case "object": if(!Array.isArray(c)) p(c, ...keys, k)
+                        break
+                }
+            }
+        }
+        p(def, 'item')
+        this.columnsModel.set(this.columnsModel.get())
+        return this
+    }
+}
+
+export function treeTable(channel, childrenModels = staticExpand) {
+    return new TreeTable(channel, childrenModels)
+}
+
+
+export function self(row) {
+    return row.item()
+}
+self.header = row => last(row.path)
+
+export function path(row) {
+    return self(row)
+}
+path.header = row => row.path.join(".")
+
+export function position(row) {
+    return row.index + 1
+}
+position.header = () => '#'
+
+export function named(name, cellFunction) {
+    let f = (row, c) => cellFunction(row, c)
+    f.header = () => name
+    return f
 }

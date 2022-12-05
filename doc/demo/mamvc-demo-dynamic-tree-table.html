@@ -6,15 +6,8 @@
     <link rel="stylesheet" href="mamvc-demo.css"/>
     <script type="module" src="mamvc-demo-runner.js" defer></script>
     <script type="module" id="demoSource" defer>
-import {body, div, channel, get } from "../../mamvc.js";
-import {treeTable} from "../../mamvc-ui.js";
-
-function ch(row) {
-    return row.content
-}
-ch.header = function(name) {
-    return "Custom header"
-}
+import {body, div, channel, get, a } from "../../mamvc.js";
+import {treeTable, named} from "../../mamvc-ui.js";
 
 body().add(div().id('demoOutput').add(
     treeTable(
@@ -22,8 +15,8 @@ body().add(div().id('demoOutput').add(
         nodeModel => get(channel('data/subtree', nodeModel.item.id, '.json').setModel(nodeModel.children))
     )
         .column('id')
-        .treeColumn('name')
-        .column('content', ch)
+        .treeColumn('name', row => a().add(row.item()))
+        .column('content', named("Custom header", row => row.content))
 ))
     </script>
 </head>

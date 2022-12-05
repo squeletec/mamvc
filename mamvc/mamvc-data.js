@@ -25,7 +25,7 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {concat, isState, state, boolean} from "./mamvc-state.js";
+import {concat, isState, state, boolean, string} from "./mamvc-state.js";
 
 const SUCCESS_STATUSES = new Set([200, 0])
 
@@ -88,34 +88,41 @@ export function channel(...uri) {
     return new Channel(concat(...uri))
 }
 
-function setArg(value, args, i, rest) {
+function setArg(value, args, i, result) {
     return isState(value) ? value.onChange(v => {
         args[i] = v
-        rest.call()
+        result.set(args.join(''))
     }, false).get() : value
 }
 
+export function uriModel(template, input) {
+    let used = new Set()
+    let args = template.split(/\{([^}]+)}/)
+    let result = string()
+    for(let i = 1; i < args.length; i += 2) {
+        let name = args[i]
+        if(input.hasOwnProperty(name)) {
+            args[i] = setArg(input[name], args, i, result)
+            used.add(name)
+        }
+        else throw new Error('Parameter ' + name + ' not bound.')
+    }
+    let sep = template.indexOf("?") < 0 ? "?" : "&"
+    for(let name in input) if(input.hasOwnProperty(name) && !used.has(name)) {
+        args.push(sep + name + "=")
+        args.push(setArg(input[name], args, args.length, this))
+        sep = "&"
+    }
+    return result.set(args.join(''))
+}
+
 class RestCall {
-    constructor(input, template, output, loading) {
+    constructor(template, input, output, loading) {
         this.input = input
         this.output = output
         this.error = state()
         this.loading = loading
-        this.args = template.split(/\{([^}]+)}/)
-        let used = new Set()
-        for(let i = 1; i < this.args.length; i += 2) {
-            let name = this.args[i]
-            if(input.hasOwnProperty(name)) {
-                this.args[i] = setArg(input[name], this.args, i, this)
-                used.add(name)
-            }
-            else throw new Error('Parameter ' + name + ' not bound.')
-        }
-        let sep = template.indexOf("?") < 0 ? "?" : "&"
-        for(let name in input) if(input.hasOwnProperty(name) && !used.has(name)) {
-            this.args.push(sep + name, setArg(input[name], this.args, this.args.length, this))
-            sep = "&"
-        }
+        this.uri = uriModel(template, input).onChange(() => this.call(), false)
     }
 
     set(value) {
@@ -125,7 +132,7 @@ class RestCall {
 
     call() {
         this.loading.set(true)
-        fetch(this.args.join('')).then(r => r.json()).then(r => this.output.set(r))
+        fetch(this.uri.get()).then(r => r.json()).then(r => this.output.set(r))
         return this
     }
 
@@ -136,7 +143,7 @@ class RestCall {
 }
 
 export function remote(template, input, output = state(), loading = boolean()) {
-    return new RestCall(input, template, output, loading)
+    return new RestCall(template, input, output, loading)
 }
 
 export function resolve(object, propertyNames) {

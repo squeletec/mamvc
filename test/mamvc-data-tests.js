@@ -1,4 +1,4 @@
-import {state, div, text, channel} from "../mamvc.js"
+import {state, div, text, channel, remote, uriModel} from "../mamvc.js"
 import {suite, assertState } from "./mamvc-test-runner.js";
 
 
@@ -19,4 +19,8 @@ suite({
         assertState(myState, "OK")
     },
 
+    async testUriModel() {
+        let m = uriModel("uri/{id}/x.html", {id: state(1), page: state(0)})
+        assertState(m, "uri/1/x.html?page=0")
+    }
 })

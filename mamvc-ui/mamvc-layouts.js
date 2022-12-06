@@ -1,8 +1,8 @@
 import {div} from "../mamvc.js";
 
-export function mainWithSidebar(mainContent, sidebarContent) {
+export function mainWithSidebar(mainContent, ...sidebarContent) {
     return div().display('flex').add(
-        div('sidebar').add(sidebarContent),
-        div().flex('auto').add(mainContent)
+        div('sidebar').add(...sidebarContent),
+        mainContent.flex('auto')
     )
 }

@@ -89,7 +89,7 @@ export function channel(...uri) {
 }
 
 function setArg(value, args, i, result) {
-    return isState(value) ? value.onChange(v => {
+    return isState(value) ? value.map(encodeURIComponent).onChange(v => {
         args[i] = v
         result.set(args.join(''))
     }, false).get() : value

@@ -119,10 +119,18 @@ export function uriModel(template, input) {
 class RestCall {
     constructor(template, input, output, loading) {
         this.input = input
+        this.data = null
         this.output = output
         this.error = string()
         this.loading = loading
         this.uri = uriModel(template, input).onChange(() => this.call(), false)
+    }
+
+    setPostData(data, sendOnChange = true) {
+        this.data = data
+        if(sendOnChange)
+            this.data.onChange(() => this.call(), false)
+        return this
     }
 
     set(value) {
@@ -138,7 +146,11 @@ class RestCall {
     call() {
         this.loading.set(true)
         this.error.set('')
-        fetch(this.uri.get()).then(r => r.ok
+        fetch(this.uri.get(), this.data ? {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(this.data.get())
+        } : {}).then(r => r.ok
             ? r.json().then(r => this.output.set(r))
             : r.headers.get('Content-Type').indexOf('json') < 0
                 ? this.setError(r.statusText)
@@ -153,7 +165,7 @@ class RestCall {
     }
 }
 
-export function remote(template, input, output = state(), loading = boolean()) {
+export function remote(template, input = {}, output = state(), loading = boolean()) {
     return new RestCall(template, input, output, loading)
 }
 

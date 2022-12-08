@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="mamvc-demo.css"/>
+    <script type="module" src="mamvc-demo-runner.js" defer></script>
+<script type="module" id="demoSource" defer>
+
+    import {state, remote } from "../../mamvc.js"
+
+    let data = state()
+
+    remote("data/items.json").setPostData(data)
+
+    data.set({
+        id: 32,
+        name: "Josh",
+        surname: "Eagle"
+    })
+
+</script>
+</head>
+<body>
+</body>
+</html>

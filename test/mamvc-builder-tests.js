@@ -30,6 +30,10 @@ suite({
         assert(i.get().value, 'A')
         myState.set('B')
         assert(i.get().value, 'B')
+    },
+
+    testAddClass() {
+        assert(div("a").addClass(" b").get().className, "a b")
     }
 
 })

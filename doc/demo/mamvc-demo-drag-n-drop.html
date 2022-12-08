@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="mamvc-demo.css"/>
+    <script type="module" src="mamvc-demo-runner.js" defer></script>
+<script type="module" id="demoSource" defer>
+
+    import {body, div, state } from "../../mamvc.js"
+
+    let transfer = state()
+
+    body().add(div().id('demoOutput').add(
+        div("d-n-d").add("Drag me").transfer(transfer, "Me"),
+        div("space"),
+        div("d-n-d").add("Drop here").receive(transfer, () => alert("Received: " + transfer.get()), "target", "droppable")
+    ))
+
+</script>
+</head>
+<body>
+</body>
+</html>

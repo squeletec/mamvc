@@ -30,7 +30,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 Micro Ajax MVC library.
 
  */
-import { isState, concat, falseTo, to } from "./mamvc-state.js";
+import { isState, concat, boolean, falseTo, to, join } from "./mamvc-state.js";
 import { set } from "./mamvc-command.js"
 
 /**
@@ -110,6 +110,7 @@ export class XBuilder extends XNode {
      */
     constructor(node) {
         super(node);
+        this.classArgs = []
     }
 
     /*
@@ -149,7 +150,8 @@ export class XBuilder extends XNode {
         }, args)
     }
 
-    setClass(...value) {return this.set('class', ...value)}
+    setClass(...value) {return this.set('class', join(' ', ...(this.classArgs = value)))}
+    addClass(...value) {return this.setClass(...this.classArgs.concat(...value))}
     id(...value) {return this.set('id', ...value)}
     name(...value) {return this.set('name', ...value)}
     title(...value) {return this.set('title', ...value)}
@@ -284,13 +286,23 @@ export class XBuilder extends XNode {
         return this.draggable(true).cursor('grab').onDragstart(set(channel, data)).onDragend(set(channel, null))
     }
 
-    receive(channel, action) {
-        return this.onDragover(e => null !== channel.get() && e.preventDefault()).onDrop(() => null != channel.get() && action(channel.get()))
+    receive(channel, action, dragStartClass, dragOverClass) {
+        return this
+            .onDragover(e => null !== channel.get() && e.preventDefault())
+            .onDrop(() => null != channel.get() && action(channel.get()))
+            .receivingClasses(channel, dragStartClass, dragOverClass)
     }
 
     receiving(channel, model) {
         channel.onChange(value => value || model.set(false))
         return this.onDragover(() => channel.get() && model.set(true)).onDragleave(set(model, false))
+    }
+
+    receivingClasses(channel, dragStartClass, dragOverClass) {
+        let indication = boolean()
+        if(dragStartClass) this.addClass(channel.map(to(dragStartClass)))
+        if(dragOverClass) this.addClass(indication.map(to(" " + dragOverClass)))
+        return this.receiving(channel, indication)
     }
 
     /*

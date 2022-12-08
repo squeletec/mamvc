@@ -126,7 +126,11 @@ export function on(...parameters) {
 }
 
 export function concat(...parameters) {
-    return on(...parameters).apply((...p) => p.join(''))
+    return join('', ...parameters)
+}
+
+export function join(separator, ...parameters) {
+    return on(...parameters).apply((...p) => p.join(separator))
 }
 
 export function fill(name, parameter) {

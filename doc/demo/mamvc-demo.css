@@ -80,3 +80,21 @@ caption.error {
     background-color: bisque;
     font-family: monospace;
 }
+
+.d-n-d {
+    display: inline-block;
+    border: 2px solid silver;
+    padding: 5px;
+}
+
+.target {
+    border-color: lightgreen;
+}
+
+.droppable {
+    border-color: green;
+}
+
+.space {
+    height: 3em;
+}

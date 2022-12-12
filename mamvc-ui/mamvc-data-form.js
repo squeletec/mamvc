@@ -1,4 +1,4 @@
-import {form, call, a, state} from "../mamvc.js";
+import {form, call, a, state} from "../trio.js";
 
 function merge(object, form) {
     return object

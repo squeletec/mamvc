@@ -1,4 +1,4 @@
-import {state, boolean, set, toggle, when} from "../mamvc.js"
+import {state, boolean, set, toggle, when} from "../trio.js"
 import {suite, assertState } from "./mamvc-test-runner.js";
 
 

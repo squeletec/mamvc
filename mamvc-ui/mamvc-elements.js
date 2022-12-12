@@ -1,4 +1,4 @@
-import {to, span, toggle, div, on, boolean, when, falseTo} from "../mamvc.js";
+import {to, span, toggle, div, on, boolean, when, falseTo} from "../trio.js";
 
 export function expander(model, enabled = boolean(true)) {
     return span().display('inline-block').cursor('pointer')

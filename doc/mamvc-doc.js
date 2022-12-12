@@ -1,4 +1,4 @@
-import {div, h1, h2, h3, a, pre, XNode} from "../mamvc.js";
+import {div, h1, h2, h3, a, pre, XNode} from "../trio.js";
 
 export function doc(name) {
     return div('document').add(h1().add(name))

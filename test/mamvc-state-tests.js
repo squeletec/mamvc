@@ -1,4 +1,4 @@
-import {state, boolean, concat, fill } from "../mamvc.js"
+import {state, boolean, concat, fill } from "../trio.js"
 import {suite, assert, assertState } from "./mamvc-test-runner.js";
 
 

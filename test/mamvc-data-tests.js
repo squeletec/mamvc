@@ -1,4 +1,4 @@
-import {state, div, text, channel, remote, uriModel} from "../mamvc.js"
+import {state, div, text, channel, remote, uriModel} from "../trio.js"
 import {suite, assertState } from "./mamvc-test-runner.js";
 
 

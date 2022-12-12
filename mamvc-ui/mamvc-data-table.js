@@ -1,7 +1,7 @@
 import {
     form, table, thead, tbody, tr, td, th, a, each, caption, list, not, on, state, string, set, when, inputText, submit,
     reset, to, XBuilder, channel, span, remote, resolve, last, boolean, execute, range, captionTop, captionBottom
-} from "../mamvc.js";
+} from "../trio.js";
 import {expander} from "./mamvc-elements.js";
 
 export function pageModel() {

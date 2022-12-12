@@ -1,4 +1,4 @@
-import {state, div, text, inputText} from "../mamvc.js"
+import {state, div, text, inputText} from "../trio.js"
 import {suite, assert } from "./mamvc-test-runner.js";
 
 

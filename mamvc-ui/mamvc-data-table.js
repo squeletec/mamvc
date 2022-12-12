@@ -151,8 +151,8 @@ export function searchTable(searchCall, page = searchCall.input.page, query = se
     //return pageTable(searchCall, page, result)
 }
 
-export function searchApi(uri) {
-    return remote(uri, {query: string(), order: string(), page: state(0), size: state(25)}, pageModel())
+export function searchApi(uri, input = {query: string(), order: string(), page: state(0), size: state(25)}) {
+    return remote(uri, input, pageModel())
 }
 
 

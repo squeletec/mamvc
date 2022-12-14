@@ -12,12 +12,20 @@ suite({
         assert(Object.entries(parsedUri.parameters).length, 0)
     },
 
+    testDecodeValue() {
+        let parsedUri = parseUri('https://host/path/file.html?query=b%3D"x"')
+        assert(parsedUri.path, 'https://host/path/file.html')
+        assert(parsedUri.parameters.query, 'b="x"')
+    },
+
     testParseUriWithOneParameters() {
         let parsedUri = parseUri('https://host/path/file.html?arg1=val1')
         assert(parsedUri.path, 'https://host/path/file.html')
         assert(parsedUri.parameters.arg1, 'val1')
         assert(parsedUri.parameters.arg2, undefined)
         assert(Object.entries(parsedUri.parameters).length, 1)
+
+        //table.html?query=b%3D"x"
     },
 
     testParseUriWithParameters() {

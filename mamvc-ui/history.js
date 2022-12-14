@@ -4,7 +4,7 @@ export function parseUri(uri) {
     let u = uri.split('?', 2)
     return {
         path: u[0],
-        parameters: u[1] ? Object.fromEntries(u[1].split('&').map(v => v.split('=', 2))) : {}
+        parameters: u[1] ? Object.fromEntries(u[1].split('&').map(v => v.split('=', 2)).map(([k,v]) => [k,decodeURIComponent(v)])) : {}
     }
 }
 
@@ -45,7 +45,7 @@ export function pushStates(locationModel, defaultValues, serializableStates) {
         allowPush = false
         let parsedUri = parseUri(window.location.toString())
         for(let name in serializableStates) if(serializableStates.hasOwnProperty(name)) {
-            serializableStates[name].set(parseParam(parsedUri.parameters, name, defaultValues[name]))
+            serializableStates[name].update(parseParam(parsedUri.parameters, name, defaultValues[name]))
         }
         allowPush = true
     })

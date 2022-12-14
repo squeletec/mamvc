@@ -16,7 +16,8 @@ body().add(
         item('Tree table loading subtrees via rest API on expansion', 'dynamic-tree-table'),
         item('Layout with sidebar', 'layout-sidebar'),
         item("Drag'n'drop", 'drag-n-drop'),
-        item("Post channel", "post-channel")
+        item("Post channel", "post-channel"),
+        item("Data form", "data-form")
     ),
     h1().add(a('index.html').title('Back to list of all examples').add('<'), ' Demo'),
     pre().id('demoSourceView').add(byId("demoSource").get().outerHTML)

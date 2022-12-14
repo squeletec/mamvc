@@ -1,6 +1,7 @@
 import {form, call, a, state} from "../trio.js";
 
 function merge(object, form) {
+    Object.entries(form.elements).filter(([k,v],i) => k !== '' + i).forEach(([k,v]) => object[k] = v.value)
     return object
 }
 

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="demo.css"/>
+    <script type="module" src="demo-runner.js" defer></script>
+<script type="module" id="demoSource" defer>
+
+    import {body, div, remote, inputText, state, submit, checkbox, option, radio, select, br } from "../../trio.js"
+    import {dataForm} from "../../rap/data-form.js";
+
+    let api = remote('aaa', {}).setPostData(state({name:'',value:''}))
+    body().add(dataForm(api).add(
+        div().add(inputText('name')),
+        inputText('value'), br(),
+        checkbox('check'), br(),
+        select("selection").add(
+            option("a").add("a"),
+            option("b").add("b")
+        ), br(),
+        radio("radio").set('value', 1), br(),
+        radio("radio").set('value', 2), br(),
+        submit('Submit')
+    ))
+
+</script>
+</head>
+<body>
+</body>
+</html>

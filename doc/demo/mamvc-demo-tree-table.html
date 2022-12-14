@@ -7,8 +7,8 @@
     <script type="module" src="mamvc-demo-runner.js" defer></script>
     <script type="module" id="demoSource" defer>
 
-    import {body, div, channel } from "../../mamvc.js";
-    import {treeTable} from "../../mamvc-ui.js";
+    import {body, div, channel } from "../../trio.js";
+    import {treeTable} from "../../rap.js";
 
     body().add(div().id('demoOutput').add(
         treeTable(channel('data/tree.json').set([]).get().model())

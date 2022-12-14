@@ -33,7 +33,7 @@ suite({
     },
 
     testAddClass() {
-        assert(div("a").addClass(" b").get().className, "a b")
+        assert(div("a").addClass("b").get().className, "a b")
     }
 
 })

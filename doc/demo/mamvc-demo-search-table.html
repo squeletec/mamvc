@@ -7,11 +7,11 @@
     <script type="module" src="mamvc-demo-runner.js" defer></script>
 <script type="module" id="demoSource" defer>
 
-    import {body, div } from "../../mamvc.js"
-    import {searchTable, position, searchApi} from "../../mamvc-ui.js"
+    import {body, div } from "../../trio.js"
+    import {searchTable, position, searchApi, serialize} from "../../rap.js"
 
     body().add(div().id('demoOutput').add(
-        searchTable(searchApi("data/page{page}.json").call())
+        searchTable(searchApi("data/page{page}.json", serialize({query:'', size:25,page:0,order:''})).call())
             .column('pos', position)
             .column('id')
             .column('name')

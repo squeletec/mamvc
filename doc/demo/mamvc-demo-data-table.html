@@ -7,8 +7,8 @@
     <script type="module" src="mamvc-demo-runner.js" defer></script>
 <script type="module" id="demoSource" defer>
 
-    import {body, div } from "../../mamvc.js"
-    import {pageTable, position, pageApi} from "../../mamvc-ui.js"
+    import {body, div } from "../../trio.js"
+    import {pageTable, position, pageApi} from "../../rap.js"
 
     body().add(div().id('demoOutput').add(
         pageTable(pageApi('data/page{page}.json').call())

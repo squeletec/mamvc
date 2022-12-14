@@ -1,4 +1,4 @@
-import { ul, li, byId, body, a, h1, div, pre } from "../../mamvc.js"
+import { ul, li, byId, body, a, h1, div, pre } from "../../trio.js"
 
 function item(name, href) {
     return li().add(a('mamvc-demo-' + href + '.html').add(name))

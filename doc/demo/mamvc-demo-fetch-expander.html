@@ -7,8 +7,8 @@
     <script type="module" src="mamvc-demo-runner.js" defer></script>
 <script type="module" id="demoSource" defer>
 
-    import { boolean, table, range, tbody, td, tr, body, div, channel, get, set, execute, not } from "../../mamvc.js";
-    import {expander, nodeExpander} from "../../mamvc-ui.js";
+    import { boolean, table, range, tbody, td, tr, body, div, channel, get, set, execute, not } from "../../trio.js";
+    import {expander, nodeExpander} from "../../rap.js";
 
     let items = channel('data/items.json').set([])
     let expanded = nodeExpander(get(items), items.model())

@@ -1,6 +1,6 @@
-import * as m from "../../mamvc.js"
+import * as m from "../../trio.js"
 import {doc, method, section, description, parameter, example} from "../mamvc-doc.js"
-import {code} from "../../mamvc.js";
+import {code} from "../../trio.js";
 
 m.body().add(
     doc('Document builder API').add(

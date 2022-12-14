@@ -30,8 +30,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 Micro Ajax MVC library.
 
  */
-import { isState } from "./mamvc-state.js";
-import { XNode } from "./mamvc-builder.js";
+import { isState } from "./state.js";
+import { XNode } from "./builder.js";
 
 /*
 Commands

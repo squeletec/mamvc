@@ -1,5 +1,5 @@
 import {state, div, text, inputText} from "../trio.js"
-import {suite, assert } from "./mamvc-test-runner.js";
+import {suite, assert } from "./test-runner.js";
 
 
 suite({

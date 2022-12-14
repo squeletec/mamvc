@@ -1,5 +1,5 @@
-import {locationModel, parseUri, toModels} from "../mamvc-ui/history.js"
-import {suite, assert, assertState} from "./mamvc-test-runner.js";
+import {locationModel, parseUri, toModels} from "../rap/history.js"
+import {suite, assert, assertState} from "./test-runner.js";
 
 
 suite({

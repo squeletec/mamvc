@@ -2,7 +2,7 @@ import {
     form, table, thead, tbody, tr, td, th, a, each, caption, list, not, on, state, string, set, when, inputText, submit,
     reset, to, XBuilder, channel, span, remote, resolve, last, boolean, execute, range, captionTop, captionBottom
 } from "../trio.js";
-import {expander} from "./mamvc-elements.js";
+import {expander} from "./elements.js";
 
 export function pageModel() {
     return state({

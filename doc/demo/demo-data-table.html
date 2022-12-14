@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <link rel="stylesheet" href="mamvc-demo.css"/>
-    <script type="module" src="mamvc-demo-runner.js" defer></script>
+    <link rel="stylesheet" href="demo.css"/>
+    <script type="module" src="demo-runner.js" defer></script>
 <script type="module" id="demoSource" defer>
 
     import {body, div } from "../../trio.js"
-    import {searchTable, position, searchApi, serialize} from "../../rap.js"
+    import {pageTable, position, pageApi} from "../../rap.js"
 
     body().add(div().id('demoOutput').add(
-        searchTable(searchApi("data/page{page}.json", serialize({query:'', size:25,page:0,order:''})).call())
+        pageTable(pageApi('data/page{page}.json').call())
             .column('pos', position)
             .column('id')
             .column('name')

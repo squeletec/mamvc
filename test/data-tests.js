@@ -1,5 +1,5 @@
 import {state, div, text, channel, remote, uriModel} from "../trio.js"
-import {suite, assertState } from "./mamvc-test-runner.js";
+import {suite, assertState } from "./test-runner.js";
 
 
 suite({

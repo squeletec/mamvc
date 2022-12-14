@@ -30,8 +30,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 Micro Ajax MVC library.
 
  */
-import { isState, concat, boolean, falseTo, to, join } from "./mamvc-state.js";
-import { set } from "./mamvc-command.js"
+import { isState, concat, boolean, falseTo, to, join } from "./state.js";
+import { set } from "./command.js"
 
 /**
  * Class UI Element is a wrapper for DOM element, marking, that such object has a DOM element representing it's

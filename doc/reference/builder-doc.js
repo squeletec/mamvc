@@ -1,5 +1,5 @@
 import * as m from "../../trio.js"
-import {doc, method, section, description, parameter, example} from "../mamvc-doc.js"
+import {doc, method, section, description, parameter, example} from "../doc.js"
 import {code} from "../../trio.js";
 
 m.body().add(

@@ -115,7 +115,7 @@ export function pageControls(page, result) {
     return form().onSubmit(event => page.set(parseInt(event.target.page.value) - 1)).add(
         a().setClass('paging first-page').color(firstDisabled).add('\u23EE\uFE0E').title('Go to first page').onClick(when(notFirst, set(page, 0))),
         a().setClass('paging prev-page').color(firstDisabled).add('\u23F4\uFE0E').title('Go to previous page').onClick(when(notFirst, set(page, result.number.map(v => v - 1)))),
-        span('paging current-page').add('Page: ', inputText('page').width(2, 'em').value(result.number.map(v => v + 1)), ' of ', result.totalPages, ' (rows ', result.pageable.offset.map(v => v + 1), ' - ', on(result.pageable.offset, result.size).apply((a, b) => a + b), ' of ', result.totalElements, ')'),
+        span('paging current-page').add('Page: ', inputText('page').width(2, 'em').value(result.map(v => v.numberOfElements > 0 ? v.number + 1 : 0)), ' of ', result.totalPages, ' (rows ', result.pageable.offset.map(v => v + 1), ' - ', on(result.pageable.offset, result.numberOfElements).apply((a, b) => a + b), ' of ', result.totalElements, ')'),
         a().setClass('paging next-page').color(lastDisabled).add('\u23F5\uFE0E').title('Go to next page').onClick(when(notLast, set(page, result.number.map(v => v + 1)))),
         a().setClass('paging last-page').color(lastDisabled).add('\u23ED\uFE0E').title('Go to last page').onClick(when(notLast, set(page, result.totalPages.map(v => v - 1)))),
         a().setClass('paging reload-page').add('\u21BB').title('Reload page').onClick(set(page, page))

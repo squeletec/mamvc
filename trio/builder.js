@@ -392,7 +392,7 @@ export function range(start, model, itemView = item => item, end = xText('')) {
             s = n.nextSibling
             builder(n).remove()
         }
-        (Array.isArray(value) ? value : [value]).forEach((item, index) => end.prepend(itemView(item, index)))
+        (Array.isArray(value) ? value : null === value ? [] : [value]).forEach((item, index) => end.prepend(itemView(item, index)))
     })
     return f
 }

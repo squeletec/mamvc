@@ -3,6 +3,8 @@
     margin: 10px;
     padding: 10px;
     border: 1px solid grey;
+    width: 95%;
+    overflow-x: auto;
 /*    box-shadow: 3px 3px 10px silver;*/
 }
 

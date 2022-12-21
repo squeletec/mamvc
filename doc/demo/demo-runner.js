@@ -5,7 +5,7 @@ function item(name, href) {
 }
 
 body().add(
-    ul().float('right').add(
+    ul().setClass('list').add(
         item('State view', 'stateview'),
         item('Expander', 'expander'),
         item('Dialog', 'dialog'),

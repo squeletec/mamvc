@@ -1,8 +1,12 @@
-import { ul, li, byId, body, a, h1, div, pre } from "../../trio.js"
+import { ul, li, byId, head, body, meta, a, h1, div, pre } from "../../trio.js"
 
 function item(name, href) {
     return li().add(a('demo-' + href + '.html').add(name))
 }
+
+head().add(
+    meta('viewport').content('width=device-width, initial-scale=1.0')
+)
 
 body().add(
     ul().setClass('list').add(

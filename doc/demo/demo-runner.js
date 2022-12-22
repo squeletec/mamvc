@@ -17,7 +17,7 @@ head().add(
 )
 
 body().add(
-    div('stripe').add(''),
+    div('stripe').add('RAP Examples'),
     div('nav').add(
         a('').add('< Prev'),
         a('index.html').add('^ Up'),

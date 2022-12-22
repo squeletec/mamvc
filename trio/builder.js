@@ -172,6 +172,7 @@ export class XBuilder extends XNode {
     autocomplete(...value) {return this.set('autocomplete', ...value)}
     checked(value) {return this.set('checked', value)}
     disabled(value) {return this.set('disabled', isState(value) ? value.map(to(true)) : value)}
+    content(...value) {return this.set('content', ...value)}
 
     /*
       Manipulation of Element style properties

@@ -8,7 +8,9 @@ let examples = [
     ['search-table', 'Search data table'],
     ['data-table-struct', 'Data table with nested structure'],
     ['tree-table', 'Tree table'],
-    ['dynamic-tree-table', 'Tree table loading node children dynamically']
+    ['dynamic-tree-table', 'Tree table loading node children dynamically'],
+    ['layout-sidebar', 'Layout with sidebar'],
+    ['drag-n-drop', 'Drag and drop']
 ]
 
 let positions = Object.fromEntries(examples.map(([v,k], i) => ['demo-' + v + '.html', i]))
@@ -36,16 +38,7 @@ body().add(
     ul().display(displayList).setClass('list').add(
         ...examples.map(([k,v]) => item(v, k))
         /*
-        item('State view', 'stateview'),
-        item('Expander', 'expander'),
-        item('Dialog', 'dialog'),
-        item('Simple data table', 'data-table'),
-        item('Search data table', 'search-table'),
-        item('Nested structure table', 'data-table-struct'),
-        item('Tree table', 'tree-table'),
         item('Tree table loading subtrees via rest API on expansion', 'dynamic-tree-table'),
-        item('Layout with sidebar', 'layout-sidebar'),
-        item("Drag'n'drop", 'drag-n-drop'),
         item("Post channel", "post-channel"),
         item("Data form", "data-form")*/
     ),

@@ -119,6 +119,10 @@ caption.error {
     filter: saturation(1.3);
 }
 
+.nav a:not([href]) {
+    background-color: silver;
+}
+
 .stripe {
     background-color: cornflowerblue;
     padding: 4px;

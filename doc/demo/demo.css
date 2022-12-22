@@ -100,3 +100,18 @@ caption.error {
 .space {
     height: 3em;
 }
+
+.nav a {
+    background-color: cornflowerblue;
+    border-radius: 5px;
+    color: white;
+    border: 1px solid blue;
+    padding: 4px;
+    margin: 4px;
+}
+
+.stripe {
+    background-color: cornflowerblue;
+    padding: 4px;
+    margin-bottom: 0.5em;
+}

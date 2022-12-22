@@ -1,4 +1,12 @@
-import { ul, li, byId, head, body, meta, a, h1, div, pre } from "../../trio.js"
+import { ul, li, byId, head, body, meta, a, h1, div, pre, boolean, toggle } from "../../trio.js"
+
+let examples = {
+    stateview: 'State view',
+    expander: 'Expander',
+    dialog: 'Dialog'
+}
+
+let displayList = boolean()
 
 function item(name, href) {
     return li().add(a('demo-' + href + '.html').add(name))
@@ -9,7 +17,14 @@ head().add(
 )
 
 body().add(
-    ul().setClass('list').add(
+    div('stripe').add(''),
+    div('nav').add(
+        a('').add('< Prev'),
+        a('index.html').add('^ Up'),
+        a().onClick(toggle(displayList)).add('...'),
+        a('').add('Next >')
+    ),
+    ul().display(displayList).setClass('list').add(
         item('State view', 'stateview'),
         item('Expander', 'expander'),
         item('Dialog', 'dialog'),
@@ -23,7 +38,7 @@ body().add(
         item("Post channel", "post-channel"),
         item("Data form", "data-form")
     ),
-    h1().add(a('index.html').title('Back to list of all examples').add('<'), ' Demo'),
+    h1().add(' demo'),
     pre().id('demoSourceView').add(byId("demoSource").get().outerHTML)
 )
 

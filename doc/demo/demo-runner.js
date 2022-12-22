@@ -28,10 +28,10 @@ head().add(
 body().add(
     div('stripe').add('RAP Examples'),
     div('nav').add(
-        a(p > 0 ? examples[p - 1] : null).add('< Prev'),
+        a(p > 0 ? 'demo-' + examples[p - 1][0] + '.html' : null).add('< Prev'),
         a('index.html').add('^ Up'),
         a().onClick(toggle(displayList)).add('...'),
-        a(p < examples.length - 1 ? examples[p + 1] : null).add('Next >')
+        a(p < examples.length - 1 ? 'demo-' + examples[p + 1][0] + '.html' : null).add('Next >')
     ),
     ul().display(displayList).setClass('list').add(
         ...examples.map(([k,v]) => item(v, k))

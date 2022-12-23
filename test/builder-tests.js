@@ -1,4 +1,4 @@
-import {state, div, text, inputText} from "../trio.js"
+import {state, div, a, text, inputText} from "../trio.js"
 import {suite, assert } from "./test-runner.js";
 
 

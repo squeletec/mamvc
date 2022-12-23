@@ -127,4 +127,9 @@ caption.error {
     background-color: cornflowerblue;
     padding: 4px;
     margin-bottom: 0.5em;
+    background-color: white;
+}
+
+h1 {
+    padding: 5px;
 }

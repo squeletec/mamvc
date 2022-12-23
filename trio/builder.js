@@ -134,7 +134,7 @@ export class XBuilder extends XNode {
     }
 
     _manipulate(f, args) {
-        let value = concat(...args)
+        let value = args.length === 1 ? args[0] : concat(...args)
         if(isState(value)) value.onChange(f)
         else f(value)
         return this

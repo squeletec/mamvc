@@ -34,6 +34,9 @@ suite({
 
     testAddClass() {
         assert(div("a").addClass("b").get().className, "a b")
-    }
+    },
 
+    testNullProperty() {
+        assert(a(null).get().hasAttribute('href'), false)
+    }
 })

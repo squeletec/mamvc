@@ -2,13 +2,14 @@
 body {
     font-family: Arial, serif;
     font-size: 10pt;
+    margin: 0;
+    pading: 3px;
 }
 
 table {
     width: 100%;
     border: 1px solid silver;
     border-collapse: collapse;
-    margin: 1em;
     box-sizing: border-box;
 }
 

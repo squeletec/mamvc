@@ -83,6 +83,30 @@ class State {
 
 }
 
+class AccumulatingState extends State {
+    accumulating = false
+    stack = []
+
+    constructor(value) {
+        super(value)
+    }
+
+    set(value) {
+        if(this.accumulating)
+            this.stack.push(() => super.set(value), this)
+        else
+            super.set(value)
+    }
+
+    accumulate() {
+        let stack = this.stack
+        while(stack.length > 0) {
+            let ch = stack.pop(2)
+            if(!visited(ch[0])) ch[1]()
+        }
+    }
+}
+
 export function isState(variable) {
     return variable instanceof State
 }

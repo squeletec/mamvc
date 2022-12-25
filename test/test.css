@@ -5,16 +5,17 @@ body {
 }
 
 table {
-    width: 90%;
+    width: 100%;
     border: 1px solid silver;
     border-collapse: collapse;
     margin: 1em;
+    box-sizing: border-box;
 }
 
 th, td {
     text-align: left;
     border: 1px solid silver;
-    padding-left: 1em;
+    padding: 3px;
 }
 
 thead {

@@ -1,4 +1,4 @@
-import {state} from "../trio.js"
+import {state, accumulatingState, batch} from "../trio.js"
 
 export function parseUri(uri) {
     let u = uri.split('?', 2)
@@ -20,12 +20,12 @@ export function parseParam(parameters, name, defaultValue) {
 }
 
 export function toModels(parsedUri, defaultValues) {
-    return Object.fromEntries(Object.entries(defaultValues).map(([k,v]) => [k, state(parseParam(parsedUri.parameters, k, v))]))
+    return batch(() => Object.fromEntries(Object.entries(defaultValues).map(([k,v]) => [k, state(parseParam(parsedUri.parameters, k, v))])))
 }
 
 export function locationModel(parsedUri, defaultValues, serializableStates = toModels(parsedUri, defaultValues)) {
     let args = {}
-    let argsModel = state()
+    let argsModel = accumulatingState()
     Object.entries(serializableStates).forEach(([k,v],i) => {
         v.onChange(nv => {
             args[k] = nv === defaultValues[k] ? null : nv

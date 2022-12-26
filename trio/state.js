@@ -84,27 +84,36 @@ class State {
 }
 
 class AccumulatingState extends State {
-    accumulating = false
-    stack = []
+    static stack = null
 
     constructor(value) {
         super(value)
     }
 
     set(value) {
-        if(this.accumulating)
+        if(Array.isArray(AccumulatingState.stack))
             this.stack.push(() => super.set(value), this)
         else
             super.set(value)
     }
+}
 
-    accumulate() {
-        let stack = this.stack
-        while(stack.length > 0) {
-            let ch = stack.pop(2)
-            if(!visited(ch[0])) ch[1]()
-        }
+export function batch(changes) {
+    let stack = AccumulatingState.stack = []
+    let visited = new Set()
+    let result = changes()
+    while(stack.length > 0) {
+        let state = stack.pop()
+        let change = stack.pop()
+        if(!visited.has(state))
+            visited.add(change())
     }
+    AccumulatingState.stack = null
+    return result
+}
+
+export function accumulatingState(value = null) {
+    return new AccumulatingState(value)
 }
 
 export function isState(variable) {
@@ -140,7 +149,7 @@ export function execute(trueCommand, falseCommand) {
 }
 
 export function on(...parameters) {
-    return {apply(f, result = state()) {
+    return {apply(f, result = accumulatingState()) {
         let args = parameters.map((p, i) => isState(p) ? p.onChange(value => {
             args[i] = value
             result.set(f(...args))

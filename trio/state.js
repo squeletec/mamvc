@@ -96,6 +96,7 @@ class AccumulatingState extends State {
             this.stack.push(() => super.set(value), this)
         else
             super.set(value)
+        return this
     }
 }
 

@@ -75,8 +75,9 @@ class State {
         return on(this, state).apply((a, b) => a || b)
     }
 
-    onChange(observer, trigger = true) {
-        this._observers.push(observer)
+    onChange(observer, trigger = true, push = true) {
+        if(push) this._observers.push(observer)
+        else this._observers.unshift(observer)
         if(trigger) observer(this._value)
         return this
     }

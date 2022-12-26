@@ -143,7 +143,7 @@ export function searchControls(query) {
 }
 
 export function searchTable(searchCall, page = searchCall.input.page, query = searchCall.input.query, result = searchCall.output) {
-    query.onChange(() => page.set(0))
+    query.onChange(() => page.set(0), false, false)
     return dataTable(result.map(v => v.content), result.pageable.offset).add(
         captionTop().setClass('search').textLeft().nowrap().add(searchControls(query)),
         captionTop().setClass('error').textLeft().nowrap().add(searchCall.error),

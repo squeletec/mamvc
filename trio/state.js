@@ -85,23 +85,17 @@ class State {
 }
 
 class AccumulatingState extends State {
-    static stack = null
-
     constructor(value) {
         super(value)
-    }
-
-    set(value) {
-        if(Array.isArray(AccumulatingState.stack))
-            this.stack.push(() => super.set(value), this)
-        else
-            super.set(value)
-        return this
     }
 }
 
 export function batch(changes) {
-    let stack = AccumulatingState.stack = []
+    let stack = []
+    AccumulatingState.prototype.set = function(value) {
+        stack.push(() => State.prototype.set.call(this, value), this)
+        return this
+    }
     let visited = new Set()
     let result = changes()
     while(stack.length > 0) {
@@ -110,7 +104,7 @@ export function batch(changes) {
         if(!visited.has(state))
             visited.add(change())
     }
-    AccumulatingState.stack = null
+    delete AccumulatingState.prototype.set
     return result
 }
 

@@ -336,6 +336,7 @@ export function h2() {return element('h2')}
 export function h3() {return element('h3')}
 export function h4() {return element('h4')}
 export function h5() {return element('h5')}
+export function h6() {return element('h6')}
 export function p() {return element('p')}
 export function pre() {return element('pre')}
 export function code() {return element('code')}
@@ -384,6 +385,7 @@ export function ins() {return element('ins')}
 export function hr() {return element('hr')}
 export function br() {return element('br')}
 export function iframe(...src) {return element('iframe').src(src)}
+export function dialog(title = div('dialog-close').float('right').add('x').onClick(event => event.target.parentNode.close())) {return element('dialog').add(title)}
 export function fragment(...args) {return builder(document.createDocumentFragment()).add(...args)}
 
 export function range(start, model, itemView = item => item, end = xText('')) {

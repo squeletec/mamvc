@@ -7,10 +7,9 @@
     <script type="module" src="demo-runner.js" defer></script>
 <script type="module" id="demoSource" defer>
 
-    import {dialog} from "../../rap.js"
-    import {body} from "../../trio/builder.js"
+    import {body, dialog} from "../../trio/builder.js"
 
-    dialog('My dialog').titleBarClass('title').dialogClass('dialog').contentClass('content').add(
+    dialog().add(
         "This is my dialog's content"
     ).to(body())
 

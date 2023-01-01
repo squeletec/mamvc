@@ -78,3 +78,11 @@ export function copyToClipboard(nodeOrBuilder) {
         }
     }
 }
+
+export function showModal(dialog) {
+    return () => dialog.get().showModal()
+}
+
+export function close(dialog) {
+    return () => dialog.get().close()
+}

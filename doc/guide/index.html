@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script type="module" src="guide.js"></script>
+  <link rel="stylesheet" type="text/css" href="guide.css">
+</head>
+<body>
+<h1>Quick guide to µ-AMVC</h1>
+<h2>Trio - The MVC pattern</h2>
+<h3>VIEW: DOM Builder</h3>
+<p>
+  TRIO is a web MVC technology, so the presentation (VIEW) layer is at the end represented as HTML Dom. Therefore
+  it needs to allow fully flexible way of creating and manipulating the DOM tree of the page.
+</p>
+<p>
+  µ-AMVC is pure Ecma Script 5 based library, so the API is JavaScript. For DOM manipulation it uses a builder pattern
+  per element. Each builder instance wraps a DOMNode, and provides methods to simply and intuitively manipulate it.
+</p>
+<h4>Builder entry methods</h4>
+<h4>Building DOM subtree</h4>
+<h4>Manipulating element attributes</h4>
+<h4>Manipulating CSS properties</h4>
+<h4>Manipulating object properties</h4>
+<h4>Attaching event handlers</h4>
+
+<h3>MODEL: Observable state</h3>
+<h4>Simple model</h4>
+<h5>Shortcut functions for different "data types"</h5>
+<h5>Simple model presentation in element content</h5>
+<h4>Transformations</h4>
+<h5>Simple transformation: map()</h5>
+<h5>General function transformations</h5>
+<h5>String functions</h5>
+<h5>Model presentations in attributes or CSS declarations</h5>
+
+<h3>COMMAND: Triggers</h3>
+</body>
+</html>

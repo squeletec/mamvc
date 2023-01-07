@@ -1,0 +1,23 @@
+
+body code {
+    display: block;
+    white-space: pre;
+    font-family: monospace;
+    margin: 1em;
+    padding: 1em;
+    border: 1px solid grey;
+}
+
+.counter {
+    border-radius: 5px;
+    background-color: lightblue;
+    padding: 3px;
+    margin: 3px;
+    display: inline-block;
+    padding-left: 3em;
+    padding-right: 3em;
+}
+
+body {
+    margin-bottom: 5em;
+}

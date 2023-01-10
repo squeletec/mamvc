@@ -86,3 +86,7 @@ export function showModal(dialog) {
 export function close(dialog) {
     return () => dialog.get().close()
 }
+
+export function add(model, increment) {
+    return () => model.set(model.get() + increment)
+}

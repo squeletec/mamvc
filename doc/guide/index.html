@@ -62,7 +62,9 @@
 <code>
   import {body, a} from "../../trio.js";
 
-  body().add(a().onClick(() => clickCounter.set(clickCounter.get() + 1)).add('Click here'))
+  body().add(
+    a().onClick(add(clickCounter, 1))
+       .add('Click here'))
 
 </code>
 <div id="s2"></div>

@@ -385,7 +385,7 @@ export function ins() {return element('ins')}
 export function hr() {return element('hr')}
 export function br() {return element('br')}
 export function iframe(...src) {return element('iframe').src(src)}
-export function dialog(title = div('dialog-close').float('right').add('x').onClick(event => event.target.parentNode.close())) {return element('dialog').add(title)}
+export function dialog(title = div('dialog-close').position('absolute').top('inherit').right('inherit').add('x').onClick(event => event.target.parentNode.close())) {return element('dialog').add(title)}
 export function fragment(...args) {return builder(document.createDocumentFragment()).add(...args)}
 
 export function range(start, model, itemView = item => item, end = xText('')) {

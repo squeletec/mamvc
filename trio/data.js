@@ -25,7 +25,7 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {concat, isState, state, accumulatingState, boolean, string} from "./state.js";
+import {concat, isState, state, boolean, string} from "./state.js";
 
 const SUCCESS_STATUSES = new Set([200, 0])
 
@@ -98,7 +98,7 @@ function setArg(value, args, i, result) {
 export function uriModel(template, input) {
     let used = new Set()
     let args = template.split(/\{([^}]+)}/)
-    let result = accumulatingState('')
+    let result = state('')
     for(let i = 1; i < args.length; i += 2) {
         let name = args[i]
         if(input.hasOwnProperty(name)) {

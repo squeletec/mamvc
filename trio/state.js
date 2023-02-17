@@ -84,34 +84,6 @@ class State {
 
 }
 
-class AccumulatingState extends State {
-    constructor(value) {
-        super(value)
-    }
-}
-
-export function batch(changes) {
-    let stack = []
-    AccumulatingState.prototype.set = function(value) {
-        stack.push(() => State.prototype.set.call(this, value), this)
-        return this
-    }
-    let visited = new Set()
-    let result = changes()
-    while(stack.length > 0) {
-        let state = stack.pop()
-        let change = stack.pop()
-        if(!visited.has(state))
-            visited.add(change())
-    }
-    delete AccumulatingState.prototype.set
-    return result
-}
-
-export function accumulatingState(value = null) {
-    return new AccumulatingState(value)
-}
-
 export function isState(variable) {
     return variable instanceof State
 }
@@ -145,7 +117,7 @@ export function execute(trueCommand, falseCommand) {
 }
 
 export function on(...parameters) {
-    return {apply(f, result = accumulatingState()) {
+    return {apply(f, result = state()) {
         let args = parameters.map((p, i) => isState(p) ? p.onChange(value => {
             args[i] = value
             result.set(f(...args))
@@ -187,4 +159,18 @@ export function fill(name, parameter) {
 
 export function not(booleanModel) {
     return booleanModel.map(v => !v)
+}
+
+export function hook(handler, timeout = 0) {
+    let result, send = true
+    return value => {
+        result = value
+        if(send) {
+            send = false
+            setTimeout(() => {
+                send = true
+                handler(result)
+            }, timeout)
+        }
+    }
 }

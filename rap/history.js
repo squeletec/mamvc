@@ -1,4 +1,4 @@
-import {state, accumulatingState, batch} from "../trio.js"
+import {state, hook} from "../trio.js"
 
 export function parseUri(uri) {
     let u = uri.split('?', 2)
@@ -20,12 +20,12 @@ export function parseParam(parameters, name, defaultValue) {
 }
 
 export function toModels(parsedUri, defaultValues) {
-    return batch(() => Object.fromEntries(Object.entries(defaultValues).map(([k,v]) => [k, state(parseParam(parsedUri.parameters, k, v))])))
+    return Object.fromEntries(Object.entries(defaultValues).map(([k,v]) => [k, state(parseParam(parsedUri.parameters, k, v))]))
 }
 
 export function locationModel(parsedUri, defaultValues, serializableStates = toModels(parsedUri, defaultValues)) {
     let args = {}
-    let argsModel = accumulatingState()
+    let argsModel = state()
     Object.entries(serializableStates).forEach(([k,v],i) => {
         v.onChange(nv => {
             args[k] = nv === defaultValues[k] ? null : nv
@@ -40,14 +40,14 @@ export function locationModel(parsedUri, defaultValues, serializableStates = toM
 
 export function pushStates(locationModel, defaultValues, serializableStates) {
     let allowPush = true
-    locationModel.onChange(location => allowPush && window.history.pushState({}, window.title, location))
+    locationModel.onChange(hook(location => allowPush && window.history.pushState({}, window.title, location)))
     window.addEventListener('popstate', () => {
         allowPush = false
         let parsedUri = parseUri(window.location.toString())
         for(let name in serializableStates) if(serializableStates.hasOwnProperty(name)) {
             serializableStates[name].update(parseParam(parsedUri.parameters, name, defaultValues[name]))
         }
-        allowPush = true
+        setTimeout(() => allowPush = true, 0)
     })
 }
 

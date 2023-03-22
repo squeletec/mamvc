@@ -171,7 +171,7 @@ export function remote(template, input = {}, output = state(), loading = boolean
 
 export function resolve(object, propertyNames) {
     for(let i = 0; i < propertyNames.length; i++)
-        if(typeof object === "object") object = object[propertyNames[i]]
+        if(typeof object === "object" && object) object = object[propertyNames[i]]
     return object
 }
 

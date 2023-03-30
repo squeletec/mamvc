@@ -151,7 +151,7 @@ class RestCall {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(this.data.get())
         } : {}).then(r => r.ok
-            ? r.json().then(r => this.output.set(r))
+            ? r.json().then(r => this.set(r))
             : r.headers.get('Content-Type').indexOf('json') < 0
                 ? this.setError(r.statusText)
                 : r.json().then(j => this.setError(j.message))

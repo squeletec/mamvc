@@ -174,3 +174,29 @@ export function hook(handler, timeout = 0) {
         }
     }
 }
+
+
+export function timer(booleanState, updatePeriod = 1000) {
+    let result = state()
+    let interval = null
+    let start = 0
+    function update() {
+        result.set(new Date().getTime() - start)
+    }
+    function handle(value) {
+        if(value) {
+            if(interval === null) {
+                start = new Date().getTime()
+                interval = setInterval(update, updatePeriod)
+            }
+        } else {
+            if(interval !== null) {
+                clearInterval(interval)
+                update()
+                interval = null
+            }
+        }
+    }
+    booleanState.onChange(handle)
+    return result
+}

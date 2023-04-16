@@ -6,13 +6,13 @@
     <link rel="stylesheet" href="demo.css"/>
     <script type="module" src="demo-runner.js" defer></script>
     <script type="module" id="demoSource" defer>
-import {body, div, channel, get, a } from "../../trio.js";
+import {body, div, a, list, remote, call } from "../../trio.js";
 import {treeTable, named} from "../../rap.js";
 
 body().add(div().id('demoOutput').add(
     treeTable(
-        channel('data/root.json').set([]).get().model(),
-        nodeModel => get(channel('data/subtree', nodeModel.item.id, '.json').setModel(nodeModel.children))
+        remote('data/root.json', null, list()).call().output,
+        nodeModel => call(remote("data/subtree{id}.json", {id: nodeModel.item.id}, nodeModel.children))
     )
         .column('id')
         .treeColumn('name', row => a().add(row.item()))

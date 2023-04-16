@@ -1,6 +1,6 @@
 import {
     form, table, thead, tbody, tr, td, th, a, each, caption, list, not, on, state, string, set, when, inputText, submit,
-    reset, to, XBuilder, channel, span, remote, resolve, last, boolean, execute, range, captionTop, captionBottom
+    reset, to, XBuilder, span, remote, resolve, last, boolean, execute, range, captionTop, captionBottom
 } from "../trio.js";
 import {expander} from "./elements.js";
 
@@ -34,10 +34,6 @@ export function pageModel() {
 
 export function pageRequestModel(pageSize = 25) {
     return state({page: 0, size: pageSize}).hierarchy()
-}
-
-export function pagedChannel(...uri) {
-    return channel(...uri).setModel(pageModel())
 }
 
 function cell(func, row, c) {

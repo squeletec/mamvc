@@ -25,68 +25,10 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {concat, isState, state, boolean, string} from "./state.js";
+import {isState, state, boolean, string} from "./state.js";
 
 const SUCCESS_STATUSES = new Set([200, 0])
 
-class Channel {
-    constructor(uri) {
-        this._uri = isState(uri) ? uri : state(uri)
-        this._uri.onChange(() => this.get(), false)
-        this._model = state()
-        this._busy = boolean()
-        this._progress = state({total: 0, done: 0}).hierarchy()
-    }
-
-    setModel(model) {
-        this._model = model
-        return this
-    }
-
-    map(mappingFunction, result) {
-        this._model.map(mappingFunction, result)
-        return this
-    }
-
-    model() {
-        return this._model
-    }
-
-    progress() {
-        return this._progress
-    }
-
-    busy() {
-        return this._busy
-    }
-
-    set(value) {
-        this.model().set(value)
-        this._busy.set(false)
-        return this
-    }
-
-    get() {
-        this._busy.set(true)
-        fetch(this._uri.get()).then(response => response.json()).then(json => this.set(json)).catch()
-        return this
-    }
-
-    post(data) {
-        this._busy.set(true)
-        fetch(this._uri.get(), {method: 'POST', body: JSON.stringify(data)}).then(response => response.json()).then(json => this.set(json)).catch()
-        return this
-    }
-
-    getEvery(milliseconds) {
-        setInterval(() => this.get(), milliseconds)
-        return this
-    }
-}
-
-export function channel(...uri) {
-    return new Channel(concat(...uri))
-}
 
 function setArg(value, args, i, result) {
     return isState(value) ? value.map(encodeURIComponent).onChange(v => {

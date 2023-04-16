@@ -1,4 +1,4 @@
-import {state, div, text, channel, remote, uriModel} from "../trio.js"
+import {state, div, text, remote, uriModel} from "../trio.js"
 import {suite, assertState } from "./test-runner.js";
 
 
@@ -7,14 +7,14 @@ suite({
 
     async testGetChannel() {
         let myState = state()
-        channel('data/string.json').setModel().get()
+        remote('data/string.json', null, myState).call()
         await new Promise(resolve => setTimeout(resolve, 1000));
         assertState(myState, "OK")
     },
 
     async testPostChannel() {
         let myState = state()
-        channel('data/string.json').setModel().post({data:"A"})
+        remote('data/string.json', null, myState).setPostData({data:"A"}).call()
         await new Promise(resolve => setTimeout(resolve, 1000));
         assertState(myState, "OK")
     },

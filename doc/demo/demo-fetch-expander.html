@@ -7,23 +7,23 @@
     <script type="module" src="demo-runner.js" defer></script>
 <script type="module" id="demoSource" defer>
 
-    import { boolean, table, range, tbody, td, tr, body, div, channel, get, set, execute, not } from "../../trio.js";
+    import { boolean, table, range, tbody, td, tr, body, div, set, execute, not, remote, list, call } from "../../trio.js";
     import {expander, nodeExpander} from "../../rap.js";
 
-    let items = channel('data/items.json').set([])
-    let expanded = nodeExpander(get(items), items.model())
+    let items = remote('data/items.json', null, list())
+    let expanded = nodeExpander(call(items), items.output)
 
     body().add(div().id('demoOutput').add(
         table().add(
             tbody().add(
                 range(
-                    tr().add(td().add(expander(expanded, items.busy().map(v => !v)), ' Node')),
-                    items.model(),
+                    tr().add(td().add(expander(expanded, items.loading.map(v => !v)), ' Node')),
+                    items.output,
                     item => {
-                        let d = channel("data/", item).set([])
+                        let d = remote("data/{item}", {item: item}, list())
                         return range(
-                            tr().add(td().setClass('level1').add(expander(boolean().onChange(execute(get(d), set(d.model(), []))), not(d.busy())), ' ', item)),
-                            d.model(),
+                            tr().add(td().setClass('level1').add(expander(boolean().onChange(execute(call(d), set(d.output, []))), not(d.loading)), ' ', item)),
+                            d.output,
                             item2 => tr().add(td().setClass('level2').add(item2))
                         )
                     }

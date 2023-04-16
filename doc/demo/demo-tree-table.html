@@ -7,11 +7,11 @@
     <script type="module" src="demo-runner.js" defer></script>
     <script type="module" id="demoSource" defer>
 
-    import {body, div, channel } from "../../trio.js";
+    import {body, div, remote, list } from "../../trio.js";
     import {treeTable} from "../../rap.js";
 
     body().add(div().id('demoOutput').add(
-        treeTable(channel('data/tree.json').set([]).get().model())
+        treeTable(remote('data/tree.json', null, list()).call().output)
             .column('id')
             .treeColumn('name')
             .column('content')

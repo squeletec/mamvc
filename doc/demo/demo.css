@@ -135,3 +135,8 @@ caption.error {
 h1 {
     padding: 5px;
 }
+
+.load-timer {
+    font-size: small;
+    color: silver;
+}

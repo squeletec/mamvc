@@ -1,6 +1,6 @@
 import {
     form, table, thead, tbody, tr, td, th, a, each, caption, list, not, on, state, string, set, when, inputText, submit,
-    reset, to, XBuilder, span, remote, resolve, last, boolean, execute, range, captionTop, captionBottom
+    reset, to, XBuilder, span, remote, resolve, last, boolean, execute, range, captionTop, captionBottom, timer
 } from "../trio.js";
 import {expander} from "./elements.js";
 
@@ -103,7 +103,7 @@ class DataTable extends XBuilder {
     }
 }
 
-export function pageControls(page, result) {
+export function pageControls(page, result, loading) {
     let firstDisabled = result.first.map(to('silver'))
     let lastDisabled = result.last.map(to('silver'))
     let notFirst = not(result.first)
@@ -114,7 +114,8 @@ export function pageControls(page, result) {
         span('paging current-page').add('Page: ', inputText('page').width(2, 'em').value(result.map(v => v.numberOfElements > 0 ? v.number + 1 : 0)), ' of ', result.totalPages, ' (rows ', result.pageable.offset.map(v => v + 1), ' - ', on(result.pageable.offset, result.numberOfElements).apply((a, b) => a + b), ' of ', result.totalElements, ')'),
         a().setClass('paging next-page').color(lastDisabled).add('\u23F5\uFE0E').title('Go to next page').onClick(when(notLast, set(page, result.number.map(v => v + 1)))),
         a().setClass('paging last-page').color(lastDisabled).add('\u23ED\uFE0E').title('Go to last page').onClick(when(notLast, set(page, result.totalPages.map(v => v - 1)))),
-        a().setClass('paging reload-page').add('\u21BB').title('Reload page').onClick(set(page, page))
+        a().setClass('paging reload-page').add('\u21BB').title('Reload page').onClick(set(page, page)),
+        span('paging load-timer').add(loading.map(to(' loading ', ' loaded in ')), timer(loading), ' ms.')
     )
 }
 
@@ -123,7 +124,7 @@ export function dataTable(result, offset = state(0)) {
 }
 
 export function pageTable(pageCall, page = pageCall.input.page, result = pageCall.output) {
-    return dataTable(result.map(v => v.content), result.pageable.offset).captionTop(pageCall.error).captionBottom(pageControls(page, result))
+    return dataTable(result.map(v => v.content), result.pageable.offset).captionTop(pageCall.error).captionBottom(pageControls(page, result, pageCall.loading))
 }
 
 export function pageApi(uri) {
@@ -143,7 +144,7 @@ export function searchTable(searchCall, page = searchCall.input.page, query = se
     return dataTable(result.map(v => v.content), result.pageable.offset).add(
         captionTop().setClass('search').textLeft().nowrap().add(searchControls(query)),
         captionTop().setClass('error').textLeft().nowrap().add(searchCall.error),
-        captionBottom().setClass('paging').textLeft().nowrap().add(pageControls(page, result))
+        captionBottom().setClass('paging').textLeft().nowrap().add(pageControls(page, result, searchCall.loading))
     )
     //return pageTable(searchCall, page, result)
 }

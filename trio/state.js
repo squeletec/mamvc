@@ -187,6 +187,7 @@ export function timer(booleanState, updatePeriod = 1000) {
         if(value) {
             if(interval === null) {
                 start = new Date().getTime()
+                update()
                 interval = setInterval(update, updatePeriod)
             }
         } else {

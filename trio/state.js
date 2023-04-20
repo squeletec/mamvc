@@ -27,27 +27,84 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 /**
- * Class state represents, observable state.
+ * Interface like class Observable
  */
-class State {
+class Observable {
 
-    constructor(value = null) {
-        this._value = value
-        this._observers = []
+    onChange(observer, triggerNow = true, push = true) {}
+
+    set(value) {}
+
+    get() {}
+
+    trigger() {}
+
+}
+
+function getProperty(object, property) {
+    return object === null ? null : object === undefined ? undefined : object[property]
+}
+
+class PropertyState extends Observable {
+    #parent;
+    #property;
+
+    constructor(parent, property) {
+        super();
+        this.#parent = parent
+        this.#property = property
     }
 
-    set(value) {
-        this._value = value
-        this._observers.forEach(observer => observer(this._value))
+    onChange(observer, triggerNow = true, push = true) {
+        this.#parent.onChange(value => observer(getProperty(value, this.#property), triggerNow, push))
         return this
     }
 
-    update(value) {
-        return value === this._value ? this : this.set(value)
+    set(value) {
+        this.#parent.get()[this.#property] = value
+        return this.trigger()
     }
 
     get() {
-        return this._value
+        return getProperty(this.#parent.get(), this.#property);
+    }
+
+    trigger() {
+        this.#parent.trigger();
+        return this
+    }
+}
+
+
+/**
+ * Class state represents, observable state.
+ */
+class State extends Observable {
+    #value;
+    #observers;
+
+    constructor(value = null) {
+        super();
+        this.#value = value
+        this.#observers = []
+    }
+
+    trigger() {
+        this.#observers.forEach(observer => observer(this.#value))
+        return this
+    }
+
+    set(value) {
+        this.#value = value
+        return this.trigger()
+    }
+
+    update(value) {
+        return value === this.#value ? this : this.set(value)
+    }
+
+    get() {
+        return this.#value
     }
 
     map(mappingFunction, result = new State()) {
@@ -55,7 +112,7 @@ class State {
         return result
     }
 
-    hierarchy(structure = this._value) {
+    hierarchy(structure = this.#value) {
         if('object' === typeof structure) {
             if(Array.isArray(structure))
                 this.length = this.map(_ => (_ === undefined || _ === null) ? _ : _.length)
@@ -76,16 +133,16 @@ class State {
     }
 
     onChange(observer, trigger = true, push = true) {
-        if(push) this._observers.push(observer)
-        else this._observers.unshift(observer)
-        if(trigger) observer(this._value)
+        if(push) this.#observers.push(observer)
+        else this.#observers.unshift(observer)
+        if(trigger) observer(this.#value)
         return this
     }
 
 }
 
 export function isState(variable) {
-    return variable instanceof State
+    return variable instanceof Observable
 }
 
 export function state(value = null) {

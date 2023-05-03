@@ -225,10 +225,14 @@ export function execute(trueCommand, falseCommand) {
     return value => value ? trueCommand() : falseCommand()
 }
 
+function passValueTo(target) {
+   return value => target.set(value)
+}
+
 export function on(...parameters) {
     return {apply(f, result = state()) {
         let args = list([parameters.length])
-        parameters.forEach((p, i) => isState(p) ? p.onChange(value => args.property(i).set(value)) : args.get()[i] = p)
+        parameters.forEach((p, i) => isState(p) ? p.onChange(passValueTo(args.property(i)) : args.get()[i] = p)
         return args.map(a => f(...a))
     }}
 }

@@ -124,7 +124,9 @@ export function dataTable(result, offset = state(0)) {
 }
 
 export function pageTable(pageCall, page = pageCall.input.page, result = pageCall.output) {
-    return dataTable(result.map(v => v.content), result.pageable.offset).captionTop(pageCall.error).captionBottom(pageControls(page, result, pageCall.loading))
+    return dataTable(result.map(v => v.content), result.pageable.offset)
+        .captionTop(pageCall.error)
+        .captionBottom(pageControls(page, result, pageCall.loading))
 }
 
 export function pageApi(uri) {
@@ -187,7 +189,9 @@ class TreeTable extends XBuilder {
     treeColumn(name, content = self) {
         let c = {name: ['item', name], cell: (row, td) => {
                 td.add(span().paddingLeft(row.level, 'em'))
-                return content(row, row.data.hasOwnProperty('children') ? td.add(expander(nodeExpander(this.childrenCommand(row.data, row.level), row.data.children)), ' ') : td, row.level)
+                return content(row, row.data.hasOwnProperty('children')
+                    ? td.add(expander(nodeExpander(this.childrenCommand(row.data, row.level), row.data.children)), ' ')
+                    : td, row.level)
             }}
         c.cell.header = content.header
         this.columnsModel.get().push(c)

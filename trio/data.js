@@ -25,7 +25,7 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {isState, state, boolean, string} from "./state.js";
+import {isState, state, boolean, string, template, join} from "./state.js";
 
 const SUCCESS_STATUSES = new Set([200, 0])
 
@@ -56,6 +56,17 @@ export function uriModel(template, input) {
         sep = "&"
     }
     return result.set(args.join(''))
+}
+
+function args(input) {
+    return []
+}
+
+export function uri(uriTemplate, input) {
+    return join('?',
+        template(uriTemplate, input),
+        join('&', ...args(input))
+    )
 }
 
 class RestCall {

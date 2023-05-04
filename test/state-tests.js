@@ -1,4 +1,4 @@
-import {state, boolean, concat, fill } from "../trio.js"
+import {state, boolean, concat, fill, template} from "../trio.js"
 import {suite, assert, assertState } from "./test-runner.js";
 
 
@@ -70,6 +70,14 @@ suite({
         p1.set('value1')
         p2.set('value2')
         assertState(result, "fixed/value1/aha/value2/aa/C/value2")
+    },
+
+    testTemplate2() {
+        let d = state('D')
+        let s= template('path/{x}/{a}/{x}', {a: 1, x: d})
+        assertState(s, 'path/D/1/D')
+        d.set('X')
+        assertState(s, 'path/X/1/X')
     },
 
     testHierarchyAccess() {

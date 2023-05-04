@@ -232,13 +232,21 @@ function passValueTo(target) {
 export function on(...parameters) {
     return {apply(f, result = state()) {
         let args = list([parameters.length])
-        parameters.forEach((p, i) => isState(p) ? p.onChange(passValueTo(args.property(i)) : args.get()[i] = p)
+        parameters.forEach((p, i) => isState(p) ? p.onChange(passValueTo(args.property(i))) : args.get()[i] = p)
         return args.map(a => f(...a))
     }}
 }
 
 export function concat(...parameters) {
     return join('', ...parameters)
+}
+
+export function template(t, args) {
+    let array = t.split(/\{([^{])}/g);
+    for(let i = 1; i < array.length; i += 2) {
+        array[i] = args[array[i]]
+    }
+    return concat(...array)
 }
 
 export function join(separator, ...parameters) {

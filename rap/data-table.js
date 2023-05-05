@@ -156,10 +156,10 @@ export function searchApi(uri, input = {query: string(), order: string(), page: 
     return remote(uri, input, pageModel())
 }
 
-export function searchPage() {
-    let input = state({query = '', order ='', page='', size=''})
-    input.page = input.property('page')
-    input.query = intput.transform((o, v) => {o.query=v,o.page=0})
+export function searchPage(params = {}) {
+    let input = state({query = '', order ='', page='', size='', ...params})
+    for(p in input.get()) if(input.get().hasOwnProperty(p)
+        input[p] = input.transform((o,v) => {o.page=0,o[p]=v})
     return input
 }
 

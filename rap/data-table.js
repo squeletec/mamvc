@@ -152,12 +152,12 @@ export function searchTable(searchCall, page = searchCall.input.page, query = se
     //return pageTable(searchCall, page, result)
 }
 
-export function searchApi(uri, input = {query: string(), order: string(), page: state(0), size: state(25)}) {
+export function searchApi(uri, input = searchPage()) {
     return remote(uri, input, pageModel())
 }
 
 export function searchPage(params = {}) {
-    let input = state({query: '', order: '', page: '', size: '', ...params})
+    let input = state({query: '', order: '', page: 0, size: 25, ...params})
     for(p in input.get()) if(input.get().hasOwnProperty(p)
         input[p] = input.transform((o,v) => {o.page=0,o[p]=v})
     return input
@@ -178,17 +178,18 @@ class TreeTable extends XBuilder {
         this.columnsModel = list().hierarchy()
         this.columnsModel.onChange(() => rootModel.set(rootModel.get()))
         this.childrenCommand = childrenCommand
-        let subTree = (parent, index, level = 1) => {
+        let subTree = (parent, children, index, level = 1) => {
             let r = tr().add(each(this.columnsModel, column => cell(column.cell, row(parent, column.name, index, level), td())))
+            let ch = list()
             return parent.hasOwnProperty('children') ? range(
                 r,
-                parent.children,
-                (child, index) => subTree(state(child).hierarchy(), index, level + 1)
+                ch,
+                (child, index) => subTree(state(child).hierarchy(), ch, index, level + 1)
             ) : r
         }
         this.add(
             thead().add(tr().add(each(this.columnsModel, (column, index) => cell(column.cell.header || self.header, row(column.name, column.name, index, -1), th().setClass('header-' + column.name))))),
-            tbody().add(each(rootModel, (item, index) => subTree(state(item).hierarchy(), index))),
+            tbody().add(each(rootModel, (item, index) => subTree(state(item).hierarchy(), rootModel, index))),
         )
     }
 

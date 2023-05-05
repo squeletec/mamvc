@@ -156,7 +156,12 @@ export function searchApi(uri, input = {query: string(), order: string(), page: 
     return remote(uri, input, pageModel())
 }
 
-
+export function searchPage() {
+    let input = state({query = '', order ='', page='', size=''})
+    input.page = input.property('page')
+    input.query = intput.transform((o, v) => {o.query=v,o.page=0})
+    return input
+}
 
 function staticExpand(nodeModel) {
     return set(nodeModel.children, nodeModel.children.get())

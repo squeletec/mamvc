@@ -178,18 +178,18 @@ class TreeTable extends XBuilder {
         this.columnsModel = list().hierarchy()
         this.columnsModel.onChange(() => rootModel.set(rootModel.get()))
         this.childrenCommand = childrenCommand
-        let subTree = (parent, children, index, level = 1) => {
-            let r = tr().add(each(this.columnsModel, column => cell(column.cell, row(parent, column.name, index, level), td())))
-            let ch = list()
+        let subTree = (parent, index, level = 1) => {
+            let display = list()
+            let r = tr().add(each(this.columnsModel, column => cell(column.cell, row(parent, column.name, index, level, display), td())))
             return parent.hasOwnProperty('children') ? range(
                 r,
-                ch,
-                (child, index) => subTree(state(child).hierarchy(), ch, index, level + 1)
+                display,
+                (child, index) => subTree(state(child).hierarchy(), index, level + 1)
             ) : r
         }
         this.add(
             thead().add(tr().add(each(this.columnsModel, (column, index) => cell(column.cell.header || self.header, row(column.name, column.name, index, -1), th().setClass('header-' + column.name))))),
-            tbody().add(each(rootModel, (item, index) => subTree(state(item).hierarchy(), rootModel, index))),
+            tbody().add(each(rootModel, (item, index) => subTree(state(item).hierarchy(), index))),
         )
     }
 

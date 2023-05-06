@@ -31,7 +31,8 @@ Micro Ajax MVC library.
 
  */
 import { isState, concat, boolean, falseTo, to, join } from "./state.js";
-import { set } from "./command.js"
+import { set, call } from "./command.js"
+import { remote } from "./data.js"
 
 /**
  * Class UI Element is a wrapper for DOM element, marking, that such object has a DOM element representing it's

@@ -40,9 +40,10 @@ function cell(func, row, c) {
     return c.add(func(row, c))
 }
 
-function row(data, path, index, level) {
+function row(data, path, index, level, display) {
     return {
         data: data,
+        display: display,
         path: path,
         item() {return resolve(this.data, this.path)},
         index: index,
@@ -124,7 +125,9 @@ export function dataTable(result, offset = state(0)) {
 }
 
 export function pageTable(pageCall, page = pageCall.input.page, result = pageCall.output) {
-    return dataTable(result.map(v => v.content), result.pageable.offset).captionTop(pageCall.error).captionBottom(pageControls(page, result, pageCall.loading))
+    return dataTable(result.map(v => v.content), result.pageable.offset)
+        .captionTop(pageCall.error)
+        .captionBottom(pageControls(page, result, pageCall.loading))
 }
 
 export function pageApi(uri) {
@@ -147,17 +150,21 @@ export function searchTable(searchCall, page = searchCall.input.page, query = se
         captionTop().setClass('error').textLeft().nowrap().add(searchCall.error),
         captionBottom().setClass('paging').textLeft().nowrap().add(pageControls(page, result, searchCall.loading))
     )
-    //return pageTable(searchCall, page, result)
 }
 
-export function searchApi(uri, input = {query: string(), order: string(), page: state(0), size: state(25)}) {
+export function searchApi(uri, input = searchPage()) {
     return remote(uri, input, pageModel())
 }
 
+export function searchPage(params = {}) {
+    let input = state({query: '', order: '', page: 0, size: 25, ...params})
+    for(let p in input.get()) if(input.get().hasOwnProperty(p))
+        input[p] = input.transform((o, v) => {o.page=0; o[p]=v})
+    return input
+}
 
-
-function staticExpand(nodeModel) {
-    return set(nodeModel.children, nodeModel.children.get())
+function staticExpand(display, nodeModel) {
+    return set(display, nodeModel.children.get())
 }
 
 export function nodeExpander(expandCommand, model) {
@@ -172,10 +179,11 @@ class TreeTable extends XBuilder {
         this.columnsModel.onChange(() => rootModel.set(rootModel.get()))
         this.childrenCommand = childrenCommand
         let subTree = (parent, index, level = 1) => {
-            let r = tr().add(each(this.columnsModel, column => cell(column.cell, row(parent, column.name, index, level), td())))
+            let display = list()
+            let r = tr().add(each(this.columnsModel, column => cell(column.cell, row(parent, column.name, index, level, display), td())))
             return parent.hasOwnProperty('children') ? range(
                 r,
-                parent.children,
+                display,
                 (child, index) => subTree(state(child).hierarchy(), index, level + 1)
             ) : r
         }
@@ -188,7 +196,9 @@ class TreeTable extends XBuilder {
     treeColumn(name, content = self) {
         let c = {name: ['item', name], cell: (row, td) => {
                 td.add(span().paddingLeft(row.level, 'em'))
-                return content(row, row.data.hasOwnProperty('children') ? td.add(expander(nodeExpander(this.childrenCommand(row.data, row.level), row.data.children)), ' ') : td, row.level)
+                return content(row, row.data.hasOwnProperty('children')
+                    ? td.add(expander(nodeExpander(this.childrenCommand(row.display, row.data, row.level), row.display)), ' ')
+                    : td, row.level)
             }}
         c.cell.header = content.header
         this.columnsModel.get().push(c)

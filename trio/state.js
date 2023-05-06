@@ -39,10 +39,59 @@ class Observable {
 
     trigger() {}
 
+    map(mappingFunction) {
+        return new TransformedState(this, mappingFunction, () => {})
+    }
+
+    apply(writeFunction) {
+        return new TransformedState(this, v => v, writeFunction)
+    }
+
+    property(name) {
+        return property(this, name)
+    }
+
+    hierarchy(structure = this.get()) {
+        if('object' === typeof structure) {
+            if(Array.isArray(structure))
+                this.length = this.map(_ => (_ === undefined || _ === null) ? _ : _.length)
+            else
+                Object.getOwnPropertyNames(structure).forEach(property => this[property] = this.property(property).hierarchy(structure[property]))
+        }
+        return this
+    }
+
 }
 
-function getProperty(object, property) {
-    return object === null ? null : object === undefined ? undefined : object[property]
+class TransformedState extends Observable {
+    #parent;
+    #read;
+    #write;
+
+    constructor(parent, read, write) {
+        super();
+        this.#parent = parent
+        this.#read = read
+        this.#write = write
+    }
+
+    onChange(observer, triggerNow = true, push = true) {
+        this.#parent.onChange(value => observer(this.#read(value), triggerNow, push))
+        return this
+    }
+
+    set(value) {
+        this.#write(this.#parent.get(), value)
+        return this.trigger()
+    }
+
+    get() {
+        return this.#read(this.#parent.get());
+    }
+
+    trigger() {
+        return this
+    }
 }
 
 class PropertyState extends Observable {
@@ -56,7 +105,7 @@ class PropertyState extends Observable {
     }
 
     onChange(observer, triggerNow = true, push = true) {
-        this.#parent.onChange(value => observer(getProperty(value, this.#property), triggerNow, push))
+        this.#parent.onChange(value => observer(value[this.#property], triggerNow, push))
         return this
     }
 
@@ -66,7 +115,7 @@ class PropertyState extends Observable {
     }
 
     get() {
-        return getProperty(this.#parent.get(), this.#property);
+        return this.#parent.get()[this.#property];
     }
 
     trigger() {
@@ -75,6 +124,12 @@ class PropertyState extends Observable {
     }
 }
 
+function getProp(object, name) {
+    return object => object === null || object === undefined ? object : object[name]
+}
+export function property(state, name) {
+    return new PropertyState(state, name)
+}
 
 /**
  * Class state represents, observable state.
@@ -83,7 +138,7 @@ class State extends Observable {
     #value;
     #observers;
 
-    constructor(value = null) {
+    constructor(value) {
         super();
         this.#value = value
         this.#observers = []
@@ -107,23 +162,6 @@ class State extends Observable {
         return this.#value
     }
 
-    map(mappingFunction, result = new State()) {
-        this.onChange(value => result.set(mappingFunction(value)))
-        return result
-    }
-
-    hierarchy(structure = this.#value) {
-        if('object' === typeof structure) {
-            if(Array.isArray(structure))
-                this.length = this.map(_ => (_ === undefined || _ === null) ? _ : _.length)
-            else
-                for(let property in structure)
-                    if(structure.hasOwnProperty(property))
-                        this[property] = this.map(_ => (_ === undefined || _ === null) ? _ : _[property], isState(structure[property]) ? structure[property] : new State(structure[property]).hierarchy())
-        }
-        return this
-    }
-
     and(state) {
         return on(this, state).apply((a, b) => a && b)
     }
@@ -141,12 +179,26 @@ class State extends Observable {
 
 }
 
+class State2 extends State {
+    constructor(value) {
+        super(value);
+    }
+
+    set(value) {
+        return value === this.get() ? this : super.set(value);
+    }
+}
+
 export function isState(variable) {
     return variable instanceof Observable
 }
 
-export function state(value = null) {
+export function enforcingState(value = null) {
     return new State(value)
+}
+
+export function state(value = null) {
+    return new State2(value)
 }
 
 export function string(value = '') {
@@ -173,45 +225,36 @@ export function execute(trueCommand, falseCommand) {
     return value => value ? trueCommand() : falseCommand()
 }
 
+function passValueTo(target) {
+   return value => target.set(value)
+}
+
 export function on(...parameters) {
     return {apply(f, result = state()) {
-        let args = parameters.map((p, i) => isState(p) ? p.onChange(value => {
-            args[i] = value
-            result.set(f(...args))
-        }, false).get() : p)
-        return result.set(f(...args))
+        return argStates(...parameters).map(a => f(...a))
     }}
+}
+
+export function argStates(...args) {
+    let result = list([args.length])
+    args.forEach((p, i) => isState(p) ? p.onChange(passValueTo(result.property(i))) : result.get()[i] = p)
+    return result
 }
 
 export function concat(...parameters) {
     return join('', ...parameters)
 }
 
-export function join(separator, ...parameters) {
-    return on(...parameters).apply((...p) => p.join(separator))
+export function template(t, args) {
+    let array = t.split(/\{([^{]+)}/g);
+    for(let i = 1; i < array.length; i += 2) {
+        array[i] = args[array[i]]
+    }
+    return concat(...array)
 }
 
-export function fill(name, parameter) {
-    function rep(t, name, value) {return t.replaceAll('{' + name + '}', value)}
-    let inputs = []
-    let f = t => t
-    let i = t => t
-    return {
-        fill(name, parameter) {
-            if(isState(parameter)) {
-                inputs.push(parameter)
-                let p = f
-                f = t => rep(p(t), name, parameter.get())
-            } else {
-                let p = i
-                i = t => rep(p(t), name, parameter)
-            }
-            return this
-        },
-        into(template) {
-            return on(i(template), ...inputs).apply(f)
-        }
-    }.fill(name, parameter)
+export function join(separator, ...parameters) {
+    return on(...parameters).apply((...p) => p.join(separator))
 }
 
 export function not(booleanModel) {

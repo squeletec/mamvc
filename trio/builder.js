@@ -311,6 +311,9 @@ export class XBuilder extends XNode {
      */
     model(model) {return this.value(model.onChange(() => model.set(this.get().value)))}
 
+    data(model) {
+        return this.onSubmit(call(remote(this.get().action).postData(model.get())))
+    }
 }
 
 export function builder(node) {

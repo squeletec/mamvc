@@ -25,7 +25,7 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {isState, state, boolean, string, template, join} from "./state.js";
+import {isState, state, boolean, string, template, join, argStates} from "./state.js";
 
 const SUCCESS_STATUSES = new Set([200, 0])
 
@@ -37,36 +37,19 @@ function setArg(value, args, i, result) {
     }, false).get() : value
 }
 
-export function uriModel(template, input) {
-    let used = new Set()
-    let args = template.split(/\{([^}]+)}/)
-    let result = state('')
-    for(let i = 1; i < args.length; i += 2) {
-        let name = args[i]
-        if(input.hasOwnProperty(name)) {
-            args[i] = setArg(input[name], args, i, result)
-            used.add(name)
-        }
-        else throw new Error('Parameter ' + name + ' not bound.')
-    }
-    let sep = template.indexOf("?") < 0 ? "?" : "&"
-    for(let name in input) if(input.hasOwnProperty(name) && !used.has(name)) {
-        args.push(sep + name + "=")
-        args.push(setArg(input[name], args, args.length, result))
-        sep = "&"
-    }
-    return result.set(args.join(''))
+function args(uriTemplate, input) {
+    return Object.getOwnPropertyNames(input).filter(name => !uriTemplate.includes('{' + name + '}')).map(name => input[name].map(v => v ? name + '=' + encodeURIComponent(v) : null))
 }
 
-function args(input) {
-    return []
+export function filter(array, predicate = v => v) {
+    return array.filter(predicate)
 }
 
-export function uri(uriTemplate, input) {
-    return join('?',
-        template(uriTemplate, input),
-        join('&', ...args(input))
-    )
+export function uriModel(uriTemplate, input) {
+    let file = template(uriTemplate, input)
+    let request = argStates(...args(uriTemplate, input)).map(filter).map(a => a.join('&'))
+    let glue = uriTemplate.includes('?') ? '&' : '?'
+    return argStates(file, request).map(filter).map(a => a.join(glue))
 }
 
 class RestCall {

@@ -40,9 +40,10 @@ function cell(func, row, c) {
     return c.add(func(row, c))
 }
 
-function row(data, path, index, level) {
+function row(data, path, index, level, display) {
     return {
         data: data,
+        display: display,
         path: path,
         item() {return resolve(this.data, this.path)},
         index: index,
@@ -149,7 +150,6 @@ export function searchTable(searchCall, page = searchCall.input.page, query = se
         captionTop().setClass('error').textLeft().nowrap().add(searchCall.error),
         captionBottom().setClass('paging').textLeft().nowrap().add(pageControls(page, result, searchCall.loading))
     )
-    //return pageTable(searchCall, page, result)
 }
 
 export function searchApi(uri, input = searchPage()) {
@@ -158,13 +158,13 @@ export function searchApi(uri, input = searchPage()) {
 
 export function searchPage(params = {}) {
     let input = state({query: '', order: '', page: 0, size: 25, ...params})
-    for(p in input.get()) if(input.get().hasOwnProperty(p)
-        input[p] = input.transform((o,v) => {o.page=0,o[p]=v})
+    for(let p in input.get()) if(input.get().hasOwnProperty(p))
+        input[p] = input.transform((o, v) => {o.page=0; o[p]=v})
     return input
 }
 
-function staticExpand(nodeModel) {
-    return set(nodeModel.children, nodeModel.children.get())
+function staticExpand(display, nodeModel) {
+    return set(display, nodeModel.children.get())
 }
 
 export function nodeExpander(expandCommand, model) {
@@ -197,7 +197,7 @@ class TreeTable extends XBuilder {
         let c = {name: ['item', name], cell: (row, td) => {
                 td.add(span().paddingLeft(row.level, 'em'))
                 return content(row, row.data.hasOwnProperty('children')
-                    ? td.add(expander(nodeExpander(this.childrenCommand(row.data, row.level), row.data.children)), ' ')
+                    ? td.add(expander(nodeExpander(this.childrenCommand(row.display, row.data, row.level), row.display)), ' ')
                     : td, row.level)
             }}
         c.cell.header = content.header

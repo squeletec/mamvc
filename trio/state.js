@@ -231,10 +231,14 @@ function passValueTo(target) {
 
 export function on(...parameters) {
     return {apply(f, result = state()) {
-        let args = list([parameters.length])
-        parameters.forEach((p, i) => isState(p) ? p.onChange(passValueTo(args.property(i))) : args.get()[i] = p)
-        return args.map(a => f(...a))
+        return argStates(...parameters).map(a => f(...a))
     }}
+}
+
+export function argStates(...args) {
+    let result = list([args.length])
+    args.forEach((p, i) => isState(p) ? p.onChange(passValueTo(result.property(i))) : result.get()[i] = p)
+    return result
 }
 
 export function concat(...parameters) {
@@ -242,7 +246,7 @@ export function concat(...parameters) {
 }
 
 export function template(t, args) {
-    let array = t.split(/\{([^{])}/g);
+    let array = t.split(/\{([^{]+)}/g);
     for(let i = 1; i < array.length; i += 2) {
         array[i] = args[array[i]]
     }
@@ -251,29 +255,6 @@ export function template(t, args) {
 
 export function join(separator, ...parameters) {
     return on(...parameters).apply((...p) => p.join(separator))
-}
-
-export function fill(name, parameter) {
-    function rep(t, name, value) {return t.replaceAll('{' + name + '}', value)}
-    let inputs = []
-    let f = t => t
-    let i = t => t
-    return {
-        fill(name, parameter) {
-            if(isState(parameter)) {
-                inputs.push(parameter)
-                let p = f
-                f = t => rep(p(t), name, parameter.get())
-            } else {
-                let p = i
-                i = t => rep(p(t), name, parameter)
-            }
-            return this
-        },
-        into(template) {
-            return on(i(template), ...inputs).apply(f)
-        }
-    }.fill(name, parameter)
 }
 
 export function not(booleanModel) {

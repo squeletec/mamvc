@@ -52,7 +52,7 @@ class Observable {
     }
 
     hierarchy(structure = this.get()) {
-        if('object' === typeof structure) {
+        if(structure !== null && 'object' === typeof structure) {
             if(Array.isArray(structure))
                 this.length = this.map(_ => (_ === undefined || _ === null) ? _ : _.length)
             else

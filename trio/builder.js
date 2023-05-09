@@ -310,7 +310,7 @@ export class XBuilder extends XNode {
     /*
      Special binding
      */
-    model(model) {return this.value(model.onChange(() => model.set(this.get().value)).get())}
+    model(model) {return this.value(model).onChange(() => model.set(this.get().value))))}
 
     data(model) {
         return this.onSubmit(call(remote(this.get().action).setPostData(model.get())))

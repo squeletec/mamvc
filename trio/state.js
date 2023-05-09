@@ -76,7 +76,7 @@ class TransformedState extends Observable {
     }
 
     onChange(observer, triggerNow = true, push = true) {
-        this.#parent.onChange(value => observer(this.#read(value), triggerNow, push))
+        this.#parent.onChange(value => observer(this.#read(value)), triggerNow, push)
         return this
     }
 
@@ -105,7 +105,7 @@ class PropertyState extends Observable {
     }
 
     onChange(observer, triggerNow = true, push = true) {
-        this.#parent.onChange(value => observer(value[this.#property], triggerNow, push))
+        this.#parent.onChange(value => observer(value[this.#property]), triggerNow, push)
         return this
     }
 

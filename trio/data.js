@@ -59,7 +59,8 @@ class RestCall {
         this.output = output
         this.error = string()
         this.loading = loading
-        this.uri = uriModel(template, input).onChange(() => this.call(), false)
+        this.uri = uriModel(template, input)
+        this.uri.onChange(() => this.call(), false)
     }
 
     setPostData(data, sendOnChange = true) {

@@ -46,6 +46,7 @@ export function filter(array, predicate = v => v) {
 }
 
 export function uriModel(uriTemplate, input) {
+   if(!isState(input)) input = state(input)
    return input.map(usingUriTemplate(uriTemplate))
 }
 

@@ -245,12 +245,39 @@ export function concat(...parameters) {
     return join('', ...parameters)
 }
 
-export function template(t, args) {
+export function template2(t, args) {
     let array = t.split(/\{([^{]+)}/g);
     for(let i = 1; i < array.length; i += 2) {
         array[i] = args[array[i]]
     }
     return concat(...array)
+}
+
+export function template(t, args) {
+    return args.map(usingTemplate(t))
+}
+
+export function usingTemplate(template) {
+   let parts = template.split(/\{([^{]+)}/g)
+   let values = Array.from(parts)
+   return function(value) {
+      for(let i = 1; i < values.length; i += 2) values[i] = value[parts[i]]
+      return values.join('')
+   }
+}
+
+export function usingUriTemplate(template) {
+   let fileFunction = usingTemplate(template)
+   return function(raw) {
+      let value = {}
+      Object.getOwnPropertyNames(raw).forEach(name => value[name] = encodeURIComponent(raw[name]))
+      let params = Object.getOwnPropertyNames(value).filter(n => n && !template.includes(n))
+      let file = fileFunction(value)
+      if(params.length > 0) {
+         file += (file.includes('?') ? '&' : '?') + params.map(n => n + = + value[n]).join('&')
+      }
+      return file
+   }
 }
 
 export function join(separator, ...parameters) {

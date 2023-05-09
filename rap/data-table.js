@@ -163,8 +163,8 @@ export function searchPage(params = {}) {
     return input
 }
 
-function staticExpand(display, nodeModel) {
-    return set(display, nodeModel.children.get())
+function staticExpand(display, node) {
+    return set(display, node.children)
 }
 
 export function nodeExpander(expandCommand, model) {

@@ -53,9 +53,10 @@ class Observable {
 
     hierarchy(structure = this.get()) {
         if(structure !== null && 'object' === typeof structure) {
-            if(Array.isArray(structure))
+            if(Array.isArray(structure)) {
                 this.length = this.map(_ => (_ === undefined || _ === null) ? _ : _.length)
-            else
+                this.appender = this.apply((array, item) => array.push(item))
+            } else
                 Object.getOwnPropertyNames(structure).forEach(property => this[property] = this.property(property).hierarchy(structure[property]))
         }
         return this

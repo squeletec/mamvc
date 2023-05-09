@@ -38,7 +38,7 @@ function setArg(value, args, i, result) {
 }
 
 function args(uriTemplate, input) {
-    return Object.getOwnPropertyNames(input).filter(name => !uriTemplate.includes('{' + name + '}')).map(name => input[name].map(v => v ? name + '=' + encodeURIComponent(v) : null))
+    return input === null ? [] : Object.getOwnPropertyNames(input).filter(name => !uriTemplate.includes('{' + name + '}')).map(name => input[name].map(v => v ? name + '=' + encodeURIComponent(v) : null))
 }
 
 export function filter(array, predicate = v => v) {

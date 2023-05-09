@@ -25,7 +25,7 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {isState, state, boolean, string, template, join, argStates} from "./state.js";
+import {isState, state, boolean, string, template, join, argStates, usingUriTemplate} from "./state.js";
 
 const SUCCESS_STATUSES = new Set([200, 0])
 
@@ -46,6 +46,10 @@ export function filter(array, predicate = v => v) {
 }
 
 export function uriModel(uriTemplate, input) {
+   return input.map(usingUriTemplate(uriTemplate))
+}
+
+export function uriModel2(uriTemplate, input) {
     let file = template(uriTemplate, input)
     let request = argStates(...args(uriTemplate, input)).map(filter).map(a => a.join('&'))
     let glue = uriTemplate.includes('?') ? '&' : '?'

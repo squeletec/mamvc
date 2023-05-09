@@ -67,7 +67,8 @@ class DataTable extends XBuilder {
     }
 
     column(name, content = self) {
-        this.columnsModel.appender.set({name: [name], cell: content}) 
+        this.columnsModel.get().push({name: [name], cell: content}) 
+        this.columnsModel.trigger()
         return this
     }
 
@@ -84,14 +85,14 @@ class DataTable extends XBuilder {
             }
         }
         p(def)
-        this.columnsModel.set(this.columnsModel.get())
+        this.columnsModel.trigger()
         return this
     }
 
     moveColumn(from, to) {
         let f = this.columnsModel.get().splice(from, 1)
         this.columnsModel.get().splice(to, 0, ...f)
-        this.columnsModel.set(this.columnsModel.get())
+        this.columnsModel.trigger()
     }
 
     captionTop(...args) {
@@ -201,14 +202,15 @@ class TreeTable extends XBuilder {
             }}
         c.cell.header = content.header
         this.columnsModel.get().push(c)
-        this.columnsModel.set(this.columnsModel.get())
+        this.columnsModel.trigger()
         return this
     }
 
     column(name, content = self) {
         //let c = (row, t) => content(node.item, t)
         //c.header = content.header
-        this.columnsModel.appender.set({name: ['item', name], cell: content})
+        this.columnsModel.get().push({name: ['item', name], cell: content})
+        this.columnsModel.trigger()
         return this
     }
 
@@ -225,7 +227,7 @@ class TreeTable extends XBuilder {
             }
         }
         p(def, 'item')
-        this.columnsModel.set(this.columnsModel.get())
+        this.columnsModel.trigger()
         return this
     }
 }

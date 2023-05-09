@@ -67,8 +67,7 @@ class DataTable extends XBuilder {
     }
 
     column(name, content = self) {
-        this.columnsModel.get().push({name: [name], cell: content})
-        this.columnsModel.set(this.columnsModel.get())
+        this.columnsModel.appender.set({name: [name], cell: content}) 
         return this
     }
 
@@ -209,8 +208,7 @@ class TreeTable extends XBuilder {
     column(name, content = self) {
         //let c = (row, t) => content(node.item, t)
         //c.header = content.header
-        this.columnsModel.get().push({name: ['item', name], cell: content})
-        this.columnsModel.set(this.columnsModel.get())
+        this.columnsModel.appender.set({name: ['item', name], cell: content})
         return this
     }
 

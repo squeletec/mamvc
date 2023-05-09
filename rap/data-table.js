@@ -189,7 +189,7 @@ class TreeTable extends XBuilder {
         }
         this.add(
             thead().add(tr().add(each(this.columnsModel, (column, index) => cell(column.cell.header || self.header, row(column.name, column.name, index, -1), th().setClass('header-' + column.name))))),
-            tbody().add(each(rootModel, (item, index) => subTree(item), index))),
+            tbody().add(each(rootModel, (item, index) => subTree(item, index))),
         )
     }
 

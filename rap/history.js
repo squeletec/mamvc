@@ -20,20 +20,12 @@ export function parseParam(parameters, name, defaultValue) {
 }
 
 export function toModels(parsedUri, defaultValues) {
-    return Object.fromEntries(Object.entries(defaultValues).map(([k,v]) => [k, state(parseParam(parsedUri.parameters, k, v))]))
+    return state(Object.fromEntries(Object.entries(defaultValues).map(([k,v]) => [k, parseParam(parsedUri.parameters, k, v)]))).hierarchy()
 }
 
 export function locationModel(parsedUri, defaultValues, serializableStates = toModels(parsedUri, defaultValues)) {
-    let args = {}
-    let argsModel = state()
-    Object.entries(serializableStates).forEach(([k,v],i) => {
-        v.onChange(nv => {
-            args[k] = nv === defaultValues[k] ? null : nv
-            argsModel.set(args)
-        })
-    })
-    return argsModel.map(args => {
-        let vs = Object.entries(args).filter(([k, v]) => v)
+    return serializableStates.map(args => {
+        let vs = Object.entries(args).filter(([k, v]) => v !== defaultValues[k])
         return vs.length > 0 ? parsedUri.path + '?' + vs.map(([k, v]) => k + '=' + encodeURIComponent(v)).join('&') : parsedUri.path
     })
 }

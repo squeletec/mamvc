@@ -131,7 +131,7 @@ export function pageTable(pageCall, page = pageCall.input.page, result = pageCal
 }
 
 export function pageApi(uri) {
-    return remote(uri, {page: state(0), size: state(25)}, pageModel())
+    return remote(uri, {page: 0, size: 25}, pageModel())
 }
 
 export function searchControls(query) {

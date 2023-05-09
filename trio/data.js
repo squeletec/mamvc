@@ -58,7 +58,7 @@ export function uriModel2(uriTemplate, input) {
 
 class RestCall {
     constructor(template, input, output, loading) {
-        this.input = input
+        this.input = isState(input) ? input : state(input)
         this.data = null
         this.output = output
         this.error = string()

@@ -274,7 +274,7 @@ export function usingUriTemplate(template) {
       let params = Object.getOwnPropertyNames(value).filter(n => n && !template.includes(n))
       let file = fileFunction(value)
       if(params.length > 0) {
-         file += (file.includes('?') ? '&' : '?') + params.map(n => n + = + value[n]).join('&')
+         file += (file.includes('?') ? '&' : '?') + params.map(n => n + '=' + value[n]).join('&')
       }
       return file
    }

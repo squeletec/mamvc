@@ -96,6 +96,10 @@ class TransformedState extends Observable {
     }
 }
 
+function get(object, property) {
+    return object === null || object === undefined ? object : object[property]
+}
+
 class PropertyState extends Observable {
     #parent;
     #property;
@@ -107,7 +111,7 @@ class PropertyState extends Observable {
     }
 
     onChange(observer, triggerNow = true, push = true) {
-        this.#parent.onChange(value => observer(value[this.#property]), triggerNow, push)
+        this.#parent.onChange(value => observer(get(value, this.#property])), triggerNow, push)
         return this
     }
 
@@ -117,7 +121,7 @@ class PropertyState extends Observable {
     }
 
     get() {
-        return this.#parent.get()[this.#property];
+        return get(this.#parent.get(), this.#property);
     }
 
     trigger() {

@@ -111,7 +111,7 @@ class PropertyState extends Observable {
     }
 
     onChange(observer, triggerNow = true, push = true) {
-        this.#parent.onChange(value => observer(get(value, this.#property])), triggerNow, push)
+        this.#parent.onChange(value => observer(get(value, this.#property)), triggerNow, push)
         return this
     }
 

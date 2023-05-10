@@ -1,6 +1,6 @@
 import {
     form, table, thead, tbody, tr, td, th, a, each, caption, list, not, on, state, string, set, when, inputText, submit,
-    reset, to, XBuilder, span, remote, resolve, last, boolean, execute, range, captionTop, captionBottom, timer
+    reset, to, XBuilder, span, remote, resolve, last, boolean, execute, range, captionTop, captionBottom, timer, toggle
 } from "../trio.js";
 import {expander} from "./elements.js";
 
@@ -55,19 +55,28 @@ class DataTable extends XBuilder {
 
     constructor(dataModel, offset = state(0)) {
         super(table().get());
+        let columnMove = state()
         this.columnsModel = list().hierarchy()
-        this.columnsModel.onChange(() => dataModel.set(dataModel.get()))
+        this.columnsModel.onChange(() => dataModel.trigger())
+        this.visibleColumnsModel = this.columnsModel.map(cols => cols.filter(col => !col.hidden))
+        let vis = boolean()
         this.add(
-            thead().add(tr().add(each(this.columnsModel, (column, index) => cell(column.cell.header || self.header, row(column.name, column.name, index), th().setClass('header-' + last(column.name)))))),
+            //td('header-visibility').position('absolute').top('inherit').right('inherit').add('U').onClick(toggle(vis)),
+            thead().add(tr().add(each(
+                this.visibleColumnsModel,
+                (column, index) => cell(column.cell.header || self.header, row(column.name, column.name, index), th()
+                    .setClass('header-' + last(column.name))
+                    .transfer(columnMove, index)
+                    .receive(columnMove, from => this.moveColumn(from, index), 'header-receiver', 'header-drop'))))),
             tbody().add(each(
                 dataModel,
-                (item, index) => tr().add(each(this.columnsModel, column => cell(column.cell, row(item, column.name, offset.get() + index), td())))
+                (item, index) => tr().add(each(this.visibleColumnsModel, column => cell(column.cell, row(item, column.name, offset.get() + index), td())))
             ))
         )
     }
 
     column(name, content = self) {
-        this.columnsModel.get().push({name: [name], cell: content}) 
+        this.columnsModel.get().push({name: [name], cell: content})
         this.columnsModel.trigger()
         return this
     }
@@ -175,8 +184,9 @@ class TreeTable extends XBuilder {
 
     constructor(rootModel, childrenCommand = staticExpand) {
         super(table().get());
+        let columnMove = state()
         this.columnsModel = list().hierarchy()
-        this.columnsModel.onChange(() => rootModel.set(rootModel.get()))
+        this.columnsModel.onChange(() => rootModel.trigger())
         this.childrenCommand = childrenCommand
         let subTree = (parent, index, level = 1) => {
             let display = list()
@@ -188,7 +198,13 @@ class TreeTable extends XBuilder {
             ) : r
         }
         this.add(
-            thead().add(tr().add(each(this.columnsModel, (column, index) => cell(column.cell.header || self.header, row(column.name, column.name, index, -1), th().setClass('header-' + column.name))))),
+            thead().add(tr().add(each(
+                this.columnsModel,
+                (column, index) => cell(column.cell.header || self.header, row(column.name, column.name, index, -1), th()
+                    .setClass('header-' + column.name)
+                    //.transfer(columnMove, index)
+                    //.receive(columnMove, from => this.moveColumn(from, index), 'header-receiver', 'header-drop')
+                )))),
             tbody().add(each(rootModel, (item, index) => subTree(item, index))),
         )
     }
@@ -230,6 +246,13 @@ class TreeTable extends XBuilder {
         this.columnsModel.trigger()
         return this
     }
+
+    moveColumn(from, to) {
+        let f = this.columnsModel.get().splice(from, 1)
+        this.columnsModel.get().splice(to, 0, ...f)
+        this.columnsModel.trigger()
+    }
+
 }
 
 export function treeTable(channel, childrenModels = staticExpand) {

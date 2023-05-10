@@ -1,6 +1,38 @@
 import {
-    form, table, thead, tbody, tr, td, th, a, each, caption, list, not, on, state, string, set, when, inputText, submit,
-    reset, to, XBuilder, span, remote, resolve, last, boolean, execute, range, captionTop, captionBottom, timer, toggle
+    form,
+    table,
+    thead,
+    tbody,
+    tr,
+    td,
+    th,
+    a,
+    each,
+    caption,
+    list,
+    not,
+    on,
+    state,
+    string,
+    set,
+    when,
+    inputText,
+    submit,
+    reset,
+    to,
+    XBuilder,
+    span,
+    remote,
+    resolve,
+    last,
+    boolean,
+    execute,
+    range,
+    captionTop,
+    captionBottom,
+    timer,
+    toggle,
+    div, checkbox, label
 } from "../trio.js";
 import {expander} from "./elements.js";
 
@@ -61,13 +93,18 @@ class DataTable extends XBuilder {
         this.visibleColumnsModel = this.columnsModel.map(cols => cols.filter(col => !col.hidden))
         let vis = boolean()
         this.add(
-            //td('header-visibility').position('absolute').top('inherit').right('inherit').add('U').onClick(toggle(vis)),
             thead().add(tr().add(each(
                 this.visibleColumnsModel,
                 (column, index) => cell(column.cell.header || self.header, row(column.name, column.name, index), th()
                     .setClass('header-' + last(column.name))
                     .transfer(columnMove, index)
-                    .receive(columnMove, from => this.moveColumn(from, index), 'header-receiver', 'header-drop'))))),
+                    .receive(columnMove, from => this.moveColumn(from, index), 'header-receiver', 'header-drop')
+                )), div().position('absolute').left('inherit', '').top('inherit', '').marginLeft('-0.5', 'em').add(a().onClick(toggle(vis)).add('⋮'),
+                div('header-visibility').display(vis).position('absolute').right(0)
+                    .add(each(this.columnsModel, column => div().add(
+                        checkbox(column.name).onChange(() => {column.hidden = !column.hidden; this.columnsModel.trigger()}, true),
+                        label(column.name).add(column.name)
+                    )))))),
             tbody().add(each(
                 dataModel,
                 (item, index) => tr().add(each(this.visibleColumnsModel, column => cell(column.cell, row(item, column.name, offset.get() + index), td())))

@@ -140,3 +140,9 @@ h1 {
     font-size: small;
     color: silver;
 }
+
+.header-visibility {
+    background-color: #e3e3e3;
+    padding: 0.2em;
+    border: 1px solid gray;
+}

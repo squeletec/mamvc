@@ -91,6 +91,7 @@ class TransformedState extends Observable {
     }
 
     trigger() {
+        this.#parent.trigger()
         return this
     }
 }

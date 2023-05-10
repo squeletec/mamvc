@@ -277,7 +277,7 @@ export function usingUriTemplate(template) {
    return function(raw) {
       let value = {}
       Object.getOwnPropertyNames(raw).forEach(name => value[name] = encodeURIComponent(raw[name]))
-      let params = Object.getOwnPropertyNames(value).filter(n => n && !template.includes(n))
+      let params = Object.getOwnPropertyNames(value).filter(n => n && !template.includes('{' + n + '}'))
       let file = fileFunction(value)
       if(params.length > 0) {
          file += (file.includes('?') ? '&' : '?') + params.map(n => n + '=' + value[n]).join('&')

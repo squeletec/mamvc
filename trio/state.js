@@ -40,7 +40,7 @@ class Observable {
     trigger() {}
 
     map(mappingFunction) {
-        return new TransformedState(this, mappingFunction, () => {})
+        return new TransformedState(this, mappingFunction, () => true)
     }
 
     apply(writeFunction) {
@@ -82,8 +82,7 @@ class TransformedState extends Observable {
     }
 
     set(value) {
-        this.#write(this.#parent.get(), value)
-        return this.trigger()
+        return this.#write(this.#parent, value) ? this : this.trigger()
     }
 
     get() {
@@ -116,6 +115,8 @@ class PropertyState extends Observable {
     }
 
     set(value) {
+        if(this.get() === value)
+            return this
         this.#parent.get()[this.#property] = value
         return this.trigger()
     }

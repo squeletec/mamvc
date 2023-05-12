@@ -260,7 +260,7 @@ export class XBuilder extends XNode {
      Dealing with events
      */
     on(event, handler, bubble) {
-        this.node.addEventListener(event, bubble ? handler : function (e) {
+        this.node.addEventListener(event, bubble ? handler : e => {
             handler(e)
             e.preventDefault()
             return false

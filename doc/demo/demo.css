@@ -141,7 +141,14 @@ h1 {
     color: silver;
 }
 
-.header-visibility {
+.rap-columns-toggle {
+    background-color: #e3e3e3;
+    padding-right: 0.2em;
+    padding-left: 0.2em;
+    border: 1px solid gray;
+    border-bottom-left-radius: 5px;
+}
+.rap-columns-visibility {
     background-color: #e3e3e3;
     padding: 0.2em;
     border: 1px solid gray;

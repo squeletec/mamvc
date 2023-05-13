@@ -49,6 +49,10 @@ export function call(rest) {
     return () => rest.call()
 }
 
+export function trigger(model) {
+    return () => model.trigger()
+}
+
 export function when(condition, command) {
     return () => condition.get() && command()
 }

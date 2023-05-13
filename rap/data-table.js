@@ -1,5 +1,4 @@
-import {
-    form,
+import {form,
     table,
     thead,
     tbody,
@@ -80,6 +79,28 @@ function row(data, path, index, level, display) {
         item() {return resolve(this.data, this.path)},
         index: index,
         level: level
+    }
+}
+
+class Column {
+    #cell
+    #header
+    #canMove
+    #canHide
+    #hidden
+    constructor(cell, header, canMove, canHide, hidden) {
+        this.#cell = cell
+        this.#header = header
+        this.#canMove = canMove
+        this.#canHide = canHide
+        this.#hidden = false
+    }
+    hide(value = true) {
+        if(ths.#canHide) this.#hidden = value
+        return this
+    }
+    isHidden() {
+        return this.#hidden
     }
 }
 

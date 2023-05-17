@@ -83,7 +83,15 @@ function row(data, path, index, level, display) {
     }
 }
 
-class Column {
+export class Column {
+    name() {}
+    header(index) {}
+    cell(data, index, depth) {}
+    hidden() {}
+    hide(value) {}
+}
+
+class Column2 {
     #cell
     #header
     #canMove
@@ -118,13 +126,13 @@ class DataTable extends XBuilder {
             captionTop().position('relative').add(div('rap-columns').position('absolute').right('0', '').top('0', '').marginLeft('-0.5', 'em').add(a().setClass('rap-columns-toggle').onClick(toggle(vis)).add('⋮'),
                 div('rap-columns-visibility').display(vis).position('absolute').textLeft().whiteSpace('nowrap').right(0)
                     .add(each(this.columnsModel, column => div().add(
-                        checkbox(column.name).checked(column.hidden ? null : 'checked').onChange(() => {column.hidden = !column.hidden; this.columnsModel.trigger()}, true),
-                        label(column.name).add(column.name)
+                        checkbox(column.name()).checked(column.hidden() ? null : 'checked').onChange(() => {column.hide(!column.hidden()); this.columnsModel.trigger()}, true),
+                        label(column.name()).add(column.name())
                     ))))
             ),
             thead().add(tr().add(each(
                 this.visibleColumnsModel,
-                (column, index) => cell(column.cell.header || self.header, row(column.name, column.name, index), th()
+                (column, index) => column.header(index, th()
                     .setClass('header-' + last(column.name))
                     .transfer(columnMove, index)
                     .receive(columnMove, from => this.moveColumn(from, index), 'header-receiver', 'header-drop')
@@ -132,7 +140,7 @@ class DataTable extends XBuilder {
             ),
             tbody().add(each(
                 dataModel,
-                (item, index) => tr().add(each(this.visibleColumnsModel, column => cell(column.cell, row(item, column.name, offset.get() + index), td())))
+                (item, index) => tr().add(each(this.visibleColumnsModel, column => column.cell(item, offset.get() + index, td())))
             ))
         )
     }

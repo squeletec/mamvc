@@ -72,6 +72,7 @@ function cell(func, row, c) {
     return c.add(func(row, c))
 }
 
+/*
 function row(data, path, index, level, display) {
     return {
         data: data,
@@ -82,35 +83,117 @@ function row(data, path, index, level, display) {
         level: level
     }
 }
+ */
 
 export class Column {
-    name() {}
-    header(index) {}
-    cell(data, index, depth) {}
+    getName() {}
+    renderHeader(index) {return this.getName()}
+    renderCell(data, td, index) {}
     hidden() {}
     hide(value) {}
 }
 
-class Column2 {
-    #cell
-    #header
-    #canMove
-    #canHide
-    #hidden
-    constructor(cell, header, canMove, canHide, hidden) {
-        this.#cell = cell
-        this.#header = header
-        this.#canMove = canMove
-        this.#canHide = canHide
-        this.#hidden = false
+class TColumn extends Column {
+    #delegate
+    #function
+    constructor(d, f) {
+        super();
+        this.#delegate = d
+        this.#function = f
     }
-    hide(value = true) {
-        if(ths.#canHide) this.#hidden = value
+
+    getName() {
+        return this.#delegate.name();
+    }
+
+    renderHeader(index) {
+        return this.#delegate.header(index);
+    }
+
+    hidden() {
+        return this.#delegate.hidden();
+    }
+
+    hide(value) {
+        return this.#delegate.hide(value);
+    }
+
+    renderCell(data, td, index, depth) {
+        super.renderCell(this.#function(data, td), td, index, depth);
+    }
+}
+
+class RColumn extends Column {
+
+    constructor(name, get) {
+        super();
+        this.n = name
+        this.get = get
+        this.h = false
+        this.index = new PColumn()
+    }
+
+    getName() {
+        return this.n;
+    }
+
+    renderCell(data, td, index) {
+        return this.get(data);
+    }
+
+    hidden() {
+        return this.h
+    }
+
+    hide(value) {
+        this.h = value
         return this
     }
-    isHidden() {
-        return this.#hidden
+}
+
+class PColumn extends Column {
+
+    getName() {
+        "index";
     }
+
+    renderHeader(index) {
+        return "#";
+    }
+
+    renderCell(data, td, index) {
+        return index
+    }
+
+    hidden() {
+        return false
+    }
+
+    hide(value) {
+        return this
+    }
+}
+export function objectPath(n = '', sss = o => o) {
+    let c = new RColumn(n, sss)
+    return new Proxy(c, {
+        get(target, property) {
+            return c[property] ? c[property] : objectPath(property, o => sss(o)?.[property])
+        }
+    })
+}
+
+export let row = objectPath()
+
+function _th(col, i) {
+    let t = th()
+    col.header(t, i)
+    return t
+}
+
+function _td(item, i, column) {
+    let t = td()
+    column.cell(item, t, i)
+    return t
 }
 
 class DataTable extends XBuilder {
@@ -126,44 +209,25 @@ class DataTable extends XBuilder {
             captionTop().position('relative').add(div('rap-columns').position('absolute').right('0', '').top('0', '').marginLeft('-0.5', 'em').add(a().setClass('rap-columns-toggle').onClick(toggle(vis)).add('⋮'),
                 div('rap-columns-visibility').display(vis).position('absolute').textLeft().whiteSpace('nowrap').right(0)
                     .add(each(this.columnsModel, column => div().add(
-                        checkbox(column.name()).checked(column.hidden() ? null : 'checked').onChange(() => {column.hide(!column.hidden()); this.columnsModel.trigger()}, true),
-                        label(column.name()).add(column.name())
+                        checkbox(column.getName()).checked(column.hidden() ? null : 'checked').onChange(() => {column.hide(!column.hidden()); this.columnsModel.trigger()}, true),
+                        label(column.getName()).add(column.getName())
                     ))))
             ),
             thead().add(tr().add(each(
                 this.visibleColumnsModel,
-                (column, index) => column.header(index, th()
-                    .setClass('header-' + last(column.name))
-                    .transfer(columnMove, index)
-                    .receive(columnMove, from => this.moveColumn(from, index), 'header-receiver', 'header-drop')
-                )))
+                (column, index) => {
+                    return _th(column, index).setClass('header-' + column.getName()).transfer(columnMove, index).receive(columnMove, from => this.moveColumn(from, index), 'header-receiver', 'header-drop')
+                }))
             ),
             tbody().add(each(
                 dataModel,
-                (item, index) => tr().add(each(this.visibleColumnsModel, column => column.cell(item, offset.get() + index, td())))
+                (item, index) => tr().add(each(this.visibleColumnsModel, column => _td(item, offset.get() + index, column)))
             ))
         )
     }
 
-    column(name, content = self) {
-        this.columnsModel.get().push({name: [name], cell: content})
-        this.columnsModel.trigger()
-        return this
-    }
-
-    columns(def) {
-        let p = (d, ...keys) => {
-            for(let k in d) if(d.hasOwnProperty(k)) {
-                let c = d[k]
-                switch (typeof c) {
-                    case "function": this.columnsModel.get().push({name: [...keys, k], cell: c})
-                        break
-                    case "object": if(!Array.isArray(c)) p(c, ...keys, k)
-                        break
-                }
-            }
-        }
-        p(def)
+    column(...defs) {
+        this.columnsModel.get().push(...defs)
         this.columnsModel.trigger()
         return this
     }
@@ -260,38 +324,38 @@ class TreeTable extends XBuilder {
         this.childrenCommand = childrenCommand
         let subTree = (parent, index, level = 1) => {
             let display = list()
-            let r = tr().add(each(this.columnsModel, column => cell(column.cell, row(parent, column.name, index, level, display), td())))
-            return parent.hasOwnProperty('children') ? range(
-                r,
-                display,
-                (child, index) => subTree(child, index, level + 1)
-            ) : r
+            let r = tr().add(each(this.columnsModel, column => _td({data: parent, level: level, display: display}, index, column)))
+            //cell(column.cell, row(parent, column.name, index, level, display), td())))
+            return parent.hasOwnProperty('children') ? range(r, display, (child, index) => subTree(child, index, level + 1)) : r
         }
         this.add(
             thead().add(tr().add(each(
                 this.columnsModel,
-                (column, index) => cell(column.cell.header || self.header, row(column.name, column.name, index, -1), th()
-                    .setClass('header-' + column.name)
+                (column, index) => _th(column, index).setClass('header-' + column.getName())
                     //.transfer(columnMove, index)
                     //.receive(columnMove, from => this.moveColumn(from, index), 'header-receiver', 'header-drop')
-                )))),
-            tbody().add(each(rootModel, (item, index) => subTree(item, index))),
+                ))),
+            tbody().add(each(rootModel, (item, index) => subTree(item, index)))
         )
     }
 
-    treeColumn(name, content = self) {
-        let c = {name: ['item', name], cell: (row, td) => {
-                td.add(span().paddingLeft(row.level, 'em'))
-                return content(row, row.data.hasOwnProperty('children')
-                    ? td.add(expander(nodeExpander(this.childrenCommand(row.display, row.data, row.level), row.display)), ' ')
-                    : td, row.level)
-            }}
-        c.cell.header = content.header
-        this.columnsModel.get().push(c)
+    treeColumn(def) {
+        this.columnsModel.get().push(new TColumn(def, (row, t) => {
+            t.add(span().paddingLeft(row.level, 'em'))
+            if(row.data.hasOwnProperty('children'))
+                t.add(expander(nodeExpander(this.childrenCommand(row.display, row.data, row.level), row.display)), ' ')
+            return row.data
+        }))
         this.columnsModel.trigger()
         return this
     }
 
+    column(...defs) {
+        this.columnsModel.get().push(...defs.map(def => new TColumn(def, row => row.data)))
+        this.columnsModel.trigger()
+        return this
+    }
+/*
     column(name, content = self) {
         //let c = (row, t) => content(node.item, t)
         //c.header = content.header
@@ -316,6 +380,7 @@ class TreeTable extends XBuilder {
         this.columnsModel.trigger()
         return this
     }
+*/
 
     moveColumn(from, to) {
         let f = this.columnsModel.get().splice(from, 1)

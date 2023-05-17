@@ -177,7 +177,7 @@ export function objectPath(n = '', sss = o => o) {
     let c = new RColumn(n, sss)
     return new Proxy(c, {
         get(target, property) {
-            return c[property] ? c[property] : objectPath(property, o => sss(o)?.[property])
+            return c[property] !== undefined ? c[property] : objectPath(property, o => sss(o)?.[property])
         }
     })
 }

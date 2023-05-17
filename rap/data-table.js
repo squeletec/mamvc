@@ -186,14 +186,12 @@ export let row = objectPath()
 
 function _th(col, i) {
     let t = th()
-    col.header(t, i)
-    return t
+    return t.add(col.renderHeader(t, i))
 }
 
 function _td(item, i, column) {
     let t = td()
-    column.cell(item, t, i)
-    return t
+    return t.add(column.renderCell(item, t, i))
 }
 
 class DataTable extends XBuilder {
@@ -203,7 +201,7 @@ class DataTable extends XBuilder {
         let columnMove = state()
         this.columnsModel = list().hierarchy()
         this.columnsModel.onChange(() => dataModel.trigger())
-        this.visibleColumnsModel = this.columnsModel.map(cols => cols.filter(col => !col.hidden))
+        this.visibleColumnsModel = this.columnsModel.map(cols => cols.filter(col => !col.hidden()))
         let vis = boolean()
         this.add(
             captionTop().position('relative').add(div('rap-columns').position('absolute').right('0', '').top('0', '').marginLeft('-0.5', 'em').add(a().setClass('rap-columns-toggle').onClick(toggle(vis)).add('⋮'),

@@ -8,13 +8,13 @@
     <script type="module" id="demoSource" defer>
 
     import {body, div, remote, list } from "../../trio.js";
-    import {treeTable} from "../../rap.js";
+    import {treeTable, row} from "../../rap.js";
 
     body().add(div().id('demoOutput').add(
         treeTable(remote('data/tree.json', null, list()).call().output)
-            .column('id')
-            .treeColumn('name')
-            .column('content')
+            .column(row.id)
+            .treeColumn(row.name)
+            .column(row.content)
     ))
 
 </script>

@@ -8,7 +8,7 @@
 <script type="module" id="demoSource" defer>
 
     import {body, div } from "../../trio.js"
-    import {pageTable, self, path, pageApi} from "../../rap.js"
+    import {pageTable, self, path, pageApi, row} from "../../rap.js"
 
     function Adult(row, c) {
         c.title(row.path.join("."))
@@ -17,16 +17,14 @@
 
     body().add(div().id('demoOutput').add(
         pageTable(pageApi('data/page.json').call())
-            .columns({
-                id: self,
-                name: self,
-                content: self,
-                user: {
-                    first: self,
-                    last: path,
-                    age: Adult
-                }
-            })
+            .column(
+                row.id,
+                row.name,
+                row.content,
+                row.user.first,
+                row.user.last,
+                row.user.age
+            )
     ))
 
 </script>

@@ -7,16 +7,16 @@
     <script type="module" src="demo-runner.js" defer></script>
     <script type="module" id="demoSource" defer>
 import {body, div, a, list, remote, call } from "../../trio.js";
-import {treeTable, named} from "../../rap.js";
+import {treeTable, row} from "../../rap.js";
 
 body().add(div().id('demoOutput').add(
     treeTable(
         remote('data/root.json', null, list()).call().output,
         (display, nodeModel) => call(remote("data/subtree{id}.json", {id: nodeModel.item.id}, display))
     )
-        .column('id')
-        .treeColumn('name', row => a().add(row.item()))
-        .column('content', named("Custom header", row => row.content))
+        .column(row.id)
+        .treeColumn(row.name)
+        .column(row.content)
 ))
     </script>
 </head>

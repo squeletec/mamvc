@@ -8,14 +8,14 @@
 <script type="module" id="demoSource" defer>
 
     import {body, div } from "../../trio.js"
-    import {searchTable, position, searchApi, serialize} from "../../rap.js"
+    import {searchTable, position, searchApi, serialize, row} from "../../rap.js"
 
     body().add(div().id('demoOutput').add(
         searchTable(searchApi("data/page{page}.json", serialize({query:'', size:25,page:0,order:''})).call())
-            .column('pos', position)
-            .column('id')
-            .column('name')
-            .column('content')
+            .column(row.index)
+            .column(row.id)
+            .column(row.name)
+            .column(row.content)
     ))
 
 </script>

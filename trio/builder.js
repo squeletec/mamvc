@@ -240,7 +240,7 @@ export class XBuilder extends XNode {
     overflowY(value) {return this.css('overflow-y', value)}
     flex(...args) {return this.css('flex', ...args)}
     flexDirection(...args) {return this.css('flex-direction', ...args)}
-    gap(...args) {return this.css('gap', ...args)}!
+    gap(...args) {return this.css('gap', ...args)}
     captionSide(...args) {return this.css('caption-side', ...args)}
     whiteSpace(...args) {return this.css('white-space', ...args)}
     nowrap() {return this.whiteSpace('nowrap')}

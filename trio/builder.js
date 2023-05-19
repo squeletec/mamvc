@@ -239,6 +239,8 @@ export class XBuilder extends XNode {
     overflowX(value) {return this.css('overflow-x', value)}
     overflowY(value) {return this.css('overflow-y', value)}
     flex(...args) {return this.css('flex', ...args)}
+    flexDirection(...args) {return this.css('flex-direction', ...args)}
+    gap(...args) {return this.css('gap', ...args)}
     captionSide(...args) {return this.css('caption-side', ...args)}
     whiteSpace(...args) {return this.css('white-space', ...args)}
     nowrap() {return this.whiteSpace('nowrap')}
@@ -391,6 +393,9 @@ export function br() {return element('br')}
 export function iframe(...src) {return element('iframe').src(src)}
 export function dialog(title = div('dialog-close').position('absolute').top('inherit').right('inherit').add('x').onClick(event => event.target.parentNode.close())) {return element('dialog').add(title)}
 export function fragment(...args) {return builder(document.createDocumentFragment()).add(...args)}
+export function flexRow(...args) {return div().display('flex').add(...args)}
+export function flexColumn(...args) {return div().display('flex').flexDirection('column').add(...args)}
+export function auto(...args) {return div().flex('auto').add(...args)}
 
 export function range(start, model, itemView = item => item, end = xText('')) {
     let f = fragment(start, end)

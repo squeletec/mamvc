@@ -336,7 +336,7 @@ class TreeTable extends XBuilder {
         let subTree = (parent, index, level = 1) => {
             let display = pageModel()
             let r = tr().add(each(this.columnsModel, column => _td({data: parent, level: level, display: display.content}, index, column)))
-            return parent.hasOwnProperty('children') ? treeLevel(r, display.content, (child, index) => subTree(child, index, level + 1), page => tr().add(td().add('...'))) : r
+            return parent.hasOwnProperty('children') ? treeLevel(r, display, (child, index) => subTree(child, index, level + 1), page => tr().add(td().add(a().onClick(() => display.size.set(display.size.get() + 20)).add('...')))) : r
         }
         this.add(
             thead().add(tr().add(each(

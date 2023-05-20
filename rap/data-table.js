@@ -103,11 +103,11 @@ class TColumn extends Column {
     }
 
     getName() {
-        return this.#delegate.name();
+        return this.#delegate.getName();
     }
 
     renderHeader(index) {
-        return this.#delegate.header(index);
+        return this.#delegate.renderHeader(index);
     }
 
     hidden() {
@@ -119,7 +119,7 @@ class TColumn extends Column {
     }
 
     renderCell(data, td, index, depth) {
-        super.renderCell(this.#function(data, td), td, index, depth);
+        return this.#delegate.renderCell(this.#function(data, td), td, index, depth);
     }
 }
 
@@ -323,7 +323,6 @@ class TreeTable extends XBuilder {
         let subTree = (parent, index, level = 1) => {
             let display = pageModel()
             let r = tr().add(each(this.columnsModel, column => _td({data: parent, level: level, display: display.content}, index, column)))
-            //cell(column.cell, row(parent, column.name, index, level, display), td())))
             return parent.hasOwnProperty('children') ? range(r, display.content, (child, index) => subTree(child, index, level + 1)) : r
         }
         this.add(
@@ -342,43 +341,17 @@ class TreeTable extends XBuilder {
             t.add(span().paddingLeft(row.level, 'em'))
             if(row.data.hasOwnProperty('children'))
                 t.add(expander(nodeExpander(this.childrenCommand(row.display, row.data, row.level), row.display)), ' ')
-            return row.data
+            return row.data.item
         }))
         this.columnsModel.trigger()
         return this
     }
 
     column(...defs) {
-        this.columnsModel.get().push(...defs.map(def => new TColumn(def, row => row.data)))
+        this.columnsModel.get().push(...defs.map(def => new TColumn(def, row => row.data.item)))
         this.columnsModel.trigger()
         return this
     }
-/*
-    column(name, content = self) {
-        //let c = (row, t) => content(node.item, t)
-        //c.header = content.header
-        this.columnsModel.get().push({name: ['item', name], cell: content})
-        this.columnsModel.trigger()
-        return this
-    }
-
-    columns(def) {
-        let p = (d, ...keys) => {
-            for(let k in d) if(d.hasOwnProperty(k)) {
-                let c = d[k]
-                switch (typeof c) {
-                    case "function": this.columnsModel.get().push({name: [...keys, k], cell: c})
-                        break
-                    case "object": if(!Array.isArray(c)) p(c, ...keys, k)
-                        break
-                }
-            }
-        }
-        p(def, 'item')
-        this.columnsModel.trigger()
-        return this
-    }
-*/
 
     moveColumn(from, to) {
         let f = this.columnsModel.get().splice(from, 1)

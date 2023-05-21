@@ -1,4 +1,5 @@
-[{
+{
+  "content": [{
   "item": {
     "id": 1,
     "name": "Root 1",
@@ -18,4 +19,6 @@
     "name": "Root 3",
     "content": "Root 3 content"
   }
-}]
+}],
+  "last": true
+}

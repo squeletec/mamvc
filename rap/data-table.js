@@ -312,19 +312,6 @@ export function nodeExpander(expandCommand, model) {
     return boolean().onChange(execute(expandCommand, set(model, [])))
 }
 
-function level(start, page, itemView, pageControlsView, end = xText('')) {
-    let f = fragment(start, end)
-    page.onChange(value => {
-        for(let n = start.get().nextSibling, s; n && n !== end.get(); n = s) {
-            s = n.nextSibling
-            builder(n).remove()
-        }
-        value.content.forEach((item, index) => end.prepend(itemView(item, index)))
-        if(!value.last) end.prepend(pageControlsView(value))
-    })
-    return f
-}
-
 class TreeTable extends XBuilder {
 
     constructor(rootModel, childrenCommand = staticExpand) {
@@ -336,7 +323,7 @@ class TreeTable extends XBuilder {
         let subTree = (parent, index, level = 1) => {
             let display = pageModel()
             let r = tr().add(each(this.columnsModel, column => _td({data: parent, level: level, display: display.content}, index, column)))
-            return parent.hasOwnProperty('children') ? treeLevel(r, display, (child, index) => subTree(child, index, level + 1), page => tr().add(td().add(a().onClick(() => display.size.set(display.size.get() + 20)).add('...')))) : r
+            return parent.hasOwnProperty('children') ? range(r, display.content, (child, index) => subTree(child, index, level + 1)) : r
         }
         this.add(
             thead().add(tr().add(each(

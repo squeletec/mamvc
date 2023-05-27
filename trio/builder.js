@@ -83,7 +83,7 @@ export class XText extends XNode {
     }
 }
 
-function xText(text) {
+export function xText(text) {
     return new XText(text)
 }
 
@@ -358,6 +358,7 @@ export function form(method) {return element('form').method(method || 'POST')}
 export function textarea(name) {return element('textarea').name(name)}
 export function input(type, name) {return element('input').type(type).name(name)}
 export function inputText(name) {return input('text', name)}
+export function inputHidden(name) {return input('hidden', name)}
 export function password(name) {return input('password', name)}
 export function checkbox(name) {return input('checkbox', name)}
 export function radio(name) {return input('radio', name)}

@@ -29,9 +29,11 @@ function content(columnsModel, page, commandFactory, depth, moreCommand) {
             let expandCommand = commandFactory(display, item, depth)
             f.add(tr().add(each(columnsModel, column => _td({data: item, depth: depth, display: display, command: expandCommand}, index, column))))
             if(item.hasOwnProperty('children'))
-                f.add(content(columnsModel, display, commandFactory, depth + 1))
+                f.add(content(columnsModel, display, commandFactory, depth + 1, expandCommand.more))
         })
-        if(!value.last) f.add(tr().add(td().setClass('rap-tree-table-more').colspan(columnsModel.length).add(a().onClick(moreCommand).add('...'))))
+        if(!value.last && moreCommand) f.add(tr().add(td().setClass('rap-tree-table-page-controls').colspan(columnsModel.length).add(
+            a().setClass('rap-tree-table-page-more').onClick(moreCommand).add('...')
+        )))
     })
     return f
 }
@@ -44,7 +46,8 @@ class PagedTreeTable extends XBuilder {
         let columnMove = state()
         this.columnsModel = list().hierarchy()
         this.columnsModel.onChange(() => rootPage.trigger())
-        commandFactory(rootPage, null, 0)()
+        let rootLevelCommand = commandFactory(rootPage, null, 0)
+        rootLevelCommand()
         this.add(
             thead().add(tr().add(each(
                 this.columnsModel,
@@ -52,7 +55,7 @@ class PagedTreeTable extends XBuilder {
                     .transfer(columnMove, index)
                     .receive(columnMove, from => this.moveColumn(from, index), 'header-receiver', 'header-drop')
             ))),
-            tbody().add(content(this.columnsModel, rootPage, commandFactory, 1))
+            tbody().add(content(this.columnsModel, rootPage, commandFactory, 1, rootLevelCommand.more))
         )
     }
 

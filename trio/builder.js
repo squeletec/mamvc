@@ -398,19 +398,31 @@ export function flexRow(...args) {return div().display('flex').add(...args)}
 export function flexColumn(...args) {return div().display('flex').flexDirection('column').add(...args)}
 export function auto(...args) {return div().flex('auto').add(...args)}
 
-export function range(start, model, itemView = item => item, end = xText('')) {
+export function space(start = xText(''), end = xText('')) {
     let f = fragment(start, end)
-    model.onChange(value => {
-        for(let n = start.get().nextSibling, s; n && n !== end.get(); n = s) {
-            s = n.nextSibling
-            builder(n).remove()
+    f.clear = () => {
+        for(let node = start.get().nextSibling, next; node && node !== end.get(); node = next) {
+            next = node.nextSibling
+            builder(node).remove()
         }
+    }
+    f.add = function(...items) {
+        items.forEach(i => end.prepend(i))
+        return this
+    }
+    return f
+}
+
+export function range(start, model, itemView = item => item, end = xText('')) {
+    let f = space(start, end)
+    model.onChange(value => {
+        f.clear();
         (Array.isArray(value) ? value : null === value ? [] : [value]).forEach((item, index) => end.prepend(itemView(item, index)))
     })
     return f
 }
 
-export function each(model, itemView = item => item, end = xText('')) {
+export function each(model, itemView = (item, index) => item, end = xText('')) {
     return range(xText(''), model, itemView, end)
 }
 

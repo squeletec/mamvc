@@ -1,0 +1,28 @@
+{
+  "content": [
+    {
+      "item": {
+        "id": 1,
+        "name": "Root 1",
+        "content": "Root 1 content"
+      },
+      "children": []
+    },
+    {
+      "item": {
+        "id": 2,
+        "name": "Root 2",
+        "content": "Root 2 content"
+      },
+      "children": []
+    },
+    {
+      "item": {
+        "id": 3,
+        "name": "Root 3",
+        "content": "Root 3 content"
+      }
+    }
+  ],
+  "last": true
+}

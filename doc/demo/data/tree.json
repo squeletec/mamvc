@@ -7,8 +7,21 @@
   "children": [{
     "item": {
       "id": 2,
+      "name": "Child leaf",
+      "content": "Child leaf content"
+    }
+  }, {
+    "item": {
+      "id": 3,
       "name": "Child",
       "content": "Child content"
-    }
+    },
+    "children": []
   }]
+}, {
+  "item": {
+    "id": 10,
+    "name": "Root leaf",
+    "content": "Root leaf content"
+  }
 }]

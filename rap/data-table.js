@@ -12,7 +12,6 @@ import {form,
     not,
     on,
     state,
-    string,
     set,
     trigger,
     when,
@@ -23,8 +22,6 @@ import {form,
     XBuilder,
     span,
     remote,
-    resolve,
-    last,
     boolean,
     execute,
     range,
@@ -93,7 +90,7 @@ export class Column {
     hide(value) {}
 }
 
-class TColumn extends Column {
+export class TColumn extends Column {
     #delegate
     #function
     constructor(d, f) {
@@ -123,7 +120,7 @@ class TColumn extends Column {
     }
 }
 
-class RColumn extends Column {
+export class RColumn extends Column {
 
     constructor(name, get) {
         super();
@@ -151,7 +148,7 @@ class RColumn extends Column {
     }
 }
 
-class PColumn extends Column {
+export class PColumn extends Column {
 
     getName() {
         "index";
@@ -173,6 +170,7 @@ class PColumn extends Column {
         return this
     }
 }
+
 export function objectPath(n = '', sss = o => o) {
     let c = new RColumn(n, sss)
     return new Proxy(c, {
@@ -304,85 +302,7 @@ export function searchPage(params = {}) {
     return input
 }
 
-function staticExpand(display, node) {
-    return set(display, node.children)
-}
-
 export function nodeExpander(expandCommand, model) {
     return boolean().onChange(execute(expandCommand, set(model, [])))
 }
 
-class TreeTable extends XBuilder {
-
-    constructor(rootModel, childrenCommand = staticExpand) {
-        super(table().get());
-        let columnMove = state()
-        this.columnsModel = list().hierarchy()
-        this.columnsModel.onChange(() => rootModel.trigger())
-        this.childrenCommand = childrenCommand
-        let subTree = (parent, index, level = 1) => {
-            let display = pageModel()
-            let r = tr().add(each(this.columnsModel, column => _td({data: parent, level: level, display: display.content}, index, column)))
-            return parent.hasOwnProperty('children') ? range(r, display.content, (child, index) => subTree(child, index, level + 1)) : r
-        }
-        this.add(
-            thead().add(tr().add(each(
-                this.columnsModel,
-                (column, index) => _th(column, index).setClass('header-' + column.getName())
-                    //.transfer(columnMove, index)
-                    //.receive(columnMove, from => this.moveColumn(from, index), 'header-receiver', 'header-drop')
-                ))),
-            tbody().add(each(rootModel, (item, index) => subTree(item, index)))
-        )
-    }
-
-    treeColumn(def) {
-        this.columnsModel.get().push(new TColumn(def, (row, t) => {
-            t.add(span().paddingLeft(row.level, 'em'))
-            if(row.data.hasOwnProperty('children'))
-                t.add(expander(nodeExpander(this.childrenCommand(row.display, row.data, row.level), row.display)), ' ')
-            return row.data.item
-        }))
-        this.columnsModel.trigger()
-        return this
-    }
-
-    column(...defs) {
-        this.columnsModel.get().push(...defs.map(def => new TColumn(def, row => row.data.item)))
-        this.columnsModel.trigger()
-        return this
-    }
-
-    moveColumn(from, to) {
-        let f = this.columnsModel.get().splice(from, 1)
-        this.columnsModel.get().splice(to, 0, ...f)
-        this.columnsModel.trigger()
-    }
-
-}
-
-export function treeTable(channel, childrenModels = staticExpand) {
-    return new TreeTable(channel, childrenModels)
-}
-
-
-export function self(row) {
-    return row.item()
-}
-self.header = row => last(row.path)
-
-export function path(row) {
-    return self(row)
-}
-path.header = row => row.path.join(".")
-
-export function position(row) {
-    return row.index + 1
-}
-position.header = () => '#'
-
-export function named(name, cellFunction) {
-    let f = (row, c) => cellFunction(row, c)
-    f.header = () => name
-    return f
-}

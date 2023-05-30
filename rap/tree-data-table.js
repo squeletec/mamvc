@@ -1,0 +1,86 @@
+import {table, thead, tbody, tr, td, th, a, each, list, state, set, XBuilder, span, boolean, execute, space} from "../trio.js";
+import {expander} from "./elements.js";
+import {pageModel, TColumn} from "./data-table.js";
+
+function _th(col, i) {
+    let t = th()
+    return t.add(col.renderHeader(t, i))
+}
+
+function _td(item, i, column) {
+    let t = td()
+    return t.add(column.renderCell(item, t, i))
+}
+
+export function treeModel(model) {
+    return (display, parent, depth) => depth > 0 ? set(display, {content: parent.children, last: true}) : () => model.onChange(value => display.set({content: value, last: true}))
+}
+
+export function nodeState(expandCommand, model) {
+    return boolean().onChange(execute(expandCommand, () => model.set({content: [], last: true})))
+}
+
+function content(columnsModel, page, commandFactory, depth, moreCommand) {
+    let f = space()
+    page.onChange(value => {
+        f.clear()
+        value.content.forEach((item, index) => {
+            let display = pageModel()
+            let expandCommand = commandFactory(display, item, depth)
+            f.add(tr().add(each(columnsModel, column => _td({data: item, depth: depth, display: display, command: expandCommand}, index, column))))
+            if(item.hasOwnProperty('children'))
+                f.add(content(columnsModel, display, commandFactory, depth + 1))
+        })
+        if(!value.last) f.add(tr().add(td().setClass('rap-tree-table-more').colspan(columnsModel.length).add(a().onClick(moreCommand).add('...'))))
+    })
+    return f
+}
+
+class PagedTreeTable extends XBuilder {
+
+    constructor(commandFactory) {
+        super(table().get());
+        let rootPage = pageModel()
+        let columnMove = state()
+        this.columnsModel = list().hierarchy()
+        this.columnsModel.onChange(() => rootPage.trigger())
+        commandFactory(rootPage, null, 0)()
+        this.add(
+            thead().add(tr().add(each(
+                this.columnsModel,
+                (column, index) => _th(column, index).setClass('header-' + column.getName())
+                    .transfer(columnMove, index)
+                    .receive(columnMove, from => this.moveColumn(from, index), 'header-receiver', 'header-drop')
+            ))),
+            tbody().add(content(this.columnsModel, rootPage, commandFactory, 1))
+        )
+    }
+
+    treeColumn(def) {
+        this.columnsModel.get().push(new TColumn(def, (row, t) => {
+            t.add(span().paddingLeft(row.depth, 'em'))
+            if(row.data.hasOwnProperty('children'))
+                t.add(expander(nodeState(row.command, row.display)), ' ')
+            return row.data.item
+        }))
+        this.columnsModel.trigger()
+        return this
+    }
+
+    column(...defs) {
+        this.columnsModel.get().push(...defs.map(def => new TColumn(def, row => row.data.item)))
+        this.columnsModel.trigger()
+        return this
+    }
+
+    moveColumn(from, to) {
+        let f = this.columnsModel.get().splice(from, 1)
+        this.columnsModel.get().splice(to, 0, ...f)
+        this.columnsModel.trigger()
+    }
+
+}
+
+export function treeTable(childrenModels) {
+    return new PagedTreeTable(childrenModels)
+}

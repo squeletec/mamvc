@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="demo.css"/>
+    <script type="module" src="demo-runner.js" defer></script>
+    <script type="module" id="demoSource" defer>
+import {body, div, remote, call } from "../../trio.js";
+import {row} from "../../rap.js";
+import {treeTable} from "../../rap/tree-data-table.js";
+
+
+body().add(div().id('demoOutput').add(
+    treeTable(
+        (display, nodeModel) => call(remote("data/node{id}.json", {id: nodeModel ? nodeModel.item.id : 0}, display))
+    ).column(row.id).treeColumn(row.name).column(row.content)
+))
+    </script>
+</head>
+<body>
+</body>
+</html>

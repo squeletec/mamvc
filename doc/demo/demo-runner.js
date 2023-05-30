@@ -7,8 +7,8 @@ let examples = [
     ['data-table', 'Simple data table'],
     ['search-table', 'Search data table'],
     ['data-table-struct', 'Data table with nested structure'],
-    ['tree-table', 'Tree table'],
-    ['dynamic-tree-table', 'Tree table loading node children dynamically'],
+    ['simple-paged-tree-table', 'Simple Paged Tree table'],
+    ['dynamic-paged-tree-table', 'Paged Tree table loading node children dynamically'],
     ['layout-sidebar', 'Layout with sidebar'],
     ['drag-n-drop', 'Drag and drop']
 ]

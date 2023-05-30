@@ -120,3 +120,9 @@ export function resolve(object, propertyNames) {
 export function last(array) {
     return array[array.length - 1]
 }
+
+export function isoOffsetFormat(date) {
+   let minutes = date.getTimezoneOffset()
+   let offset = minutes > 0 ? '-' : '+'
+   return date.toISOString() + offset
+}

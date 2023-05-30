@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="demo.css"/>
+    <script type="module" src="demo-runner.js" defer></script>
+    <script type="module" id="demoSource" defer>
+import {body, div, remote, call, state, set } from "../../trio.js";
+import {row} from "../../rap.js";
+import {treeTable} from "../../rap/tree-data-table.js";
+
+function commands(display, nodeModel) {
+    let input = state({id: nodeModel ? nodeModel.item.id : 0, size: 2}).hierarchy()
+    let dataSource = remote("data/node{id}-{size}.json", input, display)
+    let expandCommand = call(dataSource)
+    expandCommand.more = set(input.size, 4)
+    return expandCommand
+}
+
+body().add(div().id('demoOutput').add(
+    treeTable(commands).column(row.id).treeColumn(row.name).column(row.content)
+))
+    </script>
+</head>
+<body>
+</body>
+</html>

@@ -1,14 +1,16 @@
-[{
+{
+"content":[{
   "item": {
     "id": 1,
-    "name": "Subtree",
+    "name": "Subtree 2",
     "content": "Subtree content"
-  },
-  "children": []
+  }
 }, {
   "item": {
     "id": 2,
-    "name": "Leaf",
+    "name": "Leaf 2",
     "content": "Leaf content"
   }
-}]
+}],
+  "last": false
+}

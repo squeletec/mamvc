@@ -17,7 +17,7 @@ export function treeModel(model) {
 }
 
 export function nodeState(expandCommand, model) {
-    return boolean().onChange(execute(expandCommand, () => model.set({content: [], last: true})))
+    return boolean().onChange(execute(expandCommand, () => model.set({content: [], first: true, last: true})))
 }
 
 function content(columnsModel, page, commandFactory, depth, moreCommand, lessCommand) {

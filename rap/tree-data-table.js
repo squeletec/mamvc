@@ -20,6 +20,10 @@ export function nodeState(expandCommand, model) {
     return boolean().onChange(execute(expandCommand, () => model.set({content: [], first: true, last: true})))
 }
 
+function notLeaf(item) {
+    return item.hasOwnProperty('children')
+}
+
 function content(columnsModel, page, commandFactory, depth, moreCommand, lessCommand) {
     let f = space()
     page.onChange(value => {
@@ -30,8 +34,8 @@ function content(columnsModel, page, commandFactory, depth, moreCommand, lessCom
         value.content.forEach((item, index) => {
             let display = pageModel()
             let expandCommand = commandFactory(display, item, depth)
-            f.add(tr().add(each(columnsModel, column => _td({data: item, depth: depth, display: display, command: expandCommand}, index, column))))
-            if(item.hasOwnProperty('children'))
+            f.add(tr().add(each(columnsModel, column => _td({data: item, depth: depth, nodeState: nodeState(expandCommand, display)}, index, column))))
+            if(notLeaf(item))
                 f.add(content(columnsModel, display, commandFactory, depth + 1, expandCommand.more, expandCommand.less))
         })
         if(!value.last && moreCommand) f.add(tr().add(td().setClass('rap-tree-table-page-controls').colspan(columnsModel.length).add(
@@ -64,9 +68,11 @@ class PagedTreeTable extends XBuilder {
 
     treeColumn(def) {
         this.columnsModel.get().push(new TColumn(def, (row, t) => {
-            t.add(span().paddingLeft(row.depth, 'em'))
-            if(row.data.hasOwnProperty('children'))
-                t.add(expander(nodeState(row.command, row.display)), ' ')
+            t.add(
+                span().paddingLeft(row.depth, 'em'),
+                notLeaf(row.data) ? expander(row.nodeState) : span('rap-tree-table-leaf-indent'),
+                ' '
+            )     
             return row.data.item
         }))
         this.columnsModel.trigger()

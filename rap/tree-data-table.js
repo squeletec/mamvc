@@ -13,7 +13,7 @@ function _td(item, i, column) {
 }
 
 export function treeModel(model) {
-    return (display, parent, depth) => depth > 0 ? set(display, {content: parent.children, last: true}) : () => model.onChange(value => display.set({content: value, last: true}))
+    return (display, parent, depth) => depth > 0 ? set(display, {content: parent.children, first: true, last: true}) : () => model.onChange(value => display.set({content: value, last: true}))
 }
 
 export function nodeState(expandCommand, model) {

@@ -34,7 +34,11 @@ import {form,
 import {expander} from "./elements.js";
 
 export function pageModel() {
-    return state({
+    return state(emptyPage()).hierarchy()
+}
+
+export function emptyPage() {
+    return {
         "pageable": {
             "sort": {
                 "sorted": false,
@@ -58,7 +62,7 @@ export function pageModel() {
         },
         "first": true,
         "content": []
-    }).hierarchy()
+    }
 }
 
 export function pageRequestModel(pageSize = 25) {

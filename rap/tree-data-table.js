@@ -20,16 +20,19 @@ export function nodeState(expandCommand, model) {
     return boolean().onChange(execute(expandCommand, () => model.set({content: [], last: true})))
 }
 
-function content(columnsModel, page, commandFactory, depth, moreCommand) {
+function content(columnsModel, page, commandFactory, depth, moreCommand, lessCommand) {
     let f = space()
     page.onChange(value => {
         f.clear()
+        if(!value.first && lessCommand) f.add(tr().add(td().setClass('rap-tree-table-page-controls').colspan(columnsModel.length).add(
+            a().setClass('rap-tree-table-page-less').onClick(lessCommand).add('...')
+        )))
         value.content.forEach((item, index) => {
             let display = pageModel()
             let expandCommand = commandFactory(display, item, depth)
             f.add(tr().add(each(columnsModel, column => _td({data: item, depth: depth, display: display, command: expandCommand}, index, column))))
             if(item.hasOwnProperty('children'))
-                f.add(content(columnsModel, display, commandFactory, depth + 1, expandCommand.more))
+                f.add(content(columnsModel, display, commandFactory, depth + 1, expandCommand.more, expandCommand.less))
         })
         if(!value.last && moreCommand) f.add(tr().add(td().setClass('rap-tree-table-page-controls').colspan(columnsModel.length).add(
             a().setClass('rap-tree-table-page-more').onClick(moreCommand).add('...')
@@ -55,7 +58,7 @@ class PagedTreeTable extends XBuilder {
                     .transfer(columnMove, index)
                     .receive(columnMove, from => this.moveColumn(from, index), 'header-receiver', 'header-drop')
             ))),
-            tbody().add(content(this.columnsModel, rootPage, commandFactory, 1, rootLevelCommand.more))
+            tbody().add(content(this.columnsModel, rootPage, commandFactory, 1, rootLevelCommand.more, rootLevelCommand.less))
         )
     }
 

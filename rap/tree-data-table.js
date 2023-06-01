@@ -58,7 +58,7 @@ class PagedTreeTable extends XBuilder {
         this.add(
             thead().add(tr().add(each(
                 this.columnsModel,
-                (column, index) => _th(column, index).setClass('header-' + column.getName())
+                (column, index) => _th(column, index)
                     .transfer(columnMove, index)
                     .receive(columnMove, from => this.moveColumn(from, index), 'header-receiver', 'header-drop')
             ))),

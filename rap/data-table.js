@@ -97,10 +97,11 @@ export class Column {
 export class TColumn extends Column {
     #delegate
     #function
-    constructor(d, f) {
+    constructor(d, f, i = false) {
         super();
         this.#delegate = d
         this.#function = f
+        this.isTreeColumn = i
     }
 
     getName() {

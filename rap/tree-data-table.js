@@ -28,9 +28,12 @@ function content(columnsModel, page, commandFactory, depth, moreCommand, lessCom
     let f = space()
     page.onChange(value => {
         f.clear()
-        if(!value.first && lessCommand) f.add(tr().add(td().setClass('rap-tree-table-page-controls').colspan(columnsModel.length).add(
-            a().setClass('rap-tree-table-page-less').onClick(lessCommand).add('...')
-        )))
+        if(!value.first && lessCommand) {
+            f.add(tr().add(each(columnsModel, c => c.isTreeColumn ? td().setClass('rap-tree-table-page-controls').add(
+                    span().paddingLeft(depth, 'em'),
+                a().setClass('rap-tree-table-page-less').onClick(lessCommand).add('...')
+            ) : td())))
+        }
         value.content.forEach((item, index) => {
             let display = pageModel()
             let expandCommand = commandFactory(display, item, depth)
@@ -38,9 +41,12 @@ function content(columnsModel, page, commandFactory, depth, moreCommand, lessCom
             if(notLeaf(item))
                 f.add(content(columnsModel, display, commandFactory, depth + 1, expandCommand.more, expandCommand.less))
         })
-        if(!value.last && moreCommand) f.add(tr().add(td().setClass('rap-tree-table-page-controls').colspan(columnsModel.length).add(
-            a().setClass('rap-tree-table-page-more').onClick(moreCommand).add('...')
-        )))
+        if(!value.last && moreCommand) {
+            f.add(tr().add(each(columnsModel, c => c.isTreeColumn ? td().setClass('rap-tree-table-page-controls').add(
+                    span().paddingLeft(depth, 'em'),
+                a().setClass('rap-tree-table-page-more').onClick(moreCommand).add('...')
+            ) : td())))
+        }
     })
     return f
 }
@@ -74,7 +80,7 @@ class PagedTreeTable extends XBuilder {
                 ' '
             )     
             return row.data.item
-        }))
+        }, true))
         this.columnsModel.trigger()
         return this
     }

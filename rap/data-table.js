@@ -217,7 +217,7 @@ class DataTable extends XBuilder {
             thead().add(tr().add(each(
                 this.visibleColumnsModel,
                 (column, index) => {
-                    return _th(column, index).setClass('header-' + column.getName()).transfer(columnMove, index).receive(columnMove, from => this.moveColumn(from, index), 'header-receiver', 'header-drop')
+                    return _th(column, index).transfer(columnMove, index).receive(columnMove, from => this.moveColumn(from, index), 'header-receiver', 'header-drop')
                 }))
             ),
             tbody().add(each(

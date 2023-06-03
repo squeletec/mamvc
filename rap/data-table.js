@@ -1,200 +1,16 @@
-import {form,
-    table,
-    thead,
-    tbody,
-    tr,
-    td,
-    th,
-    a,
-    each,
-    caption,
-    list,
-    not,
-    on,
-    state,
-    set,
-    trigger,
-    when,
-    inputText,
-    submit,
-    reset,
-    to,
-    XBuilder,
-    span,
-    remote,
-    boolean,
-    execute,
-    range,
-    captionTop,
-    captionBottom,
-    timer,
-    toggle,
-    div, checkbox, label
+import {form, table, thead, tbody, tr, td, th, a, each, caption, list, not, on, state, set, trigger, when, inputText, submit, reset, to, XBuilder,
+    span, remote, boolean, execute, captionTop, captionBottom,
+    timer, toggle, div, checkbox, label
 } from "../trio.js";
-import {expander} from "./elements.js";
 
-export function pageModel() {
-    return state(emptyPage()).hierarchy()
-}
-
-export function emptyPage() {
-    return {
-        "pageable": {
-            "sort": {
-                "sorted": false,
-                "unsorted": true
-            },
-            "offset": 0,
-            "pageNumber": 0,
-            "pageSize": 0,
-            "paged": true,
-            "unpaged": false
-        },
-        "totalPages": 0,
-        "last": true,
-        "totalElements": 0,
-        "size": 0,
-        "number": 0,
-        "numberOfElements": 0,
-        "sort": {
-            "sorted": false,
-            "unsorted": true
-        },
-        "first": true,
-        "content": []
-    }
-}
-
-export function pageRequestModel(pageSize = 25) {
-    return state({page: 0, size: pageSize}).hierarchy()
-}
-
-function cell(func, row, c) {
-    return c.add(func(row, c))
-}
-
-/*
-function row(data, path, index, level, display) {
-    return {
-        data: data,
-        display: display,
-        path: path,
-        item() {return resolve(this.data, this.path)},
-        index: index,
-        level: level
-    }
-}
- */
-
-export class Column {
-    getName() {}
-    renderHeader(index) {return this.getName()}
-    renderCell(data, td, index) {}
-    hidden() {}
-    hide(value) {}
-}
-
-export class TColumn extends Column {
-    #delegate
-    #function
-    constructor(d, f, i = false) {
-        super();
-        this.#delegate = d
-        this.#function = f
-        this.isTreeColumn = i
-    }
-
-    getName() {
-        return this.#delegate.getName();
-    }
-
-    renderHeader(index) {
-        return this.#delegate.renderHeader(index);
-    }
-
-    hidden() {
-        return this.#delegate.hidden();
-    }
-
-    hide(value) {
-        return this.#delegate.hide(value);
-    }
-
-    renderCell(data, td, index, depth) {
-        return this.#delegate.renderCell(this.#function(data, td), td, index, depth);
-    }
-}
-
-export class RColumn extends Column {
-
-    constructor(name, get) {
-        super();
-        this.n = name
-        this.get = get
-        this.h = false
-        this.index = new PColumn()
-    }
-
-    getName() {
-        return this.n;
-    }
-
-    renderCell(data, td, index) {
-        return this.get(data);
-    }
-
-    hidden() {
-        return this.h
-    }
-
-    hide(value) {
-        this.h = value
-        return this
-    }
-}
-
-export class PColumn extends Column {
-
-    getName() {
-        "index";
-    }
-
-    renderHeader(index) {
-        return "#";
-    }
-
-    renderCell(data, td, index) {
-        return index
-    }
-
-    hidden() {
-        return false
-    }
-
-    hide(value) {
-        return this
-    }
-}
-
-export function objectPath(n = '', sss = o => o) {
-    let c = new RColumn(n, sss)
-    return new Proxy(c, {
-        get(target, property) {
-            return c[property] !== undefined ? c[property] : objectPath(property, o => sss(o)?.[property])
-        }
-    })
-}
-
-export let row = objectPath()
-
-function _th(col, i) {
+function _th(col, i, context) {
     let t = th()
-    return t.add(col.renderHeader(t, i))
+    return t.add(col.renderHeader(t, i, context))
 }
 
-function _td(item, i, column) {
+function _td(item, i, column, context) {
     let t = td()
-    return t.add(column.renderCell(item, t, i))
+    return t.add(column.renderCell(item, t, i, context))
 }
 
 class DataTable extends XBuilder {
@@ -217,12 +33,12 @@ class DataTable extends XBuilder {
             thead().add(tr().add(each(
                 this.visibleColumnsModel,
                 (column, index) => {
-                    return _th(column, index).transfer(columnMove, index).receive(columnMove, from => this.moveColumn(from, index), 'header-receiver', 'header-drop')
+                    return _th(column, index, this).transfer(columnMove, index).receive(columnMove, from => this.moveColumn(from, index), 'header-receiver', 'header-drop')
                 }))
             ),
             tbody().add(each(
                 dataModel,
-                (item, index) => tr().add(each(this.visibleColumnsModel, column => _td(item, offset.get() + index, column)))
+                (item, index) => tr().add(each(this.visibleColumnsModel, column => _td(item, offset.get() + index, column, this)))
             ))
         )
     }
@@ -274,10 +90,6 @@ export function pageTable(pageCall, page = pageCall.input.page, result = pageCal
         .captionBottom(pageControls(page, result, pageCall.loading))
 }
 
-export function pageApi(uri) {
-    return remote(uri, {page: 0, size: 25}, pageModel())
-}
-
 export function searchControls(query) {
     return form().onSubmit(event => query.set(event.target.query.value)).onReset(set(query, '')).add(
         inputText('query').model(query),
@@ -295,19 +107,3 @@ export function searchTable(searchCall, page = searchCall.input.page, query = se
         captionBottom().setClass('paging').textLeft().nowrap().add(pageControls(page, result, searchCall.loading))
     )
 }
-
-export function searchApi(uri, input = searchPage()) {
-    return remote(uri, input, pageModel())
-}
-
-export function searchPage(params = {}) {
-    let input = state({query: '', order: '', page: 0, size: 25, ...params})
-    for(let p in input.get()) if(input.get().hasOwnProperty(p))
-        input[p] = input.transform((o, v) => {o.page=0; o[p]=v})
-    return input
-}
-
-export function nodeExpander(expandCommand, model) {
-    return boolean().onChange(execute(expandCommand, set(model, [])))
-}
-

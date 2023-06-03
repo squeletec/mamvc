@@ -1,15 +1,16 @@
 import {table, thead, tbody, tr, td, th, a, each, list, state, set, XBuilder, span, boolean, execute, space} from "../trio.js";
 import {expander} from "./elements.js";
-import {pageModel, TColumn} from "./data-table.js";
+import {pageModel} from "./data-page.js";
+import {transformingColumn} from "./data-table-column.js";
 
-function _th(col, i) {
+function _th(col, i, table) {
     let t = th()
-    return t.add(col.renderHeader(t, i))
+    return t.add(col.renderHeader(t, i, table))
 }
 
-function _td(item, i, column) {
+function _td(item, i, column, table) {
     let t = td()
-    return t.add(column.renderCell(item, t, i))
+    return t.add(column.renderCell(item, t, i, table))
 }
 
 export function treeModel(model) {
@@ -24,12 +25,12 @@ function notLeaf(item) {
     return item.hasOwnProperty('children')
 }
 
-function content(columnsModel, page, commandFactory, depth, moreCommand, lessCommand) {
+function content(table, page, commandFactory, depth, moreCommand, lessCommand) {
     let f = space()
     page.onChange(value => {
         f.clear()
         if(!value.first && lessCommand) {
-            f.add(tr().add(each(columnsModel, c => c.isTreeColumn ? td().setClass('rap-tree-table-page-controls').add(
+            f.add(tr().add(each(table.columnsModel, c => c.isTreeColumn ? td().setClass('rap-tree-table-page-controls').add(
                     span().paddingLeft(depth, 'em'),
                 a().setClass('rap-tree-table-page-less').onClick(lessCommand).add('...')
             ) : td())))
@@ -37,12 +38,12 @@ function content(columnsModel, page, commandFactory, depth, moreCommand, lessCom
         value.content.forEach((item, index) => {
             let display = pageModel()
             let expandCommand = commandFactory(display, item, depth)
-            f.add(tr().add(each(columnsModel, column => _td({data: item, depth: depth, nodeState: nodeState(expandCommand, display)}, index, column))))
+            f.add(tr().add(each(table.columnsModel, column => _td({data: item, depth: depth, nodeState: nodeState(expandCommand, display)}, index, column, table))))
             if(notLeaf(item))
-                f.add(content(columnsModel, display, commandFactory, depth + 1, expandCommand.more, expandCommand.less))
+                f.add(content(table, display, commandFactory, depth + 1, expandCommand.more, expandCommand.less))
         })
         if(!value.last && moreCommand) {
-            f.add(tr().add(each(columnsModel, c => c.isTreeColumn ? td().setClass('rap-tree-table-page-controls').add(
+            f.add(tr().add(each(table.columnsModel, c => c.isTreeColumn ? td().setClass('rap-tree-table-page-controls').add(
                     span().paddingLeft(depth, 'em'),
                 a().setClass('rap-tree-table-page-more').onClick(moreCommand).add('...')
             ) : td())))
@@ -64,16 +65,16 @@ class PagedTreeTable extends XBuilder {
         this.add(
             thead().add(tr().add(each(
                 this.columnsModel,
-                (column, index) => _th(column, index)
+                (column, index) => _th(column, index, this)
                     .transfer(columnMove, index)
                     .receive(columnMove, from => this.moveColumn(from, index), 'header-receiver', 'header-drop')
             ))),
-            tbody().add(content(this.columnsModel, rootPage, commandFactory, 1, rootLevelCommand.more, rootLevelCommand.less))
+            tbody().add(content(this, rootPage, commandFactory, 1, rootLevelCommand.more, rootLevelCommand.less))
         )
     }
 
     treeColumn(def) {
-        this.columnsModel.get().push(new TColumn(def, (row, t) => {
+        this.columnsModel.get().push(transformingColumn(def, (row, t) => {
             t.add(
                 span().paddingLeft(row.depth, 'em'),
                 notLeaf(row.data) ? expander(row.nodeState) : span('rap-tree-table-leaf-indent'),
@@ -86,7 +87,7 @@ class PagedTreeTable extends XBuilder {
     }
 
     column(...defs) {
-        this.columnsModel.get().push(...defs.map(def => new TColumn(def, row => row.data.item)))
+        this.columnsModel.get().push(...defs.map(def => transformingColumn(def, row => row.data.item)))
         this.columnsModel.trigger()
         return this
     }

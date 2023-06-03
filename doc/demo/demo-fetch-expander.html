@@ -8,10 +8,11 @@
 <script type="module" id="demoSource" defer>
 
     import { boolean, table, range, tbody, td, tr, body, div, set, execute, not, remote, list, call } from "../../trio.js";
-    import {expander, nodeExpander} from "../../rap.js";
+    import {expander} from "../../rap.js";
+    import {nodeState} from "../../rap/tree-data-table";
 
     let items = remote('data/items.json', null, list())
-    let expanded = nodeExpander(call(items), items.output)
+    let expanded = nodeState(call(items), items.output)
 
     body().add(div().id('demoOutput').add(
         table().add(

@@ -77,7 +77,7 @@ class PagedTreeTable extends XBuilder {
         this.columnsModel.get().push(transformingColumn(def, (row, t) => {
             t.add(
                 span().paddingLeft(row.depth, 'em'),
-                notLeaf(row.data) ? expander(row.nodeState) : span('rap-tree-table-leaf-indent'),
+                notLeaf(row.data) ? expander(row.nodeState) : span('rap-tree-table-leaf-indent').display('inline-block').width('1', 'em'), //.color('transparent').add('\u25B6'),
                 ' '
             )     
             return row.data.item

@@ -25,15 +25,27 @@ function notLeaf(item) {
     return item.hasOwnProperty('children')
 }
 
+function indent(depth) {
+    return span().paddingLeft(depth, 'em')
+}
+
+function button(command) {
+    return a().onClick(command)
+}
+
+function treePageControls(command, depth, table) {
+    return tr().add(each(table.columnsModel, c => c.isTreeColumn
+                         ? td().add(indent(depth), button(command).add('...'))
+                         : td()
+                        ))
+}
+
 function content(table, page, commandFactory, depth, moreCommand, lessCommand) {
     let f = space()
     page.onChange(value => {
         f.clear()
         if(!value.first && lessCommand) {
-            f.add(tr().add(each(table.columnsModel, c => c.isTreeColumn ? td().setClass('rap-tree-table-page-controls').add(
-                    span().paddingLeft(depth, 'em'),
-                a().setClass('rap-tree-table-page-less').onClick(lessCommand).add('...')
-            ) : td())))
+            f.add(treePageControls(lessCommand, depth, table))
         }
         value.content.forEach((item, index) => {
             let display = pageModel()

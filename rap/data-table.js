@@ -19,6 +19,7 @@ class DataTable extends XBuilder {
         super(table().get());
         let columnMove = state()
         this.columnsModel = list().hierarchy()
+        this.rowModel = state({customizeRow() {}})
         this.columnsModel.onChange(() => dataModel.trigger())
         this.visibleColumnsModel = this.columnsModel.map(cols => cols.filter(col => !col.hidden()))
         let vis = boolean()

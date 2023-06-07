@@ -317,6 +317,11 @@ export class XBuilder extends XNode {
     data(model) {
         return this.onSubmit(call(remote(this.get().action).setPostData(model.get())))
     }
+   
+    apply(f, ...args) {
+       f(this, ...args)
+       return this
+    }
 }
 
 export function builder(node) {

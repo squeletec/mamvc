@@ -1,0 +1,108 @@
+import {form, table, thead, tbody, tr, td, th, a, each, caption, list, not, on, state, set, trigger, when, inputText, submit, reset, to, XBuilder,
+    span, remote, boolean, execute, captionTop, captionBottom,
+    timer, toggle, div, checkbox, label
+} from "../trio.js";
+
+function _th(col, i, context) {
+    let t = th()
+    return t.add(col.renderHeader(t, i, context))
+}
+
+function _td(item, i, column, context) {
+    let t = td()
+    return t.add(column.renderCell(item, t, i, context))
+}
+
+class AbstractDataTable extends XBuilder {
+
+    constructor(dataModel) {
+        super(table().get());
+        let columnMove = state()
+        this.columnsModel = list().hierarchy()
+        this.rowModel = (tr, data) => {}
+        this.columnsModel.onChange(() => dataModel.trigger())
+        this.visibleColumnsModel = this.columnsModel.map(cols => cols.filter(col => !col.hidden()))
+        this.add(
+            thead().add(tr().add(each(this.visibleColumnsModel, (column, index) => {
+                    return _th(column, index, this)
+                      .transfer(columnMove, index)
+                      .receive(columnMove, from => this.moveColumn(from, index), 'header-receiver', 'header-drop')
+            }))),
+            tbody().add(each(
+                dataModel,
+                (item, index) => tr().apply(this.rowModel, item).add(each(this.visibleColumnsModel, column => _td(item, index, column, this)))
+            ))
+        )
+    }
+
+    customizeRow(customizer) {
+        this.rowModel = customizer
+        this.columnsModel.trigger()
+        return this
+    }
+    
+    column(...defs) {
+        this.columnsModel.get().push(...defs)
+        this.columnsModel.trigger()
+        return this
+    }
+
+    moveColumn(from, to) {
+        let f = this.columnsModel.get().splice(from, 1)
+        this.columnsModel.get().splice(to, 0, ...f)
+        this.columnsModel.trigger()
+        return this
+    }
+
+    captionTop(...args) {
+        return this.add(caption().captionSide('top').textLeft().nowrap().add(...args))
+    }
+
+    captionBottom(...args) {
+        return this.add(caption().captionSide('bottom').textLeft().nowrap().add(...args))
+    }
+}
+
+export function pageControls(page, result, loading) {
+    let firstDisabled = result.first.map(to('silver'))
+    let lastDisabled = result.last.map(to('silver'))
+    let notFirst = not(result.first)
+    let notLast = not(result.last)
+    return form().onSubmit(event => page.set(parseInt(event.target.page.value) - 1)).add(
+        a().setClass('paging first-page').color(firstDisabled).add('\u23EE\uFE0E').title('Go to first page').onClick(when(notFirst, set(page, 0))),
+        a().setClass('paging prev-page').color(firstDisabled).add('\u23F4\uFE0E').title('Go to previous page').onClick(when(notFirst, set(page, result.number.map(v => v - 1)))),
+        span('paging current-page').add('Page: ', inputText('page').width(2, 'em').value(result.map(v => v.numberOfElements > 0 ? v.number + 1 : 0)), ' of ', result.totalPages, ' (rows ', result.pageable.offset.map(v => v + 1), ' - ', on(result.pageable.offset, result.numberOfElements).apply((a, b) => a + b), ' of ', result.totalElements, ')'),
+        a().setClass('paging next-page').color(lastDisabled).add('\u23F5\uFE0E').title('Go to next page').onClick(when(notLast, set(page, result.number.map(v => v + 1)))),
+        a().setClass('paging last-page').color(lastDisabled).add('\u23ED\uFE0E').title('Go to last page').onClick(when(notLast, set(page, result.totalPages.map(v => v - 1)))),
+        a().setClass('paging reload-page', loading.map(to(' data-loading'))).add('\u21BB').title('Reload page').onClick(trigger(page)),
+        span('paging load-timer').add(loading.map(to(' loading ', ' loaded in ')), timer(loading), ' ms.')
+    )
+}
+
+export function dataTable(result, offset = state(0)) {
+    return new DataTable(result, offset)
+}
+
+export function pageTable(pageCall, page = pageCall.input.page, result = pageCall.output) {
+    return dataTable(result.map(v => v.content), result.pageable.offset)
+        .captionTop(pageCall.error)
+        .captionBottom(pageControls(page, result, pageCall.loading))
+}
+
+export function searchControls(query) {
+    return form().onSubmit(event => query.set(event.target.query.value)).onReset(set(query, '')).add(
+        inputText('query').model(query),
+        submit('Search'),
+        reset('Clear')
+    )
+}
+
+export function searchTable(searchCall, page = searchCall.input.page, query = searchCall.input.query, result = searchCall.output) {
+    // This line is currently causing duplicate rest call with intermediate state.
+    // query.onChange(() => page.set(0), false, false)
+    return dataTable(result.map(v => v.content), result.pageable.offset).add(
+        captionTop().setClass('search').textLeft().nowrap().add(searchControls(query)),
+        captionTop().setClass('error').textLeft().nowrap().add(searchCall.error),
+        captionBottom().setClass('paging').textLeft().nowrap().add(pageControls(page, result, searchCall.loading))
+    )
+}

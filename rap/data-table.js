@@ -39,13 +39,14 @@ class DataTable extends XBuilder {
             ),
             tbody().add(each(
                 dataModel,
-                (item, index) => tr().add(each(this.visibleColumnsModel, column => _td(item, offset.get() + index, column, this)))
+                (item, index) => tr().apply(this.rowModel, item).add(each(this.visibleColumnsModel, column => _td(item, offset.get() + index, column, this)))
             ))
         )
     }
 
     customizeRow(customizer) {
         this.rowModel = customizer
+        this.columnsModel.trigger()
         return this
     }
     
@@ -59,6 +60,7 @@ class DataTable extends XBuilder {
         let f = this.columnsModel.get().splice(from, 1)
         this.columnsModel.get().splice(to, 0, ...f)
         this.columnsModel.trigger()
+        return this
     }
 
     captionTop(...args) {

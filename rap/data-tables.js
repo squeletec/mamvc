@@ -27,30 +27,32 @@ class AbstractDataTable extends XBuilder {
                     return _th(column, index, this)
                       .transfer(columnMove, index)
                       .receive(columnMove, from => this.moveColumn(from, index), 'header-receiver', 'header-drop')
-            }))),
-            tbody().add(each(
-                dataModel,
-                (item, index) => tr().apply(this.rowModel, item).add(each(this.visibleColumnsModel, column => _td(item, index, column, this)))
-            ))
+            })))
         )
     }
 
-    customizeRow(customizer) {
-        this.rowModel = customizer
+    repaint() {
         this.columnsModel.trigger()
         return this
+    }
+ 
+    enableColumnFiltering() {
+        return this
+    }
+    
+    customizeRow(customizer) {
+        this.rowModel = customizer
+        return this.repaint()
     }
     
     column(...defs) {
         this.columnsModel.get().push(...defs)
-        this.columnsModel.trigger()
-        return this
+        return this.repaint()
     }
 
     moveColumn(from, to) {
         let f = this.columnsModel.get().splice(from, 1)
         this.columnsModel.get().splice(to, 0, ...f)
-        this.columnsModel.trigger()
         return this
     }
 
@@ -60,6 +62,24 @@ class AbstractDataTable extends XBuilder {
 
     captionBottom(...args) {
         return this.add(caption().captionSide('bottom').textLeft().nowrap().add(...args))
+    }
+}
+
+class DataTable extends AbstractDataTable {
+    constructor(dataModel) {
+        super(dataModel)
+        this.add(tbody().add(each(
+                dataModel,
+                (item, index) => tr().apply(this.rowModel, item).add(each(this.visibleColumnsModel, column => _td(item, index, column, this)))
+            ))
+        )
+    }
+}
+
+class TreeDataTable extends AvstractDataTable {
+    constructor() {
+        let rootModel = pageModel()
+        super(rootMidel)
     }
 }
 

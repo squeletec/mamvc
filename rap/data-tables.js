@@ -1,32 +1,6 @@
-import {
-    form, table,
-    thead,
-    tbody,
-    tr,
-    td,
-    th,
-    a,
-    each,
-    caption,
-    list,
-    not,
-    on,
-    state,
-    set,
-    trigger,
-    when,
-    inputText,
-    submit,
-    reset,
-    to,
-    XBuilder,
-    span,
-    captionTop,
-    captionBottom,
-    timer,
-    space,
-    boolean, execute
-} from "../trio.js";
+import {form, table, thead, tbody, tr, td, th, a, each, caption, list, not,
+    on, state, set, trigger, when, inputText, submit, reset, to, XBuilder, span, captionTop,
+    captionBottom, timer, space, boolean, execute} from "../trio.js";
 import {pageModel} from "./data-page.js";
 import {transformingColumn} from "./data-table-column.js";
 import {expander} from "./elements.js";

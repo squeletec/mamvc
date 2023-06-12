@@ -1,7 +1,36 @@
-import {form, table, thead, tbody, tr, td, th, a, each, caption, list, not, on, state, set, trigger, when, inputText, submit, reset, to, XBuilder,
-    span, remote, boolean, execute, captionTop, captionBottom,
-    timer, toggle, div, checkbox, label
+import {
+    form,
+    table,
+    thead,
+    tbody,
+    tr,
+    td,
+    th,
+    a,
+    each,
+    caption,
+    list,
+    not,
+    on,
+    state,
+    set,
+    trigger,
+    when,
+    inputText,
+    submit,
+    reset,
+    to,
+    XBuilder,
+    span,
+    captionTop,
+    captionBottom,
+    timer,
+    space,
+    boolean, execute
 } from "../trio.js";
+import {pageModel} from "./data-page.js";
+import {transformingColumn} from "./data-table-column.js";
+import {expander} from "./elements.js";
 
 function _th(col, i, context) {
     let t = th()
@@ -19,8 +48,8 @@ class AbstractDataTable extends XBuilder {
         super(table().get());
         let columnMove = state()
         this.columnsModel = list().hierarchy()
+        this.columnsModel.onChange(trigger(dataModel))
         this.rowModel = (tr, data) => {}
-        this.columnsModel.onChange(() => dataModel.trigger())
         this.visibleColumnsModel = this.columnsModel.map(cols => cols.filter(col => !col.hidden()))
         this.add(
             thead().add(tr().add(each(this.visibleColumnsModel, (column, index) => {
@@ -35,7 +64,11 @@ class AbstractDataTable extends XBuilder {
         this.columnsModel.trigger()
         return this
     }
- 
+
+    enableColumnMove() {
+        return this.repaint()
+    }
+
     enableColumnFiltering() {
         return this
     }
@@ -63,6 +96,7 @@ class AbstractDataTable extends XBuilder {
     captionBottom(...args) {
         return this.add(caption().captionSide('bottom').textLeft().nowrap().add(...args))
     }
+
 }
 
 class DataTable extends AbstractDataTable {
@@ -76,11 +110,76 @@ class DataTable extends AbstractDataTable {
     }
 }
 
-class TreeDataTable extends AvstractDataTable {
-    constructor() {
-        let rootModel = pageModel()
-        super(rootMidel)
+
+function indent(depth) {
+    return span().paddingLeft(depth, 'em')
+}
+
+function button(command) {
+    return a().setClass('rap-tree-table-page-more').onClick(command)
+}
+
+export function treeModel(model) {
+    return (display, parent, depth) => depth > 0 ? set(display, {content: parent.children, first: true, last: true}) : () => model.onChange(value => display.set({content: value, last: true}))
+}
+
+function treePageControls(command, depth, table) {
+    return tr().add(each(table.columnsModel, c => c.isTreeColumn
+        ? td().setClass('rap-tree-table-page-controls').add(indent(depth), button(command).add('...')) : td()
+    ))
+}
+
+export function nodeState(expandCommand, model) {
+    return boolean().onChange(execute(expandCommand, () => model.set({content: [], first: true, last: true})))
+}
+
+function content(table, page, commandFactory, depth, moreCommand, lessCommand) {
+    let f = space()
+    page.onChange(value => {
+        f.clear()
+        if(!value.first && lessCommand) {
+            f.add(treePageControls(lessCommand, depth, table))
+        }
+        value.content.forEach((item, index) => {
+            let display = pageModel()
+            let expandCommand = commandFactory(display, item, depth)
+            f.add(tr().add(each(table.columnsModel, column => _td({data: item, depth: depth, nodeState: nodeState(expandCommand, display)}, index, column, table))))
+            if(notLeaf(item))
+                f.add(content(table, display, commandFactory, depth + 1, expandCommand.more, expandCommand.less))
+        })
+        if(!value.last && moreCommand) {
+            f.add(treePageControls(moreCommand, depth, table))
+        }
+    })
+    return f
+}
+
+function notLeaf(item) {
+    return item.hasOwnProperty('children')
+}
+
+class TreeDataTable extends AbstractDataTable {
+    constructor(rootPage, commandFactory) {
+        super(rootPage)
+        let rootLevelCommand = commandFactory(rootPage, null, 0)
+        rootLevelCommand()
+        this.add(tbody().add(content(this, rootPage, commandFactory, 1, rootLevelCommand.more, rootLevelCommand.less)))
     }
+
+    treeColumn(def) {
+        return super.column(transformingColumn(def, (row, t) => {
+            t.add(indent(row.depth), notLeaf(row.data) ? expander(row.nodeState) : span('rap-tree-table-leaf-indent').display('inline-block').width('1', 'em'), ' ')
+            return row.data.item
+        }, true))
+    }
+
+    column(...defs) {
+        return super.column(...defs.map(def => transformingColumn(def, row => row.data.item)))
+    }
+
+}
+export function treeTable(childrenCommandFactory) {
+    return new TreeDataTable(pageModel(), childrenCommandFactory)
 }
 
 export function pageControls(page, result, loading) {

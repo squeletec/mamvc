@@ -8,7 +8,7 @@
     <script type="module" id="demoSource" defer>
 import {body, div, remote, call, state, set } from "../../trio.js";
 import {row, position} from "../../rap.js";
-import {treeTable} from "../../rap/tree-data-table.js";
+import {treeTable} from "../../rap/data-tables.js";
 
 function commands(display, nodeModel) {
     let input = state({id: nodeModel ? nodeModel.item.id : 0, size: 2}).hierarchy()

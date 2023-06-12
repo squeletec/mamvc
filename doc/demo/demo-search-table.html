@@ -8,7 +8,10 @@
 <script type="module" id="demoSource" defer>
 
     import {body, div } from "../../trio.js"
-    import {searchTable, searchApi, serialize, row} from "../../rap.js"
+    import {searchTable} from "../../rap/data-tables.js"
+    import {searchApi} from "../../rap/data-page.js"
+    import {row} from "../../rap/data-table-column.js"
+    import {serialize} from "../../rap/history.js";
 
     body().add(div().id('demoOutput').add(
         searchTable(searchApi("data/page{page}.json", serialize({query:'', size:25,page:0,order:''})).call())

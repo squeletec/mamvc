@@ -8,11 +8,11 @@
 <script type="module" id="demoSource" defer>
 
     import {body, div } from "../../trio.js"
-    import {pageTable, pageApi, row} from "../../rap.js"
+    import {pageTable, pageApi, row, position} from "../../rap.js"
 
     body().add(div().id('demoOutput').add(
         pageTable(pageApi('data/page{page}.json').call())
-            .column(row.index)
+            .column(position)
             .column(row.id)
             .column(row.name)
             .column(row.content)

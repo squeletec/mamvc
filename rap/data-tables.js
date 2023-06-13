@@ -68,7 +68,7 @@ class AbstractDataTable extends XBuilder {
     moveColumn(from, to) {
         let f = this.columnsModel.get().splice(from, 1)
         this.columnsModel.get().splice(to, 0, ...f)
-        return this
+        return this.repaint()
     }
 
     captionTop(...args) {

@@ -1,6 +1,8 @@
-import {form, table, thead, tbody, tr, td, th, a, each, caption, list, not,
+import {
+    form, table, thead, tbody, tr, td, th, a, each, caption, list, not,
     on, state, set, trigger, when, inputText, submit, reset, to, XBuilder, span, captionTop,
-    captionBottom, timer, space, boolean, execute} from "../trio.js";
+    captionBottom, timer, space, boolean, execute, div, toggle, checkbox, label
+} from "../trio.js";
 import {pageModel} from "./data-page.js";
 import {transformingColumn} from "./data-table-column.js";
 import {expander} from "./elements.js";
@@ -43,7 +45,14 @@ class AbstractDataTable extends XBuilder {
     }
 
     enableColumnFiltering() {
-        return this
+        let vis = boolean()
+        return this.add(captionTop().position('relative').add(div('rap-columns').position('absolute').right('0', '').top('0', '').marginLeft('-0.5', 'em').add(a().setClass('rap-columns-toggle').onClick(toggle(vis)).add('⋮'),
+            div('rap-columns-visibility').display(vis).position('absolute').textLeft().whiteSpace('nowrap').right(0)
+                .add(each(this.columnsModel, column => div().add(
+                    checkbox(column.getName()).checked(column.hidden() ? null : 'checked').onChange(() => {column.hide(!column.hidden()); this.columnsModel.trigger()}, true),
+                    label(column.getName()).add(column.getName())
+                ))))
+        ))
     }
     
     customizeRow(customizer) {

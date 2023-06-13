@@ -30,7 +30,7 @@ class AbstractDataTable extends XBuilder {
             thead().add(tr().add(each(this.visibleColumnsModel, (column, index) => {
                     return _th(column, index, this)
                       .transfer(columnMove, index)
-                      .receive(columnMove, from => this.moveColumn(from, index), 'header-receiver', 'header-drop')
+                      .receive(columnMove, from => this.moveColumn(from, index), 'rap-table-header-receiver', 'rap-table-header-drop')
             })))
         )
     }

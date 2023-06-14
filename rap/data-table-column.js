@@ -3,7 +3,7 @@ import {} from "../trio.js";
 /**
  * Base column class, a.k.a interface with few default methods.
  *
- * It represents the column with all instructions for it's rendering in data-table and tree-data-table.
+ * It represents the column with all instructions for it's rendering in dataTable and treeDataTable.
  */
 export class Column {
 

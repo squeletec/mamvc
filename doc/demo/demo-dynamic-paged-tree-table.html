@@ -19,7 +19,7 @@ function commands(display, nodeModel) {
 }
 
 body().add(div().id('demoOutput').add(
-    treeTable(commands).column(position).treeColumn(row.name).column(row.content)
+    treeTable(commands).column(position).treeColumn(row.name).column(row.content).enableColumnFiltering()
 ))
     </script>
 </head>

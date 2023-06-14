@@ -3,11 +3,6 @@ import {pageModel} from "./data-page.js";
 import {transformingColumn} from "./data-table-column.js";
 import {expander} from "./elements.js";
 
-function _td(item, i, column, context) {
-    let t = td()
-    return t.add(column.renderCell(item, t, i, context))
-}
-
 class AbstractDataTable extends XBuilder {
 
     constructor(dataModel) {
@@ -79,11 +74,7 @@ class AbstractDataTable extends XBuilder {
 class DataTable extends AbstractDataTable {
     constructor(dataModel) {
         super(dataModel)
-        this.add(tbody().add(each(
-                dataModel,
-                (item, index) => tr().apply(this.rowModel, item).add(each(this.visibleColumnsModel, column => _td(item, index, column, this)))
-            ))
-        )
+        this.add(tbody().add(each(dataModel, (item, index) => row(this, index, item))))
     }
 }
 
@@ -93,7 +84,7 @@ class TreeDataTable extends AbstractDataTable {
         super(rootPage)
         let rootLevelCommand = commandFactory(rootPage, null, 0)
         rootLevelCommand()
-        this.add(tbody().add(content(this, rootPage, commandFactory, 1, rootLevelCommand.more, rootLevelCommand.less)))
+        this.add(tbody().add(content(this, rootPage, commandFactory, 1, rootLevelCommand)))
     }
 
     treeColumn(def) {
@@ -112,23 +103,30 @@ function notLeafIndent() {
     return span('rap-tree-table-leaf-indent').display('inline-block').width('1', 'em')
 }
 
-function content(table, page, commandFactory, depth, moreCommand, lessCommand) {
+function row(table, index, item, cellData = item) {
+    return tr().apply(table.rowModel, item).add(each(table.visibleColumnsModel, column => {
+        let cell = td()
+        return cell.add(column.renderCell(cellData, cell, index, table))
+    }))
+}
+
+function content(table, page, commandFactory, depth, parentCommand) {
     let f = space()
     page.onChange(value => {
         f.clear()
-        if(!value.first && lessCommand) {
-            f.add(treePageControls(lessCommand, depth, table))
+        if(!value.first && parentCommand.less) {
+            f.add(treePageControls(parentCommand.less, depth, table))
         }
         value.content.forEach((item, index) => {
             let display = pageModel()
             page.onChange(trigger(display))
             let expandCommand = commandFactory(display, item, depth)
-            f.add(tr().add(each(table.visibleColumnsModel, column => _td({data: item, depth: depth, nodeState: nodeState(expandCommand, display)}, index, column, table))))
+            f.add(row(table, index, item, {data: item, depth: depth, nodeState: nodeState(expandCommand, display)}))
             if(notLeaf(item))
-                f.add(content(table, display, commandFactory, depth + 1, expandCommand.more, expandCommand.less))
+                f.add(content(table, display, commandFactory, depth + 1, expandCommand))
         })
-        if(!value.last && moreCommand) {
-            f.add(treePageControls(moreCommand, depth, table))
+        if(!value.last && parentCommand.more) {
+            f.add(treePageControls(parentCommand.more, depth, table))
         }
     })
     return f

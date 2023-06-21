@@ -31,7 +31,7 @@ Micro Ajax MVC library.
 
  */
 import { isState } from "./state.js";
-import { XNode } from "./builder.js";
+import { XNode } from "./node.js";
 
 /*
 Commands

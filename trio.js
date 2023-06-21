@@ -33,5 +33,6 @@ Micro Ajax MVC library.
 export * from "./trio/state.js"
 export * from "./trio/data.js"
 export * from "./trio/command.js"
+export {XNode} from "./trio/node.js"
 export * from "./trio/builder.js"
-
+export * from "./trio/builders.js"

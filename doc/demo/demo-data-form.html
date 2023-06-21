@@ -8,7 +8,7 @@
 <script type="module" id="demoSource" defer>
 
     import {body, div, remote, inputText, state, submit, checkbox, option, radio, select, br } from "../../trio.js"
-    import {dataForm} from "../../rap/data-form.js";
+    import {dataForm} from "../../rap.js";
 
     let api = remote('aaa', {}).setPostData(state({name:'',value:''}))
     body().add(dataForm(api).add(

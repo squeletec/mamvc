@@ -25,83 +25,11 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-/*
-Micro Ajax MVC library.
-
- */
 import { isState, concat, boolean, falseTo, to, join } from "./state.js";
 import { set, call } from "./command.js"
 import { remote } from "./data.js"
+import {XNode, x} from "./node.js";
 
-/**
- * Class UI Element is a wrapper for DOM element, marking, that such object has a DOM element representing it's
- * visualization.
- */
-export class XNode {
-    constructor(node) {this.node = node}
-
-    get() {
-        return this.node
-    }
-
-    prepend(node) {
-        this.node.parentNode.insertBefore(x(node).get(), this.node)
-        return this
-    }
-
-    remove() {
-        this.node.parentNode.removeChild(this.node)
-        return this
-    }
-
-    replace(replacement) {
-        this.node.parentNode.replaceChild(replacement.node, this.node)
-        return this
-    }
-
-    to(parent) {
-        parent.add(this)
-        return this
-    }
-
-}
-
-
-function xNode(node) {
-    return new XNode(node);
-}
-
-export class XText extends XNode {
-    constructor(text) {
-        super(text instanceof Node ? text : document.createTextNode(text));
-    }
-
-    setValue(value) {
-        this.node.nodeValue = value
-        return this;
-    }
-}
-
-export function xText(text) {
-    return new XText(text)
-}
-
-function x(parameter) {
-    if(parameter instanceof XNode) return parameter
-    if(parameter instanceof Node) return xNode(parameter)
-    return text(parameter)
-}
-
-export function valueView(value) {
-    let builder = xText(document.createTextNode(value.get()))
-    value.onChange(v => builder.setValue(v), false)
-    return builder
-}
-
-export function text(value) {
-    return isState(value) ? valueView(value) : xText(document.createTextNode(value));
-}
 
 export class XBuilder extends XNode {
     /**
@@ -120,18 +48,14 @@ export class XBuilder extends XNode {
     add(...args) {
         for(let i = 0; i < args.length; i++)
             if(args[i] !== null && args[i] !== undefined)
-                this.node.appendChild(x(args[i]).get())
+                this.get().appendChild(x(args[i]).get())
         return this
     }
 
     clear() {
-        while(this.node.firstChild) this.node.removeChild(this.node.firstChild)
+        let node = this.get()
+        while(node.firstChild) node.removeChild(node.firstChild)
         return this
-    }
-
-    setValue(value) {
-        this.node.nodeValue = value
-        return this;
     }
 
     _manipulate(f, args) {
@@ -146,8 +70,8 @@ export class XBuilder extends XNode {
      */
     set(name, ...args) {
         return (args.length === 0) ? this : this._manipulate(value => {
-            if(value === null) this.node.removeAttribute(name)
-            else this.node.setAttribute(name, value)
+            if(value === null) this.get().removeAttribute(name)
+            else this.get().setAttribute(name, value)
         }, args)
     }
 
@@ -158,7 +82,6 @@ export class XBuilder extends XNode {
     title(...value) {return this.set('title', ...value)}
     href(...value) {return this.set('href', ...value)}
     type(...value) {return this.set('type', ...value)}
-    //value(...value) {return this.set('value', ...value)}
     readonly(...value) {return this.set('readonly', ...value)}
     action(...value) {return this.set('action', ...value)}
     target(...value) {return this.set('target', ...value)}
@@ -180,8 +103,8 @@ export class XBuilder extends XNode {
      */
     css(property, ...args) {
         return (args.length === 0) ? this : this._manipulate(value => {
-            if(value === null) this.node.style.removeProperty(property)
-            else this.node.style.setProperty(property, value)
+            if(value === null) this.get().style.removeProperty(property)
+            else this.get().style.setProperty(property, value)
         }, args)
     }
 
@@ -249,8 +172,8 @@ export class XBuilder extends XNode {
 
     setProperty(name, ...args) {
         return (args.length === 0) ? this : this._manipulate(value => {
-            if(value === null) this.node[name] = null
-            else this.node[name] = value
+            if(value === null) this.get()[name] = null
+            else this.get()[name] = value
         }, args)
     }
 
@@ -262,7 +185,7 @@ export class XBuilder extends XNode {
      Dealing with events
      */
     on(event, handler, bubble) {
-        this.node.addEventListener(event, bubble ? handler : e => {
+        this.get().addEventListener(event, bubble ? handler : e => {
             handler(e)
             e.preventDefault()
             return false
@@ -317,134 +240,9 @@ export class XBuilder extends XNode {
     data(model) {
         return this.onSubmit(call(remote(this.get().action).setPostData(model.get())))
     }
-   
+
     apply(f, ...args) {
        f(this, ...args)
        return this
     }
-}
-
-export function builder(node) {
-    return new XBuilder(node)
-}
-
-/*
-  Ready to use element builders.
- */
-export function body() {return builder(document.body)}
-export function head() {return builder(document.head)}
-export function byId(id) {return builder(document.getElementById(id))}
-export function element(name) {return  builder(document.createElement(name))}
-export function meta() {return element('meta')}
-export function base() {return element('base')}
-export function div(...className) {return element('div').setClass(...className)}
-export function span(...className) {return element('span').setClass(...className)}
-export function img(...src) {return element('img').src(...src)}
-export function link(rel) {return element('link').rel(rel)}
-export function a(...href) {return element('a').href(...href)}
-export function h1() {return element('h1')}
-export function h2() {return element('h2')}
-export function h3() {return element('h3')}
-export function h4() {return element('h4')}
-export function h5() {return element('h5')}
-export function h6() {return element('h6')}
-export function p() {return element('p')}
-export function pre() {return element('pre')}
-export function code() {return element('code')}
-export function ul() {return element('ul')}
-export function ol() {return element('ul')}
-export function li() {return element('li')}
-export function small() {return element('small')}
-export function strong() {return element('strong')}
-export function em() {return element('em')}
-export function abbr() {return element('abbr')}
-export function time(value) {return element('time').add(text(value))}
-export function form(method) {return element('form').method(method || 'POST')}
-export function textarea(name) {return element('textarea').name(name)}
-export function input(type, name) {return element('input').type(type).name(name)}
-export function inputText(name) {return input('text', name)}
-export function inputHidden(name) {return input('hidden', name)}
-export function password(name) {return input('password', name)}
-export function checkbox(name) {return input('checkbox', name)}
-export function radio(name) {return input('radio', name)}
-export function submit(value) {return input('submit').value(value)}
-export function reset(value) {return input('reset').value(value)}
-export function select(name) {return element('select').name(name)}
-export function option(value) {return element('option').value(value)}
-export function label(forInput) {return element('label').set('for', forInput)}
-export function fieldset(legendValue) {return legendValue ? element('fieldset').add(legend(legendValue)) : element('fieldset')}
-export function legend(value) {return element('legend').add(text(value))}
-export function dd() {return element('dd')}
-export function dl() {return element('dl')}
-export function dt() {return element('dt')}
-export function dfn() {return element('dfn')}
-export function table() {return element('table')}
-export function tbody() {return element('tbody')}
-export function thead() {return element('thead')}
-export function tfoot() {return element('tfoot')}
-export function tr() {return element('tr')}
-export function td() {return element('td')}
-export function th() {return element('th')}
-export function caption() {return element('caption')}
-export function captionTop() {return caption().captionSide('top')}
-export function captionBottom() {return caption().captionSide('bottom')}
-export function sub() {return element('sub')}
-export function sup() {return element('sup')}
-export function details() {return element('details')}
-export function summary() {return element('summary')}
-export function del() {return element('del')}
-export function ins() {return element('ins')}
-export function hr() {return element('hr')}
-export function br() {return element('br')}
-export function iframe(...src) {return element('iframe').src(src)}
-export function dialog(title = div('dialog-close').position('absolute').top('inherit').right('inherit').add('x').onClick(event => event.target.parentNode.close())) {return element('dialog').add(title)}
-export function fragment(...args) {return builder(document.createDocumentFragment()).add(...args)}
-export function flexRow(...args) {return div().display('flex').add(...args)}
-export function flexColumn(...args) {return div().display('flex').flexDirection('column').add(...args)}
-export function auto(...args) {return div().flex('auto').add(...args)}
-
-export function space(start = xText(''), end = xText('')) {
-    let f = fragment(start, end)
-    f.clear = () => {
-        for(let node = start.get().nextSibling, next; node && node !== end.get(); node = next) {
-            next = node.nextSibling
-            builder(node).remove()
-        }
-    }
-    f.add = function(...items) {
-        items.forEach(i => end.prepend(i))
-        return this
-    }
-    return f
-}
-
-export function range(start, model, itemView = item => item, end = xText('')) {
-    let f = space(start, end)
-    model.onChange(value => {
-        f.clear();
-        (Array.isArray(value) ? value : null === value ? [] : [value]).forEach((item, index) => end.prepend(itemView(item, index)))
-    })
-    return f
-}
-
-export function each(model, itemView = (item, index) => item, end = xText('')) {
-    return range(xText(''), model, itemView, end)
-}
-
-
-export function refresh(listModel, itemKey, itemView = item => item, boundary = xText('')) {
-    let f = fragment(boundary)
-    let viewMap = new Map()
-    listModel.onChange(value => {
-        viewMap.forEach(view => view.remove())
-        let nView = new Map()
-        value.forEach((item, i) => {
-            let key = itemKey(item)
-            let view = viewMap.has(key) ? viewMap.get(key) : itemView(item)
-            nView.set(key, view)
-            boundary.prepend(view)
-        })
-        viewMap = nView
-    })
-    return f
 }

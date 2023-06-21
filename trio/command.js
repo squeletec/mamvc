@@ -86,3 +86,15 @@ export function close(dialog) {
 export function add(model, increment) {
     return () => model.set(model.get() + increment)
 }
+
+export function increment(model, by = 1) {
+    return () => model.set(model.get() + by)
+}
+
+export function decrement(model, by = 1) {
+    return increment(model, -by)
+}
+
+export function invert(model) {
+    return () => model.set(-model.get())
+}

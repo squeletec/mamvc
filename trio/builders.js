@@ -25,7 +25,7 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {xText} from "./node.js";
+import {text} from "./node.js";
 import {XBuilder} from "./builder.js";
 
 
@@ -510,7 +510,7 @@ export function auto(...args) {
     return div().flex('auto').add(...args)
 }
 
-export function space(start = xText(), end = xText()) {
+export function space(start = text(), end = text()) {
     let f = fragment(start, end)
     f.clear = () => {
         for (let node = start.get().nextSibling, next; node && node !== end.get(); node = next) {
@@ -546,7 +546,7 @@ export function space(start = xText(), end = xText()) {
  *        this element. If not provided, artificial empty text node is created for that purpose.
  * @returns {XBuilder} Fragment builder.
  */
-export function range(start, model, itemDisplayFunction = item => item, end = xText()) {
+export function range(start, model, itemDisplayFunction = item => item, end = text()) {
     let f = space(start, end)
     model.onChange(value => {
         f.clear();
@@ -574,12 +574,12 @@ export function range(start, model, itemDisplayFunction = item => item, end = xT
  *        this element. If not provided, artificial empty text node is created for that purpose.
  * @returns {XBuilder} Fragment builder.
  */
-export function each(model, itemDisplayFunction = (item, index) => item, end = xText()) {
-    return range(xText(), model, itemDisplayFunction, end)
+export function each(model, itemDisplayFunction = (item, index) => item, end = text()) {
+    return range(text(), model, itemDisplayFunction, end)
 }
 
 
-export function refresh(listModel, itemKey, itemView = item => item, boundary = xText()) {
+export function refresh(listModel, itemKey, itemView = item => item, boundary = text()) {
     let f = fragment(boundary)
     let viewMap = new Map()
     listModel.onChange(value => {

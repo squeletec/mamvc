@@ -102,11 +102,16 @@ export class XNode {
 
 /**
  * Create XNode wrapping DOM text node with provided value.
- * @param text Value of the text node.
+ * @param value Value of the text node.
  * @returns {XNode} New XNode instance.
  */
-export function xText(text = '') {
-    return new XNode(document.createTextNode(text))
+export function text(value = '') {
+    if(isState(value)) {
+        let node = new XNode(document.createTextNode(value.get()))
+        value.onChange(v => node.setValue(v))
+        return node
+    }
+    return new XNode(document.createTextNode(value))
 }
 
 /**
@@ -123,9 +128,5 @@ export function x(parameter) {
         return parameter
     if (parameter instanceof Node)
         return new XNode(parameter)
-    if (!isState(parameter))
-        return xText(parameter)
-    let n = xText(parameter.get())
-    parameter.onChange(value => n.setValue(value), false)
-    return n
+    return text(parameter)
 }

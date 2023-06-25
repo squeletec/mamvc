@@ -20,7 +20,7 @@ suite({
     },
 
     testUriModelTemplateChange() {
-        let input = {id: state(1), page: state(10)}
+        let input = state({id: 1, page: 10}).hierarchy()
         let m = uriModel("uri/{id}/x.html", input)
         assertState(m, "uri/1/x.html?page=10")
         input.id.set(4)
@@ -28,7 +28,7 @@ suite({
     },
 
     testUriModelParamChange() {
-        let input = {id: state(1), page: state(0)}
+        let input = state({id: 1, page: 0}).hierarchy()
         let m = uriModel("uri/{id}/x.html", input)
         assertState(m, "uri/1/x.html")
         input.page.set(1)
@@ -36,7 +36,7 @@ suite({
     },
 
     testUriModel() {
-        let input = {id: state(432), page: state(0), size: state(20)}
+        let input = {id: 432, page: 0, size: 20}
         let m = uriModel("http://localhost/path/{id}/index.html", input)
         assertState(m, "http://localhost/path/432/index.html?size=20")
     }

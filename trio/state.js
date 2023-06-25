@@ -252,18 +252,18 @@ export function concat(...parameters) {
     return join('', ...parameters)
 }
 
-export function template2(t, args) {
+export function template(t, args) {
     let array = t.split(/\{([^{]+)}/g);
     for(let i = 1; i < array.length; i += 2) {
         array[i] = args[array[i]]
     }
     return concat(...array)
 }
-
+/*
 export function template(t, args) {
     return args.map(usingTemplate(t))
 }
-
+*/
 export function usingTemplate(template) {
    let parts = template.split(/\{([^{]+)}/g)
    let values = Array.from(parts)

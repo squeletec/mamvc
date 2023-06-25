@@ -38,6 +38,7 @@ function setArg(value, args, i, result) {
 }
 
 function args(uriTemplate, input) {
+    if(!isState(input)) input = state(input).hierarchy()
     return input === null ? [] : Object.getOwnPropertyNames(input).filter(name => !uriTemplate.includes('{' + name + '}')).map(name => input[name].map(v => v ? name + '=' + encodeURIComponent(v) : null))
 }
 
@@ -45,12 +46,13 @@ export function filter(array, predicate = v => v) {
     return array.filter(predicate)
 }
 
+/*
 export function uriModel(uriTemplate, input) {
    if(!isState(input)) input = state(input)
    return input.map(usingUriTemplate(uriTemplate))
 }
-
-export function uriModel2(uriTemplate, input) {
+*/
+export function uriModel(uriTemplate, input) {
     let file = template(uriTemplate, input)
     let request = argStates(...args(uriTemplate, input)).map(filter).map(a => a.join('&'))
     let glue = uriTemplate.includes('?') ? '&' : '?'
@@ -69,7 +71,7 @@ class RestCall {
     }
 
     setPostData(data, sendOnChange = true) {
-        this.data = data
+        this.data = isState(data) ? data : state(data)
         if(sendOnChange)
             this.data.onChange(() => this.call(), false)
         return this

@@ -25,20 +25,21 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {isState, state, boolean, string, template, join, argStates, usingUriTemplate} from "./state.js";
+import {observable} from "./observable.js";
+import {state, boolean, string, template, join, argStates, usingUriTemplate} from "./state.js";
 
 const SUCCESS_STATUSES = new Set([200, 0])
 
 
 function setArg(value, args, i, result) {
-    return isState(value) ? value.map(encodeURIComponent).onChange(v => {
+    return observable(value) ? value.map(encodeURIComponent).onChange(v => {
         args[i] = v
         result.set(args.join(''))
     }, false).get() : value
 }
 
 function args(uriTemplate, input) {
-    if(!isState(input)) input = state(input).hierarchy()
+    if(!observable(input)) input = state(input).hierarchy()
     return input === null ? [] : Object.getOwnPropertyNames(input).filter(name => !uriTemplate.includes('{' + name + '}')).map(name => input[name].map(v => v ? name + '=' + encodeURIComponent(v) : null))
 }
 
@@ -61,7 +62,7 @@ export function uriModel(uriTemplate, input) {
 
 class RestCall {
     constructor(template, input, output, loading) {
-        this.input = isState(input) ? input : state(input === null ? {} : input).hierarchy()
+        this.input = observable(input) ? input : state(input === null ? {} : input).hierarchy()
         this.data = null
         this.output = output
         this.error = string()
@@ -71,7 +72,7 @@ class RestCall {
     }
 
     setPostData(data, sendOnChange = true) {
-        this.data = isState(data) ? data : state(data)
+        this.data = observable(data) ? data : state(data)
         if(sendOnChange)
             this.data.onChange(() => this.call(), false)
         return this

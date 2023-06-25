@@ -26,16 +26,14 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import {Observable, observable} from "./observable.js";
+
 /**
  * Interface like class Observable
  */
-class Observable {
-
-    onChange(observer, triggerNow = true, push = true) {}
+class Model extends Observable {
 
     set(value) {}
-
-    get() {}
 
     trigger() {}
 
@@ -64,7 +62,7 @@ class Observable {
 
 }
 
-class TransformedState extends Observable {
+class TransformedState extends Model {
     #parent;
     #read;
     #write;
@@ -99,7 +97,7 @@ function get(object, property) {
     return object === null || object === undefined ? object : object[property]
 }
 
-class PropertyState extends Observable {
+class PropertyState extends Model {
     #parent;
     #property;
 
@@ -134,6 +132,7 @@ class PropertyState extends Observable {
 function getProp(object, name) {
     return object => object === null || object === undefined ? object : object[name]
 }
+
 export function property(state, name) {
     return new PropertyState(state, name)
 }
@@ -141,7 +140,7 @@ export function property(state, name) {
 /**
  * Class state represents, observable state.
  */
-class State extends Observable {
+class State extends Model {
     #value;
     #observers;
 
@@ -196,10 +195,6 @@ class State2 extends State {
     }
 }
 
-export function isState(variable) {
-    return variable instanceof Observable
-}
-
 export function enforcingState(value = null) {
     return new State(value)
 }
@@ -244,7 +239,7 @@ export function on(...parameters) {
 
 export function argStates(...args) {
     let result = list([args.length])
-    args.forEach((p, i) => isState(p) ? p.onChange(passValueTo(result.property(i))) : result.get()[i] = p)
+    args.forEach((p, i) => observable(p) ? p.onChange(passValueTo(result.property(i))) : result.get()[i] = p)
     return result
 }
 

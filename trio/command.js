@@ -30,8 +30,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 Micro Ajax MVC library.
 
  */
-import { isState } from "./state.js";
 import { XNode } from "./node.js";
+import {observable} from "./observable.js";
 
 /*
 Commands
@@ -42,7 +42,7 @@ export function toggle(model) {
 }
 
 export function set(model, value) {
-    return isState(value) ? () => model.set(value.get()) : () => model.set(value)
+    return observable(value) ? () => model.set(value.get()) : () => model.set(value)
 }
 
 export function call(rest) {

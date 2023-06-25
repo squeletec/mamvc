@@ -25,10 +25,11 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import { isState, concat, boolean, falseTo, to, join } from "./state.js";
+import { concat, boolean, falseTo, to, join } from "./state.js";
 import { set, call } from "./command.js"
 import { remote } from "./data.js"
 import {XNode, x} from "./node.js";
+import {observable} from "./observable.js";
 
 
 export class XBuilder extends XNode {
@@ -60,7 +61,7 @@ export class XBuilder extends XNode {
 
     _manipulate(f, args) {
         let value = args.length === 1 ? args[0] : concat(...args)
-        if(isState(value)) value.onChange(f)
+        if(observable(value)) value.onChange(f)
         else f(value)
         return this
     }
@@ -95,7 +96,7 @@ export class XBuilder extends XNode {
     rowspan(...value) {return this.set('rowspan', ...value)}
     autocomplete(...value) {return this.set('autocomplete', ...value)}
     checked(value) {return this.set('checked', value)}
-    disabled(value) {return this.set('disabled', isState(value) ? value.map(to(true)) : value)}
+    disabled(value) {return this.set('disabled', observable(value) ? value.map(to(true)) : value)}
     content(...value) {return this.set('content', ...value)}
 
     /*
@@ -109,7 +110,7 @@ export class XBuilder extends XNode {
     }
 
     display(value) {
-        return this.css('display', (isState(value) && (value.get() === true || value.get() === false)) ? value.map(falseTo('none')) : value)
+        return this.css('display', (observable(value) && (value.get() === true || value.get() === false)) ? value.map(falseTo('none')) : value)
     }
 
     textAlign(value) {return this.css('text-align', value)}

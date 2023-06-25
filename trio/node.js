@@ -25,7 +25,7 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import {isState} from "./state.js";
+import {observable} from "./observable.js";
 
 /**
  * Class XNode is a wrapper for DOM element, providing builder interface for basic operations on the node.
@@ -106,7 +106,7 @@ export class XNode {
  * @returns {XNode} New XNode instance.
  */
 export function text(value = '') {
-    if(isState(value)) {
+    if(observable(value)) {
         let node = new XNode(document.createTextNode(value.get()))
         value.onChange(v => node.setValue(v))
         return node

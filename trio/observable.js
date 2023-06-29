@@ -35,6 +35,8 @@ export class Observable {
 
     get() {}
 
+    name() {return "";}
+
 }
 
 export function observable(object) {

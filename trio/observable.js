@@ -35,7 +35,7 @@ export class Observable {
 
     get() {}
 
-    name() {return "";}
+    getName() {return "";}
 
 }
 

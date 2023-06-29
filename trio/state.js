@@ -127,6 +127,10 @@ class PropertyState extends Model {
         this.#parent.trigger();
         return this
     }
+
+    getName() {
+        return this.#property
+    }
 }
 
 function getProp(object, name) {

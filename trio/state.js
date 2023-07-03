@@ -204,7 +204,7 @@ export function enforcingState(value = null) {
 }
 
 export function state(value = null) {
-    return new State2(value)
+    return observable(value) ? value : new State2(value)
 }
 
 export function string(value = '') {

@@ -5,8 +5,8 @@ function overlay() {
 }
 
 class Dialog extends XNode {
-    constructor(title) {
-        let content = div('dialog-content')
+    constructor(title, contentElement) {
+        let content = contentElement.addClass('dialog-content')
         let titleBar = div('dialog-title-bar').add(a().setClass('dialog-close-button').float('right').add('x').onClick(() => this.remove()), title)
         let dialog = div('dialog').display('inline-block').add(titleBar, content)
         super(overlay().add(dialog).get());
@@ -36,6 +36,6 @@ class Dialog extends XNode {
     }
 }
 
-export function dialog(title) {
-    return new Dialog(title)
+export function dialog(title, contentElement = div()) {
+    return new Dialog(title, contentElement)
 }

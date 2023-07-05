@@ -24,3 +24,12 @@ export function join(glue, array) {
 export function concat(...args) {
     return join('', args)
 }
+
+export function to(trueValue, falseValue = null) {
+    return value => value ? trueValue : falseValue
+}
+
+export function falseTo(falseValue) {
+    return to(null, falseValue)
+}
+

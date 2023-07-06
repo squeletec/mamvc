@@ -1,8 +1,6 @@
 import {builder} from "./ElementBuilder";
-
-export function text(value = '') {
-    return builder(document.createTextNode(value))
-}
+import {text} from "./Content.js"
+import {dynamicFragment} from "./DynamicFragmentBuilder";
 
 /**
  * Builder created on top of the existing document body element.
@@ -470,21 +468,6 @@ export function auto(...args) {
     return div().flex('auto').add(...args)
 }
 
-export function space(start = text(), end = text()) {
-    let f = fragment(start, end)
-    f.clear = () => {
-        for (let node = start.get().nextSibling, next; node && node !== end.get(); node = next) {
-            next = node.nextSibling
-            builder(node).remove()
-        }
-    }
-    f.add = function (...items) {
-        items.forEach(i => end.prepend(i))
-        return this
-    }
-    return f
-}
-
 /**
  * Space with start and end boundary, which will be populated dynamically as reaction to model change, using its display
  * function.
@@ -504,13 +487,13 @@ export function space(start = text(), end = text()) {
  *        must return appendable content.
  * @param end Optional end element, which is used as an anchor of the space, so all rendered content is prepended before
  *        this element. If not provided, artificial empty text node is created for that purpose.
- * @returns {ElementBuilder} Fragment builder.
+ * @returns {Content} Fragment builder.
  */
 export function range(start, model, itemDisplayFunction = item => item, end = text()) {
-    let f = space(start, end)
+    let f = dynamicFragment(start, end)
     model.onChange(value => {
         f.clear();
-        (Array.isArray(value) ? value : null === value ? [] : [value]).forEach((item, index) => end.prepend(itemDisplayFunction(item, index)))
+        (Array.isArray(value) ? value : null === value ? [] : [value]).forEach((item, index) => f.add(itemDisplayFunction(item, index)))
     })
     return f
 }
@@ -532,7 +515,7 @@ export function range(start, model, itemDisplayFunction = item => item, end = te
  *        must return appendable content.
  * @param end Optional end element, which is used as an anchor of the space, so all rendered content is prepended before
  *        this element. If not provided, artificial empty text node is created for that purpose.
- * @returns {ElementBuilder} Fragment builder.
+ * @returns {Content} Fragment builder.
  */
 export function each(model, itemDisplayFunction = (item, index) => item, end = text()) {
     return range(text(), model, itemDisplayFunction, end)

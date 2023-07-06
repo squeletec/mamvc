@@ -37,3 +37,11 @@ function observableTextNode(observable) {
     observable.observe(value => n.nodeValue = value, false)
     return n
 }
+
+export function text(value = '') {
+    return content(isObservable(value) ? observableTextNode(value) : document.createTextNode(value))
+}
+
+export function content(node) {
+    return new Content(node)
+}

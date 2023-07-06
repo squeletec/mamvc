@@ -1,4 +1,4 @@
-import {Content} from "./Content.js"
+import {Content, text} from "./Content.js"
 
 function content(node) {
     return new Content(node)
@@ -8,8 +8,8 @@ export class DynamicFragmentBuilder extends Content {
    #end
    constructor(start, end) {
        super(document.createDocumentFragment())
-       this.get().appendChild(this.#start = start)
-       this.get().appendChild(this.#end = content(end).get())
+       this.get().appendChild((this.#start = start).get())
+       this.get().appendChild((this.#end = end).get())
    }
 
    add(...args) {
@@ -18,9 +18,7 @@ export class DynamicFragmentBuilder extends Content {
    }
 
    clear() {
-       while(this.#start.nextSibling && this.#start.nextSibling !== this.#end.get()) {
-           content(this.#start.nextSibling).remove()
-       }
+       clearRange(this.#start.get(), this.#end.get())
        return this
    }
 }
@@ -28,4 +26,8 @@ export class DynamicFragmentBuilder extends Content {
 function clearRange(s, e) {
     while(s.nextSibling && s.nextSibling !== e)
         content(s.nextSibling).remove()
+}
+
+export function dynamicFragment(start = text(), end = text()) {
+    return new DynamicFragmentBuilder()
 }

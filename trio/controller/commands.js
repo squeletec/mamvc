@@ -18,3 +18,11 @@ export function increment(model, by = 1) {
 export function decrement(model, by = 1) {
     return increment(model, -by)
 }
+
+export function remove(content) {
+    return () => content.remove()
+}
+
+export function clear(content) {
+    return () => content.clear()
+}

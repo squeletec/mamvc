@@ -1,11 +1,12 @@
-export class Source extends {
+export class Source extends ObservableDelegate {
     uri
     model
     loading
   
-    constructor(uri, model = state(), loading = boolean()) {
+    constructor(uri, model = null, loading = boolean()) {
+        super(model)
         this.uri = uri
-        this.model = model
+        this.model = state(model)
         this.loading = loading
         this.uri.observe(value => this.#request(value), false)
     }
@@ -13,10 +14,6 @@ export class Source extends {
     #request(value) {
         request()
         return this
-    }
-
-    get() {
-        return this.#model.get()
     }
 
     trigger() {

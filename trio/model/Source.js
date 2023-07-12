@@ -7,10 +7,20 @@ export class Source extends {
         this.uri = uri
         this.model = model
         this.loading = loading
-        this.uri.observe(value => request(value, this.model, this.loading).get())
+        this.uri.observe(value => this.#request(value), false)
     }
-  
+
+    #request(value) {
+        request()
+        return this
+    }
+
     get() {
         return this.#model.get()
+    }
+
+    trigger() {
+        this.#request(this.uri.get())
+        return this
     }
 }

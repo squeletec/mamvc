@@ -2,39 +2,35 @@ import {Model} from "./Model.js";
 
 export class PropertyModel extends Model {
 
-    #parent
-
-    #property
-
     constructor(parent, property) {
         super();
-        this.#parent = parent
-        this.#property = property
+        this._parent = parent
+        this._property = property
     }
 
     get() {
-        return this.#parent.get()?.[this.#property]
+        return this._parent.get()?.[this._property]
     }
 
     observe(observer, invokeNow = true) {
-        this.#parent.onChange(value => observer(value?.[this.#property]), invokeNow);
+        this._parent.onChange(value => observer(value?.[this._property]), invokeNow);
         return this
     }
 
     trigger() {
-        this.#parent.trigger();
+        this._parent.trigger();
         return this
     }
 
     set(newValue) {
         if(this.get() === newValue)
             return this
-        this.#parent.get()[this.#property] = newValue
+        this._parent.get()[this._property] = newValue
         return this.trigger()
     }
 
-    name() {
-        return this.#property;
+    getName() {
+        return this._property;
     }
 
 }

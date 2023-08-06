@@ -8,7 +8,8 @@ export class DynamicFragmentBuilder extends Content {
    #end
    constructor(start, end) {
        super(document.createDocumentFragment())
-       this.get().appendChild((this.#start = start).get())
+       this.get().appen
+       dChild((this.#start = start).get())
        this.get().appendChild((this.#end = end).get())
    }
 

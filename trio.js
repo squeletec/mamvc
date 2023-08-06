@@ -30,6 +30,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 Micro Ajax MVC library.
 
  */
+export * from "./trio/observable.js"
 export * from "./trio/state.js"
 export * from "./trio/data.js"
 export * from "./trio/command.js"

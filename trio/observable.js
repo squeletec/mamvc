@@ -37,8 +37,23 @@ export class Observable {
 
     getName() {return "";}
 
+    map(mappingFunction) {}
+
+    apply(writeFunction) {}
+
+    property(name) {}
+
 }
 
 export function observable(object) {
     return object instanceof Observable
 }
+
+export function to(trueValue, falseValue = null) {
+    return value => value ? trueValue : falseValue
+}
+
+export function falseTo(falseValue) {
+    return to(null, falseValue)
+}
+

@@ -3,36 +3,32 @@ import {Observable} from "./Observable.js";
 
 export class StateModel extends Model {
 
-    #value
-
-    #observers
-
     constructor(initialValue) {
         super();
-        this.#value = initialValue
-        this.#observers = []
+        this._value = initialValue
+        this._observers = []
     }
 
     get() {
-        return this.#value;
+        return this._value;
     }
 
     observe(observer, invokeNow = true) {
-        this.#observers.push(observer)
+        this._observers.push(observer)
         if(invokeNow)
-            observer(this.#value)
+            observer(this._value)
         return this
     }
 
     trigger() {
-        this.#observers.forEach(observer => observer(this.#value))
+        this._observers.forEach(observer => observer(this._value))
         return this
     }
 
     set(newValue) {
-        if(this.#value === newValue)
+        if(this._value === newValue)
             return this
-        this.#value = newValue
+        this._value = newValue
         return this.trigger()
     }
 

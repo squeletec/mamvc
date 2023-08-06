@@ -25,11 +25,11 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import { concat, boolean, falseTo, to, join } from "./state.js";
+import { concat, boolean, join } from "./state.js";
 import { set, call } from "./command.js"
 import { remote } from "./data.js"
 import {XNode, x} from "./node.js";
-import {observable} from "./observable.js";
+import {observable, falseTo, to} from "./observable.js";
 
 
 export class XBuilder extends XNode {

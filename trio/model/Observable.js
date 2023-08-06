@@ -1,12 +1,12 @@
-import {PropertyModel} from "./PropertyModel.js";
+//import {PropertyModel} from "./PropertyModel.js";
 
 export class Observable {
 
-    constructor() {
-        this.$ = new Proxy({}, {
-            get: (target, name) => target.hasOwnProperty(name) ? target[name] : target[name] = new PropertyModel(this, name)
-        })
-    }
+    //constructor() {
+    //    this.$ = new Proxy({}, {
+    //        get: (target, name) => target.hasOwnProperty(name) ? target[name] : target[name] = new PropertyModel(this, name)
+    //    })
+    //}
 
     /**
      * Get current value of the observable
@@ -34,7 +34,7 @@ export class Observable {
         throw new Error("Undeclared method trigger()")
     }
 
-    name() {
+    getName() {
         return ""
     }
 

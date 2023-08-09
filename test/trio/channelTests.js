@@ -18,13 +18,18 @@ suite({
     },
 
     testNestedGetUri() {
-        let params = stateProxy(state({query: ""}))
+        let params = stateProxy({query: ""})
         assertState(params.query, "")
         let param = state({id: 1})
         param.map(usingTemplate("id={id}")).routeTo(params.query)
         assertState(params.query, "id=1")
         let uri = params.map(properties(encodeURIComponent)).map(usingUriTemplate("data/channel1/a.json"))
         assertState(uri, "data/channel1/a.json?query=id%253D1")
-    }
+    },
 
+    testGetChannelLoadedOnInput() {
+        let input = stateProxy({id: 1, name: "a", content: "body"})
+        getChannel("data/channel{id}/{name}.json", input).observeInput()
+        input.name.set("b")
+    }
 })

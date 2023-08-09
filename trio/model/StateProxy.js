@@ -1,4 +1,6 @@
 import {PropertyModel} from "./PropertyModel.js";
+import {isObservable} from "./Observable.js";
+import {state} from "./StateModel.js";
 
 let stateProxyHandler = {
     get(target, name) {
@@ -6,6 +8,6 @@ let stateProxyHandler = {
     }
 }
 
-export function stateProxy(state) {
-    return new Proxy(state, stateProxyHandler)
+export function stateProxy(stateOrValue = null) {
+    return new Proxy(isObservable(stateOrValue) ? stateOrValue : state(stateOrValue), stateProxyHandler)
 }

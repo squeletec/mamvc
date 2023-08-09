@@ -66,6 +66,11 @@ export class Channel extends Model {
         return this
     }
 
+    observeInput() {
+        this.#uri.observe(() => this.trigger())
+        return this
+    }
+
 }
 
 
@@ -93,6 +98,11 @@ class PostChannel extends Channel {
 
     trigger() {
         this.request("POST").send(JSON.stringify(this.#input.get()))
+        return this
+    }
+
+    observeInput() {
+        this.#input.observe(() => this.trigger());
         return this
     }
 

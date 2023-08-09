@@ -1,12 +1,7 @@
-//import {PropertyModel} from "./PropertyModel.js";
-
+/**
+ * Observable represents a value, which notifies observers about its changes.
+ */
 export class Observable {
-
-    //constructor() {
-    //    this.$ = new Proxy({}, {
-    //        get: (target, name) => target.hasOwnProperty(name) ? target[name] : target[name] = new PropertyModel(this, name)
-    //    })
-    //}
 
     /**
      * Get current value of the observable
@@ -34,8 +29,17 @@ export class Observable {
         throw new Error("Undeclared method trigger()")
     }
 
+    /**
+     * Name of the observer bean.
+     * @return {string}
+     */
     getName() {
         return ""
+    }
+
+    routeTo(model, invokeNow) {
+        this.observe(value => model.set(value), invokeNow)
+        return this
     }
 
 }

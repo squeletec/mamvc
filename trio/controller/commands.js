@@ -1,3 +1,4 @@
+import {isObservable} from "../model/Observable.js";
 
 export function set(model, value) {
     return isObservable(value) ? () => model.set(value.get()) : () => model.set(value)

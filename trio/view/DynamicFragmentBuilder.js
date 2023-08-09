@@ -1,8 +1,5 @@
-import {Content, text} from "./Content.js"
+import {Content, content, text} from "./Content.js"
 
-function content(node) {
-    return new Content(node)
-}
 export class DynamicFragmentBuilder extends Content {
    #start
    #end
@@ -30,5 +27,5 @@ function clearRange(s, e) {
 }
 
 export function dynamicFragment(start = text(), end = text()) {
-    return new DynamicFragmentBuilder()
+    return new DynamicFragmentBuilder(start, end)
 }

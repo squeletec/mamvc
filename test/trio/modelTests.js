@@ -1,18 +1,18 @@
 import {assert, assertState, suite} from "../test-runner.js";
-import {state} from "../../trio/model/StateModel.js";
-import {stateProxy} from "../../trio/model/StateProxy.js";
+import {state, stateProxy} from "../../trio/mvc.js";
 
 suite({
+
     name: "Model tests",
 
-    testModel() {
+    modelGetReturnsLastSetValue() {
         let model = state()
         assertState(model, null)
         model.set("A")
         assertState(model, "A")
     },
 
-    testModelObserverExecutedNow() {
+    modelNotifiesObserverWithInitialValueAndOnEveryUpdate() {
         let model = state("A")
         let value = null
         assert(value, null)
@@ -22,7 +22,7 @@ suite({
         assert(value, "B")
     },
 
-    testModelObserverNotExecutedNow() {
+    modelDoesntNotifyObserverWithInitialValueWhenInstructed() {
         let model = state("A")
         let value = null
         assert(value, null)

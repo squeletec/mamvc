@@ -13,7 +13,7 @@ export class StateTransformer extends Model {
     }
 
     get() {
-        this.#target.get();
+        return this.#target.get();
     }
 
     observe(observer, invokeNow = true) {

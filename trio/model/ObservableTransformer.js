@@ -1,26 +1,24 @@
 import {Observable} from "./Observable.js";
 
 export class ObservableTransformer extends Observable {
-    #parent
-    #transform
 
     constructor(parent, transform) {
         super();
-        this.#parent = parent
-        this.#transform = transform
+        this._parent = parent
+        this._transform = transform
     }
 
     get() {
-        return this.#transform(this.#parent.get());
+        return this._transform(this._parent.get());
     }
 
     observe(observer, invokeNow = true) {
-        this.#parent.onChange(value => this.#transform(value), invokeNow)
+        this._parent.observe(value => observer(this._transform(value)), invokeNow)
         return this
     }
 
     trigger() {
-        this.#parent.trigger();
+        this._parent.trigger();
         return this
     }
 }

@@ -8,6 +8,10 @@ export function toggle(model) {
     return () => model.set(!model.get())
 }
 
+export function when(condition, command) {
+    return () => condition.get() && command()
+}
+
 export function trigger(model) {
     return () => model.trigger()
 }

@@ -33,6 +33,14 @@ export function falseTo(falseValue) {
     return to(null, falseValue)
 }
 
+export let negate = value => !value
+
+export let invert = value => -value
+
+export function runEitherOr(trueCommand, falseCommand) {
+    return value => value ? trueCommand() : falseCommand()
+}
+
 export function usingTemplate(template) {
     let parts = template.split(/\{([^{]+)}/g)
     let values = Array.from(parts)
@@ -60,4 +68,29 @@ export function properties(map) {
     return function(object) {
         return Object.fromEntries(Object.entries(object).map(([name, value]) => [name, map(value)]))
     }
+}
+
+export function timer(booleanState, result = state(), updatePeriod = 1000) {
+    let interval = null
+    let start = 0
+    function update() {
+        result.set(new Date().getTime() - start)
+    }
+    function handle(value) {
+        if(value) {
+            if(interval === null) {
+                start = new Date().getTime()
+                update()
+                interval = setInterval(update, updatePeriod)
+            }
+        } else {
+            if(interval !== null) {
+                clearInterval(interval)
+                update()
+                interval = null
+            }
+        }
+    }
+    booleanState.onChange(handle)
+    return result
 }

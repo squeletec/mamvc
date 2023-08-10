@@ -1,6 +1,6 @@
-import {builder} from "./ElementBuilder";
+import {builder} from "./ElementBuilder.js";
 import {text} from "./Content.js"
-import {dynamicFragment} from "./DynamicFragmentBuilder";
+import {dynamicFragment} from "./DynamicFragmentBuilder.js";
 
 /**
  * Builder created on top of the existing document body element.

@@ -1,4 +1,4 @@
-import {to, span, toggle, div, on, boolean, when, falseTo, inputText} from "../trio.js";
+import {to, a, span, toggle, div, on, boolean, when, falseTo, inputText} from "../trio.js";
 
 export function expander(model, enabled = boolean(true)) {
     return span().display('inline-block').cursor('pointer')

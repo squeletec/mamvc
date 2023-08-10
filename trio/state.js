@@ -219,14 +219,6 @@ export function list(value = []) {
     return state(value)
 }
 
-export function to(trueValue, falseValue = null) {
-    return value => value ? trueValue : falseValue
-}
-
-export function falseTo(falseValue) {
-    return to(null, falseValue)
-}
-
 export function execute(trueCommand, falseCommand) {
     return value => value ? trueCommand() : falseCommand()
 }

@@ -1,4 +1,4 @@
-import {isObservable} from "../model/Observable";
+import {isObservable} from "../model/Observable.js";
 
 export class Content {
 

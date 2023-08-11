@@ -29,55 +29,56 @@ function observeRequest(method, uri, state, result) {
     return request
 }
 
-
+/**
+ * Class Channel represents channel for exchange data between the GUI and the server.
+ */
 export class Channel extends Model {
 
-    #uri
-    #model
-    #stateModel
-
-    constructor(uri, model = state().transform(request => JSON.parse(request.responseText))) {
+    constructor(uriMapping, input, output) {
         super();
-        this.#uri = uri
-        this.#model = model
+        this.input = input
+        this.uri = input.map(properties(encodeURIComponent)).map(uriMapping)
+        this.output = output
         this.setStateModel(state({state: XMLHttpRequest.UNSENT, loading: false}))
     }
 
     request(method) {
-        return  observeRequest(method, this.#uri, this.#stateModel, this.#model)
+        return  observeRequest(method, this.uri, this.stateModel, this.output)
     }
 
     setStateModel(stateModel) {
-        this.#stateModel = stateModel
+        this.stateModel = stateModel
         return this
     }
 
     set(newValue) {
-        this.#model.set(newValue);
+        this.output.set(newValue);
         return this
     }
 
     get() {
-        return this.#model.get();
+        return this.output.get();
     }
 
     observe(observer, invokeNow = true) {
-        this.#model.observe(observer, invokeNow);
+        this.output.observe(observer, invokeNow);
         return this
     }
 
     observeInput() {
-        this.#uri.observe(() => this.trigger())
+        this.input.observe(() => this.trigger());
         return this
     }
 
 }
 
-
+/**
+ * Get channel.
+ */
 class GetChannel extends Channel {
 
-    constructor(uri, model) {
-        super(uri, model);
+    constructor(uri, input, output) {
+        super(usingUriTemplate(uri), input, output);
     }
 
     trigger() {
@@ -87,22 +88,17 @@ class GetChannel extends Channel {
 
 }
 
+/**
+ * POST channel.
+ */
 class PostChannel extends Channel {
 
-    #input
-
-    constructor(uri, input, model) {
-        super(uri, model);
-        this.#input = input
+    constructor(uri, input, output) {
+        super(usingTemplate(uri), input, output);
     }
 
     trigger() {
-        this.request("POST").send(JSON.stringify(this.#input.get()))
-        return this
-    }
-
-    observeInput() {
-        this.#input.observe(() => this.trigger());
+        this.request("POST").send(JSON.stringify(this.input.get()))
         return this
     }
 
@@ -117,9 +113,9 @@ export function fromText(model = state()) {
 }
 
 export function getChannel(uri, input, result = fromJson()) {
-    return new GetChannel(input.map(properties(encodeURIComponent)).map(usingUriTemplate(uri)), result)
+    return new GetChannel(uri, input, result)
 }
 
 export function postChannel(uri, input, result = fromJson()) {
-    return new PostChannel(input.map(properties(encodeURIComponent)).map(usingTemplate(uri)), input, result)
+    return new PostChannel(uri, input, result)
 }

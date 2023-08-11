@@ -1,23 +1,4 @@
-import {
-    table,
-    thead,
-    tr,
-    th,
-    a,
-    each,
-    caption,
-    state,
-    trigger,
-    Content,
-    captionTop,
-    boolean,
-    div,
-    toggle,
-    checkbox,
-    label,
-    stateProxy,
-    td
-} from "../../trio/mvc.js";
+import {table, thead, tr, th, a, each, captionBottom, state, trigger, Content, captionTop, boolean, div, toggle, checkbox, label, stateProxy, td} from "../../trio/mvc.js";
 
 export class AbstractDataTable extends Content {
 
@@ -52,13 +33,19 @@ export class AbstractDataTable extends Content {
 
     enableColumnFiltering() {
         let vis = boolean()
-        return this.add(captionTop().position('relative').add(div('rap-columns').position('absolute').right('0', '').top('0', '').marginLeft('-0.5', 'em').add(a().setClass('rap-columns-toggle').onClick(toggle(vis)).add('⋮'),
-            div('rap-columns-visibility').display(vis).position('absolute').textLeft().whiteSpace('nowrap').right(0)
-                .add(each(this.columnsModel, column => div().add(
-                    checkbox(column.getName()).checked(column.hidden() ? null : 'checked').onChange(() => {column.hide(!column.hidden()); this.columnsModel.trigger()}, true),
-                    label(column.getName()).add(column.getName())
-                ))))
-        ))
+        return this.add(
+            captionTop().position('relative').add(
+                div().setClass('rap-columns').position('absolute').right('0', '').top('0', '').marginLeft('-0.5', 'em').add(
+                    a().setClass('rap-columns-toggle').onClick(toggle(vis)).add('⋮'),
+                    div().setClass('rap-columns-visibility').display(vis).position('absolute').textLeft().whiteSpace('nowrap').right(0).add(
+                        each(this.columnsModel, column => div().add(
+                            checkbox(column.getName()).checked(column.hidden() ? null : 'checked').onChange(() => {column.hide(!column.hidden()); this.columnsModel.trigger()}, true),
+                            label(column.getName()).add(column.getName())
+                        ))
+                    )
+                )
+            )
+        )
     }
     
     customizeRow(customizer) {
@@ -78,11 +65,11 @@ export class AbstractDataTable extends Content {
     }
 
     captionTop(...args) {
-        return this.add(caption().captionSide('top').textLeft().nowrap().add(...args))
+        return this.add(captionTop().textLeft().nowrap().add(...args))
     }
 
     captionBottom(...args) {
-        return this.add(caption().captionSide('bottom').textLeft().nowrap().add(...args))
+        return this.add(captionBottom().textLeft().nowrap().add(...args))
     }
 
 }

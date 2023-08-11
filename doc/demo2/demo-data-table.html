@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="demo.css"/>
+    <script type="module" src="demo-runner.js" defer></script>
+<script type="module" id="demoSource" defer>
+
+    import {body, div } from "../../trio/mvc.js"
+    import {row, position} from "../../rap/tables/Column.js"
+    import {pageTable} from "../../rap/tables/DataTable.js"
+    import {getChannel} from "../../trio/model/Channel";
+    import {pageModel} from "../../rap/tables/Page";
+
+    body().add(div().id('demoOutput').add(
+        pageTable(getChannel('data/page{page}.json', pageModel()))
+            .column(position)
+            .column(row.id)
+            .column(row.name)
+            .column(row.content)
+            .enableColumnFiltering()
+            .enableColumnMove()
+    ))
+
+</script>
+</head>
+<body>
+</body>
+</html>

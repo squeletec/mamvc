@@ -26,7 +26,7 @@ export class TreeDataTable extends AbstractDataTable {
 }
 
 function notLeafIndent() {
-    return span('rap-tree-table-leaf-indent').display('inline-block').width('1', 'em')
+    return span().setClass('rap-tree-table-leaf-indent').display('inline-block').width('1', 'em')
 }
 
 function content(table, page, commandFactory, depth, parentCommand) {

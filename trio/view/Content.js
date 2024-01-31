@@ -22,6 +22,10 @@ export class Content {
         return this
     }
 
+    addTo(target) {
+        node(target).appendChild(this.get())
+        return this
+    }
 }
 
 
